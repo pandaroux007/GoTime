@@ -27,6 +27,8 @@ class Application(tk.Tk):
         # ------------------------ création d'un premier menu 'fenêtre'
         fenetre_menu = tk.Menu(barre_de_menu, tearoff=0)
         fenetre_menu.add_command(label="close page", command=self.quit)
+        fenetre_menu.add_command(label="Plein écran", command=self.quit)
+        fenetre_menu.add_command(label="Taille MIN", command=self.quit)
         barre_de_menu.add_cascade(label="Fenêtre", menu=fenetre_menu)
         # ------------------------ création d'un second menu 'Aide'
         fenetre_menu = tk.Menu(barre_de_menu, tearoff=0)
@@ -41,6 +43,15 @@ class Application(tk.Tk):
         # ------------------------ Création de la frame de couleur et affichage d'un texte dedans (ici le temps restant)
         self.time_frame = tk.Frame(self, bg=couleur_frame_minuteur_verte, height=80)
         self.time_frame.pack(fill="x", padx=20, pady=(0, 20))
+        # ------------------------ Boutons pour la gestion du minuteur
+        self.boutons_frame = tk.Frame(self, bg=theme_sombre_couleur_hexa, height=80)
+        self.boutons_frame.pack(fill="x", padx=20, pady=(0, 20))
+        self.bouton_start = tk.Button(self.boutons_frame, text="START")
+        self.bouton_pause = tk.Button(self.boutons_frame, text="PAUSE")
+        self.bouton_stop = tk.Button(self.boutons_frame, text="STOP")
+        self.bouton_start.pack(side="left", padx=10)
+        self.bouton_pause.pack(side="left", padx=10)
+        self.bouton_stop.pack(side="left", padx=10)
         # ------------------------ Mise à jour de l'heure
         self.update_time()
 
@@ -56,6 +67,12 @@ class Application(tk.Tk):
     def open_github(self):
         print("Ouverture de la fenêtre d'information pour afficher le lien du github !")
         webbrowser.open_new(lien_du_github)
+
+    def fenetre_en_plein_ecran(self):
+        self.attributes("-fullscreen", True)
+
+    def fenetre_en_plein_ecran(self):
+        self.attributes("-fullscreen", False)
 
 if __name__ == "__main__":
     root = Application()
