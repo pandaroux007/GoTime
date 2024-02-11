@@ -11,8 +11,8 @@ type_application = "DESKTOP"
 theme_sombre_couleur_hexa = "#242424"
 taille_de_la_fenetre = "1080x720"
 couleur_frame_minuteur_verte = "#73FF14"
-couleur_frame_minuteur_jaune = ""
-couleur_frame_minuteur_rouge = ""
+couleur_frame_minuteur_jaune = "#F4EF12"
+couleur_frame_minuteur_rouge = "#F84615"
 
 class Application(tk.Tk):
     def __init__(self):
