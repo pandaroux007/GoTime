@@ -10,7 +10,7 @@ nom_application = "GoTime"
 type_application = "DESKTOP"
 theme_sombre_couleur_hexa = "#242424"
 taille_de_la_fenetre = "1080x720"
-# couleur_frame_minuteur_verte = "#73FF14"
+couleur_frame_minuteur_verte = "#73FF14"
 # couleur_frame_minuteur_jaune = ""
 # couleur_frame_minuteur_rouge = ""
 
@@ -38,16 +38,11 @@ class Application(tk.Tk):
         # ------------------------ Affichage de l'heure en haut de la fenêtre
         self.time_label = tk.Label(self, text="", font=("Arial", 24), bg="#242424", fg="white")
         self.time_label.pack(pady=20)
+        # ------------------------ Création de la frame de couleur et affichage d'un texte dedans (ici le temps restant)
+        self.time_frame = tk.Frame(self, bg=couleur_frame_minuteur_verte, height=80)
+        self.time_frame.pack(fill="x", padx=20, pady=(0, 20))
         # ------------------------ Mise à jour de l'heure
         self.update_time()
-        '''
-        # ------------------------ Boutons pour démarrer et mettre en pause le minuteur
-        self.start_button = tk.Button(self, text="Démarrer", command=self.start_timer)
-        self.start_button.pack(pady=10)
-
-        self.pause_button = tk.Button(self, text="Pause", command=self.pause_timer, state="disabled")
-        self.pause_button.pack(pady=5)
-        '''
 
     def update_time(self):
         current_time = datetime.now().strftime("%H:%M:%S")
