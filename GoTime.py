@@ -11,8 +11,8 @@ type_application = "DESKTOP"
 theme_sombre_couleur_hexa = "#242424"
 taille_de_la_fenetre = "1080x720"
 couleur_frame_minuteur_verte = "#73FF14"
-# couleur_frame_minuteur_jaune = ""
-# couleur_frame_minuteur_rouge = ""
+couleur_frame_minuteur_jaune = ""
+couleur_frame_minuteur_rouge = ""
 
 class Application(tk.Tk):
     def __init__(self):
@@ -46,21 +46,31 @@ class Application(tk.Tk):
         # ------------------------ Boutons pour la gestion du minuteur
         self.boutons_frame = tk.Frame(self, bg=theme_sombre_couleur_hexa, height=80)
         self.boutons_frame.pack(fill="x", padx=20, pady=(0, 20))
-        self.bouton_start = tk.Button(self.boutons_frame, text="START", activebackground=couleur_frame_minuteur_verte, state="normal")
-        self.bouton_pause = tk.Button(self.boutons_frame, text="PAUSE", activebackground=couleur_frame_minuteur_verte, state="disabled")
-        self.bouton_stop = tk.Button(self.boutons_frame, text="STOP", activebackground=couleur_frame_minuteur_verte, state="disabled")
-        self.bouton_start.pack(side="left", padx=10, expand=True)
-        self.bouton_pause.pack(side="left", padx=10, expand=True)
-        self.bouton_stop.pack(side="left", padx=10, expand=True)
+        self.bouton_start = tk.Button(self.boutons_frame, text="START",
+                                      activebackground=couleur_frame_minuteur_verte,
+                                      state="normal", width=30, height=2,
+                                      justify="center", relief="groove")
+        self.bouton_pause = tk.Button(self.boutons_frame, text="PAUSE",
+                                      activebackground=couleur_frame_minuteur_verte,
+                                      state="disabled", width=30, height=2,
+                                      justify="center", relief="groove")
+        self.bouton_stop = tk.Button(self.boutons_frame, text="STOP", activebackground=couleur_frame_minuteur_verte, state="disabled", width=30, height=2, justify="center", relief="groove")
+        self.bouton_start.pack(side="left", padx=10, pady=10, expand=True)
+        self.bouton_pause.pack(side="left", padx=10, pady=10, expand=True)
+        self.bouton_stop.pack(side="left", padx=10, pady=10, expand=True)
         # ------------------------ Entrées pour la gestion du temps du minuteur (minutes et secondes)
+        # ------------ Entrée des minutes :
         self.entrees_frame = tk.Frame(self, bg=theme_sombre_couleur_hexa, height=80)
         self.entrees_frame.pack(fill="x", padx=20, pady=(0, 20))
-        self.minutes_entry = tk.Entry(self.entrees_frame, width=5)
+        self.minutes_entry = tk.Entry(self.entrees_frame, width=40)
         self.minutes_entry.insert(0, "0")
-        self.minutes_entry.pack(side="left", padx=(20, 10))
-        self.seconds_entry = tk.Entry(self.entrees_frame, width=5)
+        # self.minutes_entry.bind('<Return>', self.start_timer)
+        self.minutes_entry.pack(side="left", padx=(20, 10), expand=True)
+        # ------------ Entrée des secondes :
+        self.seconds_entry = tk.Entry(self.entrees_frame, width=40)
         self.seconds_entry.insert(0, "0")
-        self.seconds_entry.pack(side="left", padx=(10, 20))
+        # self.seconds_entry.bind('<Return>', self.start_timer)
+        self.seconds_entry.pack(side="left", padx=(10, 20), expand=True)
         # ------------------------ Mise à jour de l'heure
         self.update_time()
 
@@ -71,10 +81,10 @@ class Application(tk.Tk):
 
     def show_github(self):
         messagebox.showinfo(f"Source {nom_application}", f"Lien du GitHub du projet :\n{lien_du_github}")
-        print(f"Ouverture du github de {nom_application} dans une nouvelle fenêtre de navigateur !")
+        print("Ouverture de la fenêtre d'information pour afficher le lien du github !")
 
     def open_github(self):
-        print("Ouverture de la fenêtre d'information pour afficher le lien du github !")
+        print(f"Ouverture du github de {nom_application} dans une nouvelle fenêtre de navigateur !")
         webbrowser.open_new(lien_du_github)
 
 if __name__ == "__main__":
