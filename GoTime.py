@@ -27,8 +27,6 @@ class Application(tk.Tk):
         # ------------------------ création d'un premier menu 'fenêtre'
         fenetre_menu = tk.Menu(barre_de_menu, tearoff=0)
         fenetre_menu.add_command(label="close page", command=self.quit)
-        fenetre_menu.add_command(label="Plein écran", command=self.quit)
-        fenetre_menu.add_command(label="Taille MIN", command=self.quit)
         barre_de_menu.add_cascade(label="Fenêtre", menu=fenetre_menu)
         # ------------------------ création d'un second menu 'Aide'
         fenetre_menu = tk.Menu(barre_de_menu, tearoff=0)
@@ -43,15 +41,26 @@ class Application(tk.Tk):
         # ------------------------ Création de la frame de couleur et affichage d'un texte dedans (ici le temps restant)
         self.time_frame = tk.Frame(self, bg=couleur_frame_minuteur_verte, height=80)
         self.time_frame.pack(fill="x", padx=20, pady=(0, 20))
+        self.temps_restant_label = tk.Label(self.time_frame, text=f"{nom_application}", font=("Arial", 24), bg=couleur_frame_minuteur_verte, fg="black")
+        self.temps_restant_label.pack(pady=20)
         # ------------------------ Boutons pour la gestion du minuteur
         self.boutons_frame = tk.Frame(self, bg=theme_sombre_couleur_hexa, height=80)
         self.boutons_frame.pack(fill="x", padx=20, pady=(0, 20))
-        self.bouton_start = tk.Button(self.boutons_frame, text="START")
-        self.bouton_pause = tk.Button(self.boutons_frame, text="PAUSE")
-        self.bouton_stop = tk.Button(self.boutons_frame, text="STOP")
-        self.bouton_start.pack(side="left", padx=10)
-        self.bouton_pause.pack(side="left", padx=10)
-        self.bouton_stop.pack(side="left", padx=10)
+        self.bouton_start = tk.Button(self.boutons_frame, text="START", activebackground=couleur_frame_minuteur_verte, state="normal")
+        self.bouton_pause = tk.Button(self.boutons_frame, text="PAUSE", activebackground=couleur_frame_minuteur_verte, state="disabled")
+        self.bouton_stop = tk.Button(self.boutons_frame, text="STOP", activebackground=couleur_frame_minuteur_verte, state="disabled")
+        self.bouton_start.pack(side="left", padx=10, expand=True)
+        self.bouton_pause.pack(side="left", padx=10, expand=True)
+        self.bouton_stop.pack(side="left", padx=10, expand=True)
+        # ------------------------ Entrées pour la gestion du temps du minuteur (minutes et secondes)
+        self.entrees_frame = tk.Frame(self, bg=theme_sombre_couleur_hexa, height=80)
+        self.entrees_frame.pack(fill="x", padx=20, pady=(0, 20))
+        self.minutes_entry = tk.Entry(self.entrees_frame, width=5)
+        self.minutes_entry.insert(0, "0")
+        self.minutes_entry.pack(side="left", padx=(20, 10))
+        self.seconds_entry = tk.Entry(self.entrees_frame, width=5)
+        self.seconds_entry.insert(0, "0")
+        self.seconds_entry.pack(side="left", padx=(10, 20))
         # ------------------------ Mise à jour de l'heure
         self.update_time()
 
@@ -67,12 +76,6 @@ class Application(tk.Tk):
     def open_github(self):
         print("Ouverture de la fenêtre d'information pour afficher le lien du github !")
         webbrowser.open_new(lien_du_github)
-
-    def fenetre_en_plein_ecran(self):
-        self.attributes("-fullscreen", True)
-
-    def fenetre_en_plein_ecran(self):
-        self.attributes("-fullscreen", False)
 
 if __name__ == "__main__":
     root = Application()
