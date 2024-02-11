@@ -49,12 +49,18 @@ class Application(tk.Tk):
         self.bouton_start = tk.Button(self.boutons_frame, text="START",
                                       activebackground=couleur_frame_minuteur_verte,
                                       state="normal", width=30, height=2,
-                                      justify="center", relief="groove")
+                                      justify="center", relief="groove",
+                                      command=self.start_timer)
         self.bouton_pause = tk.Button(self.boutons_frame, text="PAUSE",
                                       activebackground=couleur_frame_minuteur_verte,
                                       state="disabled", width=30, height=2,
-                                      justify="center", relief="groove")
-        self.bouton_stop = tk.Button(self.boutons_frame, text="STOP", activebackground=couleur_frame_minuteur_verte, state="disabled", width=30, height=2, justify="center", relief="groove")
+                                      justify="center", relief="groove",
+                                      command=self.pause_timer)
+        self.bouton_stop = tk.Button(self.boutons_frame, text="STOP",
+                                     activebackground=couleur_frame_minuteur_verte,
+                                     state="disabled", width=30, height=2,
+                                     justify="center", relief="groove",
+                                     command=self.stop_timer)
         self.bouton_start.pack(side="left", padx=10, pady=10, expand=True)
         self.bouton_pause.pack(side="left", padx=10, pady=10, expand=True)
         self.bouton_stop.pack(side="left", padx=10, pady=10, expand=True)
@@ -64,12 +70,12 @@ class Application(tk.Tk):
         self.entrees_frame.pack(fill="x", padx=20, pady=(0, 20))
         self.minutes_entry = tk.Entry(self.entrees_frame, width=40)
         self.minutes_entry.insert(0, "0")
-        # self.minutes_entry.bind('<Return>', self.start_timer)
+        self.minutes_entry.bind('<Return>', self.start_timer)
         self.minutes_entry.pack(side="left", padx=(20, 10), expand=True)
         # ------------ Entrée des secondes :
         self.seconds_entry = tk.Entry(self.entrees_frame, width=40)
         self.seconds_entry.insert(0, "0")
-        # self.seconds_entry.bind('<Return>', self.start_timer)
+        self.seconds_entry.bind('<Return>', self.start_timer)
         self.seconds_entry.pack(side="left", padx=(10, 20), expand=True)
         # ------------------------ Mise à jour de l'heure
         self.update_time()
@@ -78,6 +84,48 @@ class Application(tk.Tk):
         current_time = datetime.now().strftime("%H:%M:%S")
         self.time_label.config(text=current_time)
         self.after(1000, self.update_time)  # Met à jour toutes les secondes
+
+    def start_timer(self):
+        minutes = int(self.minutes_entry.get())
+        seconds = int(self.seconds_entry.get())
+        self.total_seconds = minutes * 60 + seconds
+        self.time_remaining = self.total_seconds
+        self.minutes_entry.config(state="disabled")
+        self.seconds_entry.config(state="disabled")
+        self.bouton_pause.config(state="normal")
+        self.bouton_start.config(state="disabled")
+        self.bouton_stop.config(state="normal")
+        self.update_timer()
+
+    def update_timer(self):
+        if self.time_remaining > 0:
+            self.time_remaining -= 1
+            minutes = self.time_remaining // 60
+            seconds = self.time_remaining % 60
+            time_str = f"{minutes:02d}:{seconds:02d}"
+            self.temps_restant_label.config(text=time_str, font=("Arial", 24), bg=couleur_frame_minuteur_verte, fg="black")
+            self.after(1000, self.update_timer)
+        else:
+            self.time_frame.config(bg=couleur_frame_minuteur_verte)
+            self.temps_restant_label.config(text="Terminé!", font=("Arial", 24), bg=couleur_frame_minuteur_verte, fg="black")
+
+    def pause_timer(self):
+        if not hasattr(self, 'paused'):
+            self.paused = False
+        if not self.paused:
+            self.paused = True  # Mettre en pause le minuteur
+        else:
+            self.paused = False  # Reprendre le décompte
+            self.update_timer()  # Reprendre le décompte depuis l'endroit où il s'est arrêté
+
+    def stop_timer(self):
+        self.time_remaining = 0  # Réinitialiser le temps restant
+        self.update_timer()  # Arrêter la récursion de la fonction update_timer()
+        self.bouton_start.config(state="normal")
+        self.bouton_pause.config(state="disabled")
+        self.bouton_stop.config(state="disabled")
+        self.minutes_entry.config(state="normal")
+        self.seconds_entry.config(state="normal")
 
     def show_github(self):
         messagebox.showinfo(f"Source {nom_application}", f"Lien du GitHub du projet :\n{lien_du_github}")
