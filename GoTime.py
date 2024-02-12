@@ -1,5 +1,5 @@
 import tkinter as tk
-from datetime import datetime, timedelta
+from datetime import datetime
 import platform
 import webbrowser
 from tkinter import messagebox
@@ -17,6 +17,9 @@ couleur_frame_minuteur_rouge = "#F84615"
 class Application(tk.Tk):
     def __init__(self):
         super().__init__()
+        # ------------------------ Variables pour les paramètre du minuteur
+        self.paused = False
+        self.time_remaining = None
         # ------------------------ Paramètrage de la fenêtre.
         self.title(f"{nom_application} - Application {type_application} - {systeme_exploitation}")
         self.geometry(taille_de_la_fenetre)
@@ -66,8 +69,8 @@ class Application(tk.Tk):
         self.bouton_stop.pack(side="left", padx=10, pady=10, expand=True)
         # ------------------------ Entrées pour la gestion du temps du minuteur (minutes et secondes)
         # ------------ Entrée des minutes :
-        self.entrees_frame = tk.Frame(self, bg=theme_sombre_couleur_hexa, height=80)
-        self.entrees_frame.pack(fill="x", padx=20, pady=(0, 20))
+        self.entrees_frame = tk.Frame(self, bg=theme_sombre_couleur_hexa)
+        self.entrees_frame.pack(padx=20, pady=(0, 20))
         self.minutes_entry = tk.Entry(self.entrees_frame, width=40)
         self.minutes_entry.insert(0, "0")
         self.minutes_entry.bind('<Return>', self.start_timer)
@@ -77,6 +80,9 @@ class Application(tk.Tk):
         self.seconds_entry.insert(0, "0")
         self.seconds_entry.bind('<Return>', self.start_timer)
         self.seconds_entry.pack(side="left", padx=(10, 20), expand=True)
+        # ------------ Boutons pour effacer les entrées
+        self.bouton_start = tk.Button(self.entrees_frame, text="Effacer les entrées", activebackground=couleur_frame_minuteur_jaune,width=15,command=self.clear_entrees)
+        self.bouton_start.pack(side="left", padx=10, pady=20, expand=True)
         # ------------------------ Mise à jour de l'heure
         self.update_time()
 
@@ -108,24 +114,29 @@ class Application(tk.Tk):
         else:
             self.time_frame.config(bg=couleur_frame_minuteur_verte)
             self.temps_restant_label.config(text="Terminé!", font=("Arial", 24), bg=couleur_frame_minuteur_verte, fg="black")
+            self.stop_timer(True)
 
     def pause_timer(self):
         if not hasattr(self, 'paused'):
             self.paused = False
         if not self.paused:
-            self.paused = True  # Mettre en pause le minuteur
+            self.paused = True
         else:
-            self.paused = False  # Reprendre le décompte
+            self.paused = False
             self.update_timer()  # Reprendre le décompte depuis l'endroit où il s'est arrêté
 
-    def stop_timer(self):
+    def stop_timer(self, parametre_appel_bouton_ou_non = None):
         self.time_remaining = 0  # Réinitialiser le temps restant
-        self.update_timer()  # Arrêter la récursion de la fonction update_timer()
         self.bouton_start.config(state="normal")
         self.bouton_pause.config(state="disabled")
         self.bouton_stop.config(state="disabled")
         self.minutes_entry.config(state="normal")
         self.seconds_entry.config(state="normal")
+        self.temps_restant_label.config(text=f"{nom_application}", font=("Arial", 24))
+        if parametre_appel_bouton_ou_non == None:
+            self.update_timer()  # Arrêter la récursion de la fonction update_timer()
+        else:
+            pass
 
     def show_github(self):
         messagebox.showinfo(f"Source {nom_application}", f"Lien du GitHub du projet :\n{lien_du_github}")
@@ -134,6 +145,12 @@ class Application(tk.Tk):
     def open_github(self):
         print(f"Ouverture du github de {nom_application} dans une nouvelle fenêtre de navigateur !")
         webbrowser.open_new(lien_du_github)
+
+    def clear_entrees(self):
+        self.minutes_entry.delete(0, tk.END)
+        self.seconds_entry.delete(0, tk.END)
+        self.minutes_entry.insert(0, "0")
+        self.seconds_entry.insert(0, "0")
 
 if __name__ == "__main__":
     root = Application()
