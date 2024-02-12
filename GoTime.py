@@ -98,19 +98,35 @@ class Application(tk.Tk):
         self.time_remaining = self.total_seconds
         self.minutes_entry.config(state="disabled")
         self.seconds_entry.config(state="disabled")
-        self.bouton_pause.config(state="normal")
         self.bouton_start.config(state="disabled")
+        self.bouton_pause.config(state="normal")
         self.bouton_stop.config(state="normal")
         self.update_timer()
 
     def update_timer(self):
-        if self.time_remaining > 0:
+        if self.time_remaining > 0 and not self.paused:
             self.time_remaining -= 1
             minutes = self.time_remaining // 60
             seconds = self.time_remaining % 60
             time_str = f"{minutes:02d}:{seconds:02d}"
             self.temps_restant_label.config(text=time_str, font=("Arial", 24), bg=couleur_frame_minuteur_verte, fg="black")
+            # Calcul des pourcentages
+            total_time = self.total_seconds
+            time_left = self.time_remaining
+            percent_remaining = time_left / total_time
+            # Changement de couleur en fonction du pourcentage restant
+            if percent_remaining <= 0.2:
+                self.time_frame.config(bg=couleur_frame_minuteur_rouge)
+                self.temps_restant_label.config(bg=couleur_frame_minuteur_rouge)
+            elif percent_remaining <= 0.3:
+                self.time_frame.config(bg=couleur_frame_minuteur_jaune)
+                self.temps_restant_label.config(bg=couleur_frame_minuteur_jaune)
+            else:
+                self.time_frame.config(bg=couleur_frame_minuteur_verte)
+                self.temps_restant_label.config(bg=couleur_frame_minuteur_verte)
             self.after(1000, self.update_timer)
+        elif self.paused:
+            pass  # Pause le minuteur sans décrémenter le temps
         else:
             self.time_frame.config(bg=couleur_frame_minuteur_verte)
             self.temps_restant_label.config(text="Terminé!", font=("Arial", 24), bg=couleur_frame_minuteur_verte, fg="black")
@@ -119,11 +135,13 @@ class Application(tk.Tk):
     def pause_timer(self):
         if not hasattr(self, 'paused'):
             self.paused = False
-        if not self.paused:
-            self.paused = True
         else:
-            self.paused = False
-            self.update_timer()  # Reprendre le décompte depuis l'endroit où il s'est arrêté
+            self.paused = not self.paused
+            if self.paused:
+                self.bouton_pause.config(text="REPRENDRE")
+            else:
+                self.bouton_pause.config(text="PAUSE")
+                self.update_timer()
 
     def stop_timer(self, parametre_appel_bouton_ou_non = None):
         self.time_remaining = 0  # Réinitialiser le temps restant
