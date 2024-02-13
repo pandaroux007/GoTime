@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import ttk
+import asyncio
 from datetime import datetime
 import platform
 import webbrowser
@@ -13,6 +15,7 @@ taille_de_la_fenetre = "1080x720"
 couleur_frame_minuteur_verte = "#73FF14"
 couleur_frame_minuteur_jaune = "#F4EF12"
 couleur_frame_minuteur_rouge = "#F84615"
+temps_max_supporte_par_le_minuteur = 3600*3 # 10800
 
 class Application(tk.Tk):
     def __init__(self):
@@ -20,6 +23,7 @@ class Application(tk.Tk):
         # ------------------------ Variables pour les paramètre du minuteur
         self.paused = False
         self.time_remaining = None
+        self.valeur_state_bouton_start = None
         # ------------------------ Paramètrage de la fenêtre.
         self.title(f"{nom_application} - Application {type_application} - {systeme_exploitation}")
         self.geometry(taille_de_la_fenetre)
@@ -29,6 +33,7 @@ class Application(tk.Tk):
         barre_de_menu = tk.Menu(self)
         # ------------------------ création d'un premier menu 'fenêtre'
         fenetre_menu = tk.Menu(barre_de_menu, tearoff=0)
+        fenetre_menu.add_command(label="paramètres", command=self.fonction_pour_la_page_des_parametres)
         fenetre_menu.add_command(label="close page", command=self.quit)
         barre_de_menu.add_cascade(label="Fenêtre", menu=fenetre_menu)
         # ------------------------ création d'un second menu 'Aide'
@@ -36,6 +41,13 @@ class Application(tk.Tk):
         fenetre_menu.add_command(label="Open source", command=self.open_github)
         fenetre_menu.add_command(label="Show source", command=self.show_github)
         barre_de_menu.add_cascade(label="Aide", menu=fenetre_menu)
+        # ------------------------ création d'un troisième menu 'commandes'
+        commandes_menu = tk.Menu(barre_de_menu, tearoff=0)
+        commandes_menu.add_command(label="start", command=self.start_timer)
+        commandes_menu.add_command(label="pause", command=self.pause_timer)
+        commandes_menu.add_command(label="stop", command=self.stop_timer)
+        commandes_menu.add_command(label="clear entry", command=self.clear_entrees)
+        barre_de_menu.add_cascade(label="Commandes", menu=commandes_menu)
         # ------------------------ Ajout de la barre de menu à la fenêtre
         self.config(menu=barre_de_menu)
         # ------------------------ Affichage de l'heure en haut de la fenêtre
@@ -51,9 +63,10 @@ class Application(tk.Tk):
         self.boutons_frame.pack(fill="x", padx=20, pady=(0, 20))
         self.bouton_start = tk.Button(self.boutons_frame, text="START",
                                       activebackground=couleur_frame_minuteur_verte,
-                                      state="normal", width=30, height=2,
+                                      state="disabled", width=30, height=2,
                                       justify="center", relief="groove",
                                       command=self.start_timer)
+        self.valeur_state_bouton_start = False
         self.bouton_pause = tk.Button(self.boutons_frame, text="PAUSE",
                                       activebackground=couleur_frame_minuteur_verte,
                                       state="disabled", width=30, height=2,
@@ -81,10 +94,26 @@ class Application(tk.Tk):
         self.seconds_entry.bind('<Return>', self.start_timer)
         self.seconds_entry.pack(side="left", padx=(10, 20), expand=True)
         # ------------ Boutons pour effacer les entrées
-        self.bouton_start = tk.Button(self.entrees_frame, text="Effacer les entrées", activebackground=couleur_frame_minuteur_jaune,width=15,command=self.clear_entrees)
-        self.bouton_start.pack(side="left", padx=10, pady=20, expand=True)
-        # ------------------------ Mise à jour de l'heure
+        self.bouton_clear_entrees = tk.Button(self.entrees_frame, text="Effacer les entrées", activebackground=couleur_frame_minuteur_jaune,width=15,command=self.clear_entrees)
+        self.bouton_clear_entrees.pack(side="left", padx=10, pady=20, expand=True)
+        # ------------------------ Mise à jour de l'heure et activation de la gestion des entrées
         self.update_time()
+        self.get_entrees()
+
+    def get_entrees(self):
+        if self.seconds_entry.get() or self.minutes_entry.get() != 0:
+            if self.valeur_state_bouton_start == True:
+                pass
+            elif self.valeur_state_bouton_start == False:
+                self.bouton_start.config(state="normal")
+                self.valeur_state_bouton_start = True
+        else:
+            if self.valeur_state_bouton_start == True:
+                self.bouton_start.config(state="disabled")
+                self.valeur_state_bouton_start = False
+            elif self.valeur_state_bouton_start == False:
+                pass
+        self.after(50, self.get_entrees)
 
     def update_time(self):
         current_time = datetime.now().strftime("%H:%M:%S")
@@ -96,12 +125,17 @@ class Application(tk.Tk):
         seconds = int(self.seconds_entry.get())
         self.total_seconds = minutes * 60 + seconds
         self.time_remaining = self.total_seconds
-        self.minutes_entry.config(state="disabled")
-        self.seconds_entry.config(state="disabled")
-        self.bouton_start.config(state="disabled")
-        self.bouton_pause.config(state="normal")
-        self.bouton_stop.config(state="normal")
-        self.update_timer()
+        if self.time_remaining >= temps_max_supporte_par_le_minuteur:
+            messagebox.showwarning(f"WARNING !\nLe temps total de seconde du minuteur ne peut pas dépasser {temps_max_supporte_par_le_minuteur}s !\nMerci d'entrer un temps de durée inferieur !")
+        else:
+            self.minutes_entry.config(state="disabled")
+            self.seconds_entry.config(state="disabled")
+            self.bouton_start.config(state="disabled")
+            self.valeur_state_bouton_start = False
+            self.bouton_clear_entrees.config(state="disabled")
+            self.bouton_pause.config(state="normal")
+            self.bouton_stop.config(state="normal")
+            self.update_timer()
 
     def update_timer(self):
         if self.time_remaining > 0 and not self.paused:
@@ -146,15 +180,26 @@ class Application(tk.Tk):
     def stop_timer(self, parametre_appel_bouton_ou_non = None):
         self.time_remaining = 0  # Réinitialiser le temps restant
         self.bouton_start.config(state="normal")
+        self.valeur_state_bouton_start = True
         self.bouton_pause.config(state="disabled")
         self.bouton_stop.config(state="disabled")
         self.minutes_entry.config(state="normal")
         self.seconds_entry.config(state="normal")
+        self.bouton_clear_entrees.config(state="normal")
         self.temps_restant_label.config(text=f"{nom_application}", font=("Arial", 24))
         if parametre_appel_bouton_ou_non == None:
             self.update_timer()  # Arrêter la récursion de la fonction update_timer()
         else:
             pass
+
+    def fonction_pour_la_page_des_parametres(self):
+        print("Ouverture de la page des paramètres !")
+        fenetre_parametres = tk.Toplevel(self, width=200, height=300)
+        progressBar = ttk.Progressbar(root, orient='horizontal', mode='indeterminate', length=100)
+        progressBar.grid(column=0, row=0, columnspan=2, padx=10, pady=20)
+        progressBar.start(); asyncio.sleep(1); progressBar.stop(); progressBar.destroy()
+        label_titre_parametres = tk.Label(fenetre_parametres, text=f"{nom_application}", font=("Arial", 24))
+        label_titre_parametres.pack(pady=10, expand=True)
 
     def show_github(self):
         messagebox.showinfo(f"Source {nom_application}", f"Lien du GitHub du projet :\n{lien_du_github}")
