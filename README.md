@@ -11,13 +11,13 @@ tant que l'auteur **R-P7 - CODE** est mentionné.
 # Présentation
 La fenêtre à une taille minimale de 1000×680 pixels, et peut être agrandie et mise en plein écran
 facilement. Sur la fenêtre principale de l'application, on trouve :
-  > Au niveau de la barre de menu, il y a trois onglets :
+  * Au niveau de la barre de menu, il y a trois onglets :
     - Fenêtre -> Quitter, Paramètres
     - Aide -> Lien vers le GitHub
     - Commandes -> Les commandes des boutons
-  > L'heure affichée en haut en grand
-  > En dessous, un rectangle de couleur (vert par défaut) contenant le nom de l'application
-  > Trois bouton (start, stop, et pause) sous cette "time frame"
-  > Enfin, encore en dessous, deux entrées (minutes/secondes) et un bouton pour les effacer rapidement.
+  * L'heure affichée en haut en grand
+  * En dessous, un rectangle de couleur (vert par défaut) contenant le nom de l'application
+  * Trois bouton (start, stop, et pause) sous cette "time frame"
+  * Enfin, encore en dessous, deux entrées (minutes/secondes) et un bouton pour les effacer rapidement.
 # Fonctionnement
 ...
