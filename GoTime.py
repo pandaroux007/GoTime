@@ -1,10 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
-import asyncio
 from datetime import datetime
 import platform
 import webbrowser
 from tkinter import messagebox
+import darkdetect
 
 systeme_exploitation = platform.system()
 lien_du_github = "https://github.com/RP7-CODE/GoTime"
@@ -33,8 +33,8 @@ class Application(tk.Tk):
         barre_de_menu = tk.Menu(self)
         # ------------------------ création d'un premier menu 'fenêtre'
         fenetre_menu = tk.Menu(barre_de_menu, tearoff=0)
-        fenetre_menu.add_command(label="paramètres", command=self.fonction_pour_la_page_des_parametres)
-        fenetre_menu.add_command(label="close page", command=self.quit)
+        fenetre_menu.add_command(label="Settings", command=self.open_parametres)
+        fenetre_menu.add_command(label=f"Close {nom_application}", command=self.quit)
         barre_de_menu.add_cascade(label="Fenêtre", menu=fenetre_menu)
         # ------------------------ création d'un second menu 'Aide'
         fenetre_menu = tk.Menu(barre_de_menu, tearoff=0)
@@ -43,23 +43,26 @@ class Application(tk.Tk):
         barre_de_menu.add_cascade(label="Aide", menu=fenetre_menu)
         # ------------------------ création d'un troisième menu 'commandes'
         commandes_menu = tk.Menu(barre_de_menu, tearoff=0)
-        commandes_menu.add_command(label="start", command=self.start_timer)
-        commandes_menu.add_command(label="pause", command=self.pause_timer)
-        commandes_menu.add_command(label="stop", command=self.stop_timer)
-        commandes_menu.add_command(label="clear entry", command=self.clear_entrees)
+        commandes_menu.add_command(label="Start", command=self.start_timer)
+        commandes_menu.add_command(label="Pause", command=self.pause_timer)
+        commandes_menu.add_command(label="Stop", command=self.stop_timer)
+        commandes_menu.add_command(label="Clear entry", command=self.clear_entrees)
         barre_de_menu.add_cascade(label="Commandes", menu=commandes_menu)
         # ------------------------ Ajout de la barre de menu à la fenêtre
         self.config(menu=barre_de_menu)
         # ------------------------ Affichage de l'heure en haut de la fenêtre
         self.time_label = tk.Label(self, text="", font=("Arial", 24), bg="#242424", fg="white")
         self.time_label.pack(pady=20)
+        # ------------------------ Création de la frame principale :
+        self.frame_principale = tk.Frame(self, width=900)
+        self.frame_principale.pack(padx=20, pady=(0, 20))
         # ------------------------ Création de la frame de couleur et affichage d'un texte dedans (ici le temps restant)
-        self.time_frame = tk.Frame(self, bg=couleur_frame_minuteur_verte, height=80)
+        self.time_frame = tk.Frame(self.frame_principale, bg=couleur_frame_minuteur_verte, height=80)
         self.time_frame.pack(fill="x", padx=20, pady=(0, 20))
         self.temps_restant_label = tk.Label(self.time_frame, text=f"{nom_application}", font=("Arial", 24), bg=couleur_frame_minuteur_verte, fg="black")
         self.temps_restant_label.pack(pady=20)
         # ------------------------ Boutons pour la gestion du minuteur
-        self.boutons_frame = tk.Frame(self, bg=theme_sombre_couleur_hexa, height=80)
+        self.boutons_frame = tk.Frame(self.frame_principale, bg=theme_sombre_couleur_hexa, height=80)
         self.boutons_frame.pack(fill="x", padx=20, pady=(0, 20))
         self.bouton_start = tk.Button(self.boutons_frame, text="START",
                                       activebackground=couleur_frame_minuteur_verte,
@@ -82,12 +85,12 @@ class Application(tk.Tk):
         self.bouton_stop.pack(side="left", padx=10, pady=10, expand=True)
         # ------------------------ Entrées pour la gestion du temps du minuteur (minutes et secondes)
         # ------------ Entrée des minutes :
-        self.entrees_frame = tk.Frame(self, bg=theme_sombre_couleur_hexa)
+        self.entrees_frame = tk.Frame(self.frame_principale, bg=theme_sombre_couleur_hexa)
         self.entrees_frame.pack(padx=20, pady=(0, 20))
         self.minutes_entry = tk.Entry(self.entrees_frame, width=40)
         self.minutes_entry.insert(0, "0")
         self.minutes_entry.bind('<Return>', self.start_timer)
-        self.minutes_entry.pack(side="left", padx=(20, 10), expand=True)
+        self.minutes_entry.pack(side="left", padx=(10, 10), expand=True)
         # ------------ Entrée des secondes :
         self.seconds_entry = tk.Entry(self.entrees_frame, width=40)
         self.seconds_entry.insert(0, "0")
@@ -96,9 +99,10 @@ class Application(tk.Tk):
         # ------------ Boutons pour effacer les entrées
         self.bouton_clear_entrees = tk.Button(self.entrees_frame, text="Effacer les entrées", activebackground=couleur_frame_minuteur_jaune,width=15,command=self.clear_entrees)
         self.bouton_clear_entrees.pack(side="left", padx=10, pady=20, expand=True)
-        # ------------------------ Mise à jour de l'heure et activation de la gestion des entrées
+        # ------------------------ Mise à jour de l'heure, gestion du thème et activation de la gestion des entrées
         self.update_time()
         self.get_entrees()
+        self.gestion_theme_par_defaut()
 
     def get_entrees(self):
         if self.seconds_entry.get() or self.minutes_entry.get() != 0:
@@ -126,7 +130,12 @@ class Application(tk.Tk):
         self.total_seconds = minutes * 60 + seconds
         self.time_remaining = self.total_seconds
         if self.time_remaining >= temps_max_supporte_par_le_minuteur:
-            messagebox.showwarning(f"WARNING !\nLe temps total de seconde du minuteur ne peut pas dépasser {temps_max_supporte_par_le_minuteur}s !\nMerci d'entrer un temps de durée inferieur !")
+            messagebox.showwarning(f"WARNING {nom_application} !", f"""\
+Le temps total de seconde du minuteur ne peut pas dépasser \
+{temps_max_supporte_par_le_minuteur}s !\nTemps entré : {self.time_remaining}s\n\
+Merci d'entrer un temps de durée inferieur !""")
+        elif self.time_remaining == 0:
+            messagebox.showwarning(f"WARNING {nom_application} !", "Merci d'entrer un temps avant de lancer le minuteur")
         else:
             self.minutes_entry.config(state="disabled")
             self.seconds_entry.config(state="disabled")
@@ -192,14 +201,41 @@ class Application(tk.Tk):
         else:
             pass
 
-    def fonction_pour_la_page_des_parametres(self):
+    def gestion_theme_par_defaut(self):
+        if darkdetect.theme() == 'Dark':
+            print("L'OS est paramètré sur le monde \"Dark\" !")
+            self.mettre_app_en_mode_dark()
+        elif darkdetect.theme() == 'Light':
+            self.mettre_app_en_mode_light()
+            print("L'OS est paramètré sur le monde \"Light\" !")
+
+    def mettre_app_en_mode_dark(self):
+        print("passage du theme de l'application de light à dark !")
+        self.config(bg=theme_sombre_couleur_hexa)
+        self.time_label.config(bg=theme_sombre_couleur_hexa, fg="white")
+        self.time_frame.config()
+        self.frame_principale.config(bg=theme_sombre_couleur_hexa)
+        self.boutons_frame.config(bg=theme_sombre_couleur_hexa)
+        self.bouton_start.config(bg=theme_sombre_couleur_hexa, fg="white")
+        self.bouton_pause.config(bg=theme_sombre_couleur_hexa, fg="white")
+        self.bouton_stop.config(bg=theme_sombre_couleur_hexa, fg="white")
+        self.entrees_frame.config(bg=theme_sombre_couleur_hexa)
+
+    def mettre_app_en_mode_light(self):
+        print("passage du theme de l'application de dark à light !")
+        self.config(bg="white")
+        self.time_label.config(bg="white", fg="black")
+        self.time_frame.config()
+        self.frame_principale.config(bg="white")
+        self.boutons_frame.config(bg="white")
+        self.bouton_start.config(bg="lightblue", fg="black")
+        self.bouton_pause.config(bg="lightblue", fg="black")
+        self.bouton_stop.config(bg="lightblue", fg="black")
+        self.entrees_frame.config(bg="white")
+
+    def open_parametres(self):
         print("Ouverture de la page des paramètres !")
-        fenetre_parametres = tk.Toplevel(self, width=200, height=300)
-        progressBar = ttk.Progressbar(root, orient='horizontal', mode='indeterminate', length=100)
-        progressBar.grid(column=0, row=0, columnspan=2, padx=10, pady=20)
-        progressBar.start(); asyncio.sleep(1); progressBar.stop(); progressBar.destroy()
-        label_titre_parametres = tk.Label(fenetre_parametres, text=f"{nom_application}", font=("Arial", 24))
-        label_titre_parametres.pack(pady=10, expand=True)
+        SettingsWindow(self)
 
     def show_github(self):
         messagebox.showinfo(f"Source {nom_application}", f"Lien du GitHub du projet :\n{lien_du_github}")
@@ -214,6 +250,24 @@ class Application(tk.Tk):
         self.seconds_entry.delete(0, tk.END)
         self.minutes_entry.insert(0, "0")
         self.seconds_entry.insert(0, "0")
+
+class SettingsWindow(tk.Toplevel):
+    def __init__(self, master):
+        super().__init__(master)
+        self.title(f"Paramètres - {nom_application}")
+        self.geometry("300x100")
+        self.progress_bar = ttk.Progressbar(self, mode="indeterminate", orient='horizontal', length=200)
+        self.progress_bar.pack(pady=20)
+        self.progress_bar.start()
+        self.after(5000, self.afficher_titre_page_des_parametres)
+
+    def afficher_titre_page_des_parametres(self):
+        self.progress_bar.stop()
+        self.progress_bar.pack_forget()
+        label_titre_parametres = tk.Label(self, text=f"{nom_application}", font=("Arial", 24))
+        label_titre_parametres.pack(pady=20, padx=10, expand=True)
+        title_label = tk.Label(self, text=f"Paramètres de {nom_application}")
+        title_label.pack(pady=10)
 
 if __name__ == "__main__":
     root = Application()
