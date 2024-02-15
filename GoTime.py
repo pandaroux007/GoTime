@@ -5,11 +5,39 @@ import platform
 import webbrowser
 from tkinter import messagebox
 import darkdetect
+from json import dump, load
+import os
+from sys import exit
 
-systeme_exploitation = platform.system()
+repertoire_courant = os.path.dirname(os.path.abspath(__file__))
+nom_fichier_sauvegarde_config = "settings.json"
+chemin_fichier_parametres = os.path.join(repertoire_courant, nom_fichier_sauvegarde_config)
 lien_du_github = "https://github.com/RP7-CODE/GoTime"
 nom_application = "GoTime"
 type_application = "DESKTOP"
+
+def load_config():
+    try:
+        with open(chemin_fichier_parametres, 'r') as file:
+            config = load(file)
+        return config
+    except FileNotFoundError:
+        print(f"Le fichier de paramètre de {nom_application} n'a pas été trouvé pour lecture.")
+        return None
+    
+def save_config(config):
+    try:
+        with open(chemin_fichier_parametres, 'w') as file:
+            dump(config, file, indent=4)
+    except FileNotFoundError:
+        print(f"Le fichier de paramètre de {nom_application} n'a pas été trouvé pour écriture.")
+        return None
+
+parametres_fichier_json = load_config()
+if parametres_fichier_json == None:
+    messagebox.showerror(title=f"ERROR {nom_application}", message="Hmm...something seems to have gone wrong 🤕️.")
+    exit()
+systeme_exploitation = platform.system()
 theme_sombre_couleur_hexa = "#242424"
 taille_de_la_fenetre = "1080x720"
 couleur_frame_minuteur_verte = "#73FF14"
@@ -66,7 +94,7 @@ class Application(tk.Tk):
         self.boutons_frame.pack(fill="x", padx=20, pady=(0, 20))
         self.bouton_start = tk.Button(self.boutons_frame, text="START",
                                       activebackground=couleur_frame_minuteur_verte,
-                                      state="disabled", width=30, height=2,
+                                      state="normal", width=30, height=2,
                                       justify="center", relief="groove",
                                       command=self.start_timer)
         self.valeur_state_bouton_start = False
@@ -89,35 +117,19 @@ class Application(tk.Tk):
         self.entrees_frame.pack(padx=20, pady=(0, 20))
         self.minutes_entry = tk.Entry(self.entrees_frame, width=40)
         self.minutes_entry.insert(0, "0")
-        self.minutes_entry.bind('<Return>', self.start_timer)
+        self.minutes_entry.bind(sequence='<Return>', func=self.start_timer)
         self.minutes_entry.pack(side="left", padx=(10, 10), expand=True)
         # ------------ Entrée des secondes :
         self.seconds_entry = tk.Entry(self.entrees_frame, width=40)
         self.seconds_entry.insert(0, "0")
-        self.seconds_entry.bind('<Return>', self.start_timer)
+        self.seconds_entry.bind(sequence='<Return>', func=self.start_timer)
         self.seconds_entry.pack(side="left", padx=(10, 20), expand=True)
         # ------------ Boutons pour effacer les entrées
         self.bouton_clear_entrees = tk.Button(self.entrees_frame, text="Effacer les entrées", activebackground=couleur_frame_minuteur_jaune,width=15,command=self.clear_entrees)
         self.bouton_clear_entrees.pack(side="left", padx=10, pady=20, expand=True)
         # ------------------------ Mise à jour de l'heure, gestion du thème et activation de la gestion des entrées
         self.update_time()
-        self.get_entrees()
         self.gestion_theme_par_defaut()
-
-    def get_entrees(self):
-        if self.seconds_entry.get() or self.minutes_entry.get() != 0:
-            if self.valeur_state_bouton_start == True:
-                pass
-            elif self.valeur_state_bouton_start == False:
-                self.bouton_start.config(state="normal")
-                self.valeur_state_bouton_start = True
-        else:
-            if self.valeur_state_bouton_start == True:
-                self.bouton_start.config(state="disabled")
-                self.valeur_state_bouton_start = False
-            elif self.valeur_state_bouton_start == False:
-                pass
-        self.after(50, self.get_entrees)
 
     def update_time(self):
         current_time = datetime.now().strftime("%H:%M:%S")
@@ -171,8 +183,6 @@ Merci d'entrer un temps de durée inferieur !""")
         elif self.paused:
             pass  # Pause le minuteur sans décrémenter le temps
         else:
-            self.time_frame.config(bg=couleur_frame_minuteur_verte)
-            self.temps_restant_label.config(text="Terminé!", font=("Arial", 24), bg=couleur_frame_minuteur_verte, fg="black")
             self.stop_timer(True)
 
     def pause_timer(self):
@@ -195,22 +205,28 @@ Merci d'entrer un temps de durée inferieur !""")
         self.minutes_entry.config(state="normal")
         self.seconds_entry.config(state="normal")
         self.bouton_clear_entrees.config(state="normal")
-        self.temps_restant_label.config(text=f"{nom_application}", font=("Arial", 24))
+        self.time_frame.config(bg=couleur_frame_minuteur_verte)
+        self.temps_restant_label.config(text=f"{nom_application}", font=("Arial", 24), bg=couleur_frame_minuteur_verte, fg="black")
         if parametre_appel_bouton_ou_non == None:
             self.update_timer()  # Arrêter la récursion de la fonction update_timer()
         else:
             pass
 
     def gestion_theme_par_defaut(self):
-        if darkdetect.theme() == 'Dark':
-            print("L'OS est paramètré sur le monde \"Dark\" !")
-            self.mettre_app_en_mode_dark()
-        elif darkdetect.theme() == 'Light':
+        if parametres_fichier_json["value_theme"] == None or "DEFAULT":
+            if darkdetect.theme() == 'Dark':
+                self.mettre_app_en_mode_dark()
+            elif darkdetect.theme() == 'Light':
+                self.mettre_app_en_mode_light()
+        elif parametres_fichier_json["value_theme"] == "LIGHT":
             self.mettre_app_en_mode_light()
-            print("L'OS est paramètré sur le monde \"Light\" !")
+        elif parametres_fichier_json["value_theme"] == "DARK":
+            self.mettre_app_en_mode_dark()
+        else:
+            messagebox.showerror(f"ERREUR {nom_application}", "La sélection automatique du thème de l'application a échoué... L'application va automatiquement se lancer en mode sombre.")
+            self.mettre_app_en_mode_dark()
 
     def mettre_app_en_mode_dark(self):
-        print("passage du theme de l'application de light à dark !")
         self.config(bg=theme_sombre_couleur_hexa)
         self.time_label.config(bg=theme_sombre_couleur_hexa, fg="white")
         self.time_frame.config()
@@ -222,7 +238,6 @@ Merci d'entrer un temps de durée inferieur !""")
         self.entrees_frame.config(bg=theme_sombre_couleur_hexa)
 
     def mettre_app_en_mode_light(self):
-        print("passage du theme de l'application de dark à light !")
         self.config(bg="white")
         self.time_label.config(bg="white", fg="black")
         self.time_frame.config()
@@ -234,15 +249,46 @@ Merci d'entrer un temps de durée inferieur !""")
         self.entrees_frame.config(bg="white")
 
     def open_parametres(self):
-        print("Ouverture de la page des paramètres !")
-        SettingsWindow(self)
+        self.parametre_radiobutton_value = tk.StringVar()
+        self.parametre_radiobutton_value.set(parametres_fichier_json["value_theme"])
+        self.fenetre_parametres = tk.Toplevel()
+        self.fenetre_parametres.title(f"{nom_application} - Paramètres")
+        self.fenetre_parametres.geometry("600x400")
+        self.fenetre_parametres.maxsize(600, 400)
+        self.fenetre_parametres.minsize(600, 400)
+        # ------------------------ Créer le titre de la page de paramètres
+        label_titre_parametres = tk.Label(self.fenetre_parametres, text=f"{nom_application} - Paramètres", font=("Arial", 24))
+        label_titre_parametres.pack(pady=10)
+        # ------------------------ Frame pour regrouper les radiobutton entre eux
+        selection_theme = tk.Frame(self.fenetre_parametres)
+        selection_theme.pack(pady=20)
+        selection_parametre_theme_os_default = tk.Radiobutton(selection_theme, text=f"{nom_application} mode Default", value="DEFAULT", variable=self.parametre_radiobutton_value)
+        selection_parametre_theme_os_dark = tk.Radiobutton(selection_theme, text=f"{nom_application} mode Dark", value="DARK", variable=self.parametre_radiobutton_value)
+        selection_parametre_theme_os_light = tk.Radiobutton(selection_theme, text=f"{nom_application} mode Light", value="LIGHT", variable=self.parametre_radiobutton_value)
+        selection_parametre_theme_os_default.pack(anchor='w')
+        selection_parametre_theme_os_dark.pack(anchor='w')
+        selection_parametre_theme_os_light.pack(anchor='w')
+        # ------------------------ Frame pour regrouper les boutons entre eux
+        frame_boutons_parametres = tk.Frame(self.fenetre_parametres, width=200, height=400)
+        bouton_validation_parametre = tk.Button(frame_boutons_parametres, text="Appliquer les paramètres et quitter", command=self.apply_parametres)
+        bouton_validation_parametre.pack(fill="x", padx=20)
+        bouton_validation_parametre = tk.Button(frame_boutons_parametres, text="Annuler", command=self.fenetre_parametres.destroy)
+        bouton_validation_parametre.pack(fill="x", padx=20)
+        frame_boutons_parametres.pack(fill="x", padx=20)
+
+    def apply_parametres(self):
+        # Gestion du thème depuis les paramètres
+        selected_theme = self.parametre_radiobutton_value.get()
+        if selected_theme != parametres_fichier_json["value_theme"]:
+            parametres_fichier_json["value_theme"] = selected_theme
+            save_config(parametres_fichier_json)
+            self.gestion_theme_par_defaut()  # Met à jour le thème en temps réel
+        self.fenetre_parametres.destroy()
 
     def show_github(self):
         messagebox.showinfo(f"Source {nom_application}", f"Lien du GitHub du projet :\n{lien_du_github}")
-        print("Ouverture de la fenêtre d'information pour afficher le lien du github !")
 
     def open_github(self):
-        print(f"Ouverture du github de {nom_application} dans une nouvelle fenêtre de navigateur !")
         webbrowser.open_new(lien_du_github)
 
     def clear_entrees(self):
@@ -250,24 +296,6 @@ Merci d'entrer un temps de durée inferieur !""")
         self.seconds_entry.delete(0, tk.END)
         self.minutes_entry.insert(0, "0")
         self.seconds_entry.insert(0, "0")
-
-class SettingsWindow(tk.Toplevel):
-    def __init__(self, master):
-        super().__init__(master)
-        self.title(f"Paramètres - {nom_application}")
-        self.geometry("300x100")
-        self.progress_bar = ttk.Progressbar(self, mode="indeterminate", orient='horizontal', length=200)
-        self.progress_bar.pack(pady=20)
-        self.progress_bar.start()
-        self.after(5000, self.afficher_titre_page_des_parametres)
-
-    def afficher_titre_page_des_parametres(self):
-        self.progress_bar.stop()
-        self.progress_bar.pack_forget()
-        label_titre_parametres = tk.Label(self, text=f"{nom_application}", font=("Arial", 24))
-        label_titre_parametres.pack(pady=20, padx=10, expand=True)
-        title_label = tk.Label(self, text=f"Paramètres de {nom_application}")
-        title_label.pack(pady=10)
 
 if __name__ == "__main__":
     root = Application()
