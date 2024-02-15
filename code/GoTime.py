@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+# from tkinter import ttk
 from datetime import datetime
 import platform
 import webbrowser
@@ -11,7 +11,9 @@ from sys import exit
 
 repertoire_courant = os.path.dirname(os.path.abspath(__file__))
 nom_fichier_sauvegarde_config = "settings.json"
+nom_image_application = "icone_gotime.ico"
 chemin_fichier_parametres = os.path.join(repertoire_courant, nom_fichier_sauvegarde_config)
+chemin_image_application = os.path.join(repertoire_courant, nom_image_application)
 lien_du_github = "https://github.com/RP7-CODE/GoTime"
 nom_application = "GoTime"
 type_application = "DESKTOP"
@@ -57,6 +59,10 @@ class Application(tk.Tk):
         self.geometry(taille_de_la_fenetre)
         self.minsize(1000, 680)
         self.config(background=theme_sombre_couleur_hexa)
+        if systeme_exploitation == 'Windows': # à tester sur un windows !
+            self.iconbitmap(chemin_image_application)
+        else:
+            pass
         # ------------------------ Barre de menu
         barre_de_menu = tk.Menu(self)
         # ------------------------ création d'un premier menu 'fenêtre'
