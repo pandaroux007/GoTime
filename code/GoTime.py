@@ -24,21 +24,23 @@ def load_config():
             config = load(file)
         return config
     except FileNotFoundError:
-        print(f"Le fichier de paramètre de {nom_application} n'a pas été trouvé pour lecture.")
-        return None
+        messagebox.showerror(title=f"ERROR {nom_application}", message=f"Le fichier de paramètre de {nom_application} n'a pas été trouvé pour lecture.")
+        return None; exit()
     
 def save_config(config):
     try:
         with open(chemin_fichier_parametres, 'w') as file:
             dump(config, file, indent=4)
     except FileNotFoundError:
-        print(f"Le fichier de paramètre de {nom_application} n'a pas été trouvé pour écriture.")
-        return None
+        messagebox.showerror(title=f"ERROR {nom_application}", message=f"Le fichier de paramètre de {nom_application} n'a pas été trouvé pour écriture.")
+        return None; exit()
 
 parametres_fichier_json = load_config()
+'''
 if parametres_fichier_json == None:
     messagebox.showerror(title=f"ERROR {nom_application}", message="Hmm...something seems to have gone wrong 🤕️.")
     exit()
+'''
 systeme_exploitation = platform.system()
 theme_sombre_couleur_hexa = "#242424"
 taille_de_la_fenetre = "1080x720"
@@ -219,7 +221,7 @@ Merci d'entrer un temps de durée inferieur !""")
             pass
 
     def gestion_theme_par_defaut(self):
-        if parametres_fichier_json["value_theme"] == None or "DEFAULT":
+        if parametres_fichier_json["value_theme"] == "DEFAULT":
             if darkdetect.theme() == 'Dark':
                 self.mettre_app_en_mode_dark()
             elif darkdetect.theme() == 'Light':
