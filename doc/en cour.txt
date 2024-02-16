@@ -1,0 +1,15 @@
+    def affiche_barre_de_progression_fenetre_parametres(self):
+        self.progress_bar = ttk.Progressbar(self.fenetre_parametres, mode="indeterminate", orient='horizontal', length=200)
+        self.progress_bar.pack(pady=20)
+        self.progress_bar.start()
+        self.after(3000, self.stop_barre_de_chargement_fenetre_parametres)
+        
+    def stop_barre_de_chargement_fenetre_parametres(self):
+    # ------------------------ Stopper la progression de la barre de chargement
+        self.fenetre_parametres.progress_bar.stop()
+        self.fenetre_parametres.progress_bar.pack_forget()
+
+self.titre_entree_minutes = tk.Label(self.entrees_frame, text="Minutes")
+self.titre_entree_minutes.pack(expand=True)
+self.titre_entree_secondes = tk.Label(self.entrees_frame, text="Secondes")
+self.titre_entree_secondes.pack(expand=True)

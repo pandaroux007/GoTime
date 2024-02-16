@@ -12,8 +12,10 @@ from sys import exit
 repertoire_courant = os.path.dirname(os.path.abspath(__file__))
 nom_fichier_sauvegarde_config = "settings.json"
 nom_image_application = "icone_gotime.ico"
+nom_fichier_licence = "LICENCE.txt"
 chemin_fichier_parametres = os.path.join(repertoire_courant, nom_fichier_sauvegarde_config)
 chemin_image_application = os.path.join(repertoire_courant, nom_image_application)
+chemin_fichier_licence = os.path.join(repertoire_courant, nom_fichier_licence)
 lien_du_github = "https://github.com/RP7-CODE/GoTime"
 nom_application = "GoTime"
 type_application = "DESKTOP"
@@ -36,11 +38,6 @@ def save_config(config):
         return None; exit()
 
 parametres_fichier_json = load_config()
-'''
-if parametres_fichier_json == None:
-    messagebox.showerror(title=f"ERROR {nom_application}", message="Hmm...something seems to have gone wrong 🤕️.")
-    exit()
-'''
 systeme_exploitation = platform.system()
 theme_sombre_couleur_hexa = "#242424"
 taille_de_la_fenetre = "1080x720"
@@ -67,23 +64,24 @@ class Application(tk.Tk):
             pass
         # ------------------------ Barre de menu
         barre_de_menu = tk.Menu(self)
-        # ------------------------ création d'un premier menu 'fenêtre'
+        # ------------------------ création d'un premier menu 'Fenêtre'
         fenetre_menu = tk.Menu(barre_de_menu, tearoff=0)
-        fenetre_menu.add_command(label="Settings", command=self.open_parametres)
-        fenetre_menu.add_command(label=f"Close {nom_application}", command=self.quit)
+        fenetre_menu.add_command(label="Paramètres", command=self.open_parametres)
+        fenetre_menu.add_command(label=f"Quitter {nom_application}", command=self.quit)
         barre_de_menu.add_cascade(label="Fenêtre", menu=fenetre_menu)
-        # ------------------------ création d'un second menu 'Aide'
-        fenetre_menu = tk.Menu(barre_de_menu, tearoff=0)
-        fenetre_menu.add_command(label="Open source", command=self.open_github)
-        fenetre_menu.add_command(label="Show source", command=self.show_github)
-        barre_de_menu.add_cascade(label="Aide", menu=fenetre_menu)
-        # ------------------------ création d'un troisième menu 'commandes'
+        # ------------------------ création d'un second menu 'Commandes'
         commandes_menu = tk.Menu(barre_de_menu, tearoff=0)
         commandes_menu.add_command(label="Start", command=self.start_timer)
         commandes_menu.add_command(label="Pause", command=self.pause_timer)
         commandes_menu.add_command(label="Stop", command=self.stop_timer)
         commandes_menu.add_command(label="Clear entry", command=self.clear_entrees)
         barre_de_menu.add_cascade(label="Commandes", menu=commandes_menu)
+        # ------------------------ création d'un troisième menu 'Source'
+        source_menu = tk.Menu(barre_de_menu, tearoff=0)
+        source_menu.add_command(label="Open GitHub", command=self.open_github)
+        source_menu.add_command(label="Show source", command=self.show_github)
+        source_menu.add_command(label="Show LICENCE", command=self.afficher_licence)
+        barre_de_menu.add_cascade(label="Source", menu=source_menu)
         # ------------------------ Ajout de la barre de menu à la fenêtre
         self.config(menu=barre_de_menu)
         # ------------------------ Affichage de l'heure en haut de la fenêtre
@@ -120,9 +118,9 @@ class Application(tk.Tk):
         self.bouton_pause.pack(side="left", padx=10, pady=10, expand=True)
         self.bouton_stop.pack(side="left", padx=10, pady=10, expand=True)
         # ------------------------ Entrées pour la gestion du temps du minuteur (minutes et secondes)
-        # ------------ Entrée des minutes :
         self.entrees_frame = tk.Frame(self.frame_principale, bg=theme_sombre_couleur_hexa)
         self.entrees_frame.pack(padx=20, pady=(0, 20))
+        # ------------ Entrée des minutes :
         self.minutes_entry = tk.Entry(self.entrees_frame, width=40)
         self.minutes_entry.insert(0, "0")
         self.minutes_entry.bind(sequence='<Return>', func=self.start_timer)
@@ -205,6 +203,8 @@ Merci d'entrer un temps de durée inferieur !""")
                 self.update_timer()
 
     def stop_timer(self, parametre_appel_bouton_ou_non = None):
+        self.paused = False
+        self.bouton_pause.config(text="PAUSE")
         self.time_remaining = 0  # Réinitialiser le temps restant
         self.bouton_start.config(state="normal")
         self.valeur_state_bouton_start = True
@@ -243,6 +243,7 @@ Merci d'entrer un temps de durée inferieur !""")
         self.bouton_start.config(bg=theme_sombre_couleur_hexa, fg="white")
         self.bouton_pause.config(bg=theme_sombre_couleur_hexa, fg="white")
         self.bouton_stop.config(bg=theme_sombre_couleur_hexa, fg="white")
+        self.bouton_clear_entrees.config(bg=theme_sombre_couleur_hexa, fg="white")
         self.entrees_frame.config(bg=theme_sombre_couleur_hexa)
 
     def mettre_app_en_mode_light(self):
@@ -254,6 +255,7 @@ Merci d'entrer un temps de durée inferieur !""")
         self.bouton_start.config(bg="lightblue", fg="black")
         self.bouton_pause.config(bg="lightblue", fg="black")
         self.bouton_stop.config(bg="lightblue", fg="black")
+        self.bouton_clear_entrees.config(bg="lightblue", fg="black")
         self.entrees_frame.config(bg="white")
 
     def open_parametres(self):
@@ -262,8 +264,7 @@ Merci d'entrer un temps de durée inferieur !""")
         self.fenetre_parametres = tk.Toplevel()
         self.fenetre_parametres.title(f"{nom_application} - Paramètres")
         self.fenetre_parametres.geometry("600x400")
-        self.fenetre_parametres.maxsize(600, 400)
-        self.fenetre_parametres.minsize(600, 400)
+        self.fenetre_parametres.resizable(False, False)
         # ------------------------ Créer le titre de la page de paramètres
         label_titre_parametres = tk.Label(self.fenetre_parametres, text=f"{nom_application} - Paramètres", font=("Arial", 24))
         label_titre_parametres.pack(pady=10)
@@ -293,6 +294,24 @@ Merci d'entrer un temps de durée inferieur !""")
             self.gestion_theme_par_defaut()  # Met à jour le thème en temps réel
         self.fenetre_parametres.destroy()
 
+    def afficher_licence(self):
+        licence_window = tk.Toplevel(self)
+        licence_window.geometry("800x500")
+        licence_window.title(f"Licence de {nom_application}")
+        licence_window.resizable(False, False)
+        try:
+            with open(chemin_fichier_licence, "r") as file:
+                licence_content = file.read()
+            licence_text = tk.Text(licence_window, wrap="word")
+            licence_text.pack(side="top", fill="both", expand=True, padx=10, pady=10)
+            licence_text.insert("1.0", licence_content)
+        except FileNotFoundError:
+            licence_window.destroy()
+            messagebox.showwarning(title=f"WARNING {nom_application}", message="Une erreur s'est produite lors de la tentative de lecture du fichier de LICENCE. Celle-ci n'a pas été trouvée.")
+            return
+        close_button = tk.Button(licence_window, text="Fermer", activebackground=couleur_frame_minuteur_rouge, width=100, justify="center", relief="groove", command=licence_window.destroy)
+        close_button.pack(side="bottom", padx=10, pady=10)
+
     def show_github(self):
         messagebox.showinfo(f"Source {nom_application}", f"Lien du GitHub du projet :\n{lien_du_github}")
 
@@ -306,5 +325,9 @@ Merci d'entrer un temps de durée inferieur !""")
         self.seconds_entry.insert(0, "0")
 
 if __name__ == "__main__":
-    root = Application()
-    root.mainloop()
+    try:
+        root = Application()
+        root.mainloop()
+    except:
+        messagebox.showerror(title=f"ERROR {nom_application}", message="Hmm...something seems to have gone wrong 🤕️.")
+        exit()
