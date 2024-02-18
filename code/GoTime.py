@@ -1,5 +1,4 @@
 import tkinter as tk
-# from tkinter import ttk
 from datetime import datetime
 import platform
 import webbrowser
@@ -44,7 +43,7 @@ taille_de_la_fenetre = "1080x720"
 couleur_frame_minuteur_verte = "#73FF14"
 couleur_frame_minuteur_jaune = "#F4EF12"
 couleur_frame_minuteur_rouge = "#F84615"
-temps_max_supporte_par_le_minuteur = 3600*3 # 10800
+temps_max_supporte_par_le_minuteur = 3600*3 # 10800, donc 3h.
 
 class Application(tk.Tk):
     def __init__(self):
@@ -53,6 +52,7 @@ class Application(tk.Tk):
         self.paused = False
         self.time_remaining = None
         self.valeur_state_bouton_start = None
+        self.temps_restant_is_deporte_or_not = False
         # ------------------------ Paramètrage de la fenêtre.
         self.title(f"{nom_application} - Application {type_application} - {systeme_exploitation}")
         self.geometry(taille_de_la_fenetre)
@@ -85,7 +85,7 @@ class Application(tk.Tk):
         # ------------------------ Ajout de la barre de menu à la fenêtre
         self.config(menu=barre_de_menu)
         # ------------------------ Affichage de l'heure en haut de la fenêtre
-        self.time_label = tk.Label(self, text="", font=("Arial", 24), bg="#242424", fg="white")
+        self.time_label = tk.Label(self, text="", font=("Arial", 24), bg=theme_sombre_couleur_hexa, fg="white")
         self.time_label.pack(pady=20)
         # ------------------------ Création de la frame principale :
         self.frame_principale = tk.Frame(self, width=900)
@@ -105,12 +105,12 @@ class Application(tk.Tk):
                                       command=self.start_timer)
         self.valeur_state_bouton_start = False
         self.bouton_pause = tk.Button(self.boutons_frame, text="PAUSE",
-                                      activebackground=couleur_frame_minuteur_verte,
+                                      activebackground=couleur_frame_minuteur_jaune,
                                       state="disabled", width=30, height=2,
                                       justify="center", relief="groove",
                                       command=self.pause_timer)
         self.bouton_stop = tk.Button(self.boutons_frame, text="STOP",
-                                     activebackground=couleur_frame_minuteur_verte,
+                                     activebackground=couleur_frame_minuteur_rouge,
                                      state="disabled", width=30, height=2,
                                      justify="center", relief="groove",
                                      command=self.stop_timer)
@@ -130,9 +130,17 @@ class Application(tk.Tk):
         self.seconds_entry.insert(0, "0")
         self.seconds_entry.bind(sequence='<Return>', func=self.start_timer)
         self.seconds_entry.pack(side="left", padx=(10, 20), expand=True)
-        # ------------ Boutons pour effacer les entrées
-        self.bouton_clear_entrees = tk.Button(self.entrees_frame, text="Effacer les entrées", activebackground=couleur_frame_minuteur_jaune,width=15,command=self.clear_entrees)
+        # ------------ Bouton pour effacer les entrées
+        self.bouton_clear_entrees = tk.Button(self.entrees_frame, text="Effacer les entrées",
+                                              activebackground=couleur_frame_minuteur_rouge,
+                                              width=15,command=self.clear_entrees)
         self.bouton_clear_entrees.pack(side="left", padx=10, pady=20, expand=True)
+        # ------------ Bouton pour déporter le temps restant dans une nouvelle fenêtre
+        self.bouton_deporter_temps_restant = tk.Button(self.frame_principale, width=105,
+                                                       text="Déporter le temps restant dans une nouvelle fenêtre",
+                                                       activebackground=couleur_frame_minuteur_verte,
+                                                       command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
+        self.bouton_deporter_temps_restant.pack(expand=True)
         # ------------------------ Mise à jour de l'heure, gestion du thème et activation de la gestion des entrées
         self.update_time()
         self.gestion_theme_par_defaut()
@@ -171,6 +179,9 @@ Merci d'entrer un temps de durée inferieur !""")
             seconds = self.time_remaining % 60
             time_str = f"{minutes:02d}:{seconds:02d}"
             self.temps_restant_label.config(text=time_str, font=("Arial", 24), bg=couleur_frame_minuteur_verte, fg="black")
+            if self.temps_restant_is_deporte_or_not == True & hasattr(self, 'fenetre_deportee'):
+                self.temps_restant_label_fenetre_deporte.config(text=time_str, font=("Arial", 24), bg=couleur_frame_minuteur_verte, fg="black")
+            else: pass
             # Calcul des pourcentages
             total_time = self.total_seconds
             time_left = self.time_remaining
@@ -179,15 +190,27 @@ Merci d'entrer un temps de durée inferieur !""")
             if percent_remaining <= 0.2:
                 self.time_frame.config(bg=couleur_frame_minuteur_rouge)
                 self.temps_restant_label.config(bg=couleur_frame_minuteur_rouge)
+                if self.temps_restant_is_deporte_or_not == True & hasattr(self, 'fenetre_deportee'):
+                    self.fenetre_deportee.config(bg=couleur_frame_minuteur_rouge)
+                    self.temps_restant_label_fenetre_deporte.config(bg=couleur_frame_minuteur_rouge)
+                else: pass
             elif percent_remaining <= 0.3:
                 self.time_frame.config(bg=couleur_frame_minuteur_jaune)
                 self.temps_restant_label.config(bg=couleur_frame_minuteur_jaune)
+                if self.temps_restant_is_deporte_or_not == True & hasattr(self, 'fenetre_deportee'):
+                    self.fenetre_deportee.config(bg=couleur_frame_minuteur_jaune)
+                    self.temps_restant_label_fenetre_deporte.config(bg=couleur_frame_minuteur_jaune)
+                else: pass
             else:
                 self.time_frame.config(bg=couleur_frame_minuteur_verte)
                 self.temps_restant_label.config(bg=couleur_frame_minuteur_verte)
+                if self.temps_restant_is_deporte_or_not == True & hasattr(self, 'fenetre_deportee'):
+                    self.fenetre_deportee.config(bg=couleur_frame_minuteur_verte)
+                    self.temps_restant_label_fenetre_deporte.config(bg=couleur_frame_minuteur_verte)
+                else: pass
             self.after(1000, self.update_timer)
         elif self.paused:
-            pass  # Pause le minuteur sans décrémenter le temps
+            pass  # Passe le minuteur sans décrémenter le temps
         else:
             self.stop_timer(True)
 
@@ -215,6 +238,9 @@ Merci d'entrer un temps de durée inferieur !""")
         self.bouton_clear_entrees.config(state="normal")
         self.time_frame.config(bg=couleur_frame_minuteur_verte)
         self.temps_restant_label.config(text=f"{nom_application}", font=("Arial", 24), bg=couleur_frame_minuteur_verte, fg="black")
+        if self.temps_restant_is_deporte_or_not == True & hasattr(self, 'fenetre_deportee'):
+            self.fenetre_deportee.config(background=couleur_frame_minuteur_verte)
+            self.temps_restant_label_fenetre_deporte.config(text="Temps restant", font=("Arial", 30), bg=couleur_frame_minuteur_verte, fg="black")
         if parametre_appel_bouton_ou_non == None:
             self.update_timer()  # Arrêter la récursion de la fonction update_timer()
         else:
@@ -245,6 +271,7 @@ Merci d'entrer un temps de durée inferieur !""")
         self.bouton_stop.config(bg=theme_sombre_couleur_hexa, fg="white")
         self.bouton_clear_entrees.config(bg=theme_sombre_couleur_hexa, fg="white")
         self.entrees_frame.config(bg=theme_sombre_couleur_hexa)
+        self.bouton_deporter_temps_restant.config(bg=theme_sombre_couleur_hexa, fg="white")
 
     def mettre_app_en_mode_light(self):
         self.config(bg="white")
@@ -257,6 +284,7 @@ Merci d'entrer un temps de durée inferieur !""")
         self.bouton_stop.config(bg="lightblue", fg="black")
         self.bouton_clear_entrees.config(bg="lightblue", fg="black")
         self.entrees_frame.config(bg="white")
+        self.bouton_deporter_temps_restant.config(bg="lightblue", fg="black")
 
     def open_parametres(self):
         self.parametre_radiobutton_value = tk.StringVar()
@@ -305,12 +333,34 @@ Merci d'entrer un temps de durée inferieur !""")
             licence_text = tk.Text(licence_window, wrap="word")
             licence_text.pack(side="top", fill="both", expand=True, padx=10, pady=10)
             licence_text.insert("1.0", licence_content)
+            licence_text.config(state="disabled")
         except FileNotFoundError:
             licence_window.destroy()
             messagebox.showwarning(title=f"WARNING {nom_application}", message="Une erreur s'est produite lors de la tentative de lecture du fichier de LICENCE. Celle-ci n'a pas été trouvée.")
             return
-        close_button = tk.Button(licence_window, text="Fermer", activebackground=couleur_frame_minuteur_rouge, width=100, justify="center", relief="groove", command=licence_window.destroy)
+        close_button = tk.Button(licence_window, text="Fermer", activebackground=couleur_frame_minuteur_rouge,
+                                 width=100, justify="center", relief="groove", command=licence_window.destroy)
         close_button.pack(side="bottom", padx=10, pady=10)
+
+    def passer_la_fermeture_fenetre_deportee(self):
+        pass
+
+    def deporter_frame_temps_restant_dans_une_nouvelle_fenetre(self):
+        self.temps_restant_is_deporte_or_not = True
+        self.fenetre_deportee = tk.Toplevel(self, background=couleur_frame_minuteur_verte)
+        self.fenetre_deportee.geometry("600x400")
+        self.fenetre_deportee.minsize(300, 200)
+        self.fenetre_deportee.title(f"Temps restant - {nom_application}")
+        self.fenetre_deportee.protocol("WM_DELETE_WINDOW", self.passer_la_fermeture_fenetre_deportee)
+        self.bouton_deporter_temps_restant.config(text="Fermer la fenêtre affichant le temps restant", activebackground=couleur_frame_minuteur_rouge, command=self.fermer_fenetre_temps_restant_deporte)
+        # ------------------------ Afficher le temps restant au centre
+        self.temps_restant_label_fenetre_deporte = tk.Label(self.fenetre_deportee, text="Temps restant", font=("Arial", 30), bg=couleur_frame_minuteur_verte, fg="black")
+        self.temps_restant_label_fenetre_deporte.pack(expand=True)
+
+    def fermer_fenetre_temps_restant_deporte(self):
+        self.temps_restant_is_deporte_or_not = False
+        self.fenetre_deportee.destroy()
+        self.bouton_deporter_temps_restant.config(text="Déporter le temps restant dans une nouvelle fenêtre", activebackground=couleur_frame_minuteur_verte, command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
 
     def show_github(self):
         messagebox.showinfo(f"Source {nom_application}", f"Lien du GitHub du projet :\n{lien_du_github}")
@@ -329,5 +379,5 @@ if __name__ == "__main__":
         root = Application()
         root.mainloop()
     except:
-        messagebox.showerror(title=f"ERROR {nom_application}", message="Hmm...something seems to have gone wrong 🤕️.")
+        messagebox.showerror(title=f"ERROR {nom_application}", message="Hmm...something seems to have gone wrong.")
         exit()

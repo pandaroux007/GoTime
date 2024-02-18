@@ -13,3 +13,5 @@ self.titre_entree_minutes = tk.Label(self.entrees_frame, text="Minutes")
 self.titre_entree_minutes.pack(expand=True)
 self.titre_entree_secondes = tk.Label(self.entrees_frame, text="Secondes")
 self.titre_entree_secondes.pack(expand=True)
+
+# from tkinter import ttk

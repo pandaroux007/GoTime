@@ -1,4 +1,5 @@
 {
     "value_theme": "DEFAULT",
-    "value_sounds": false
+    "value_sounds": false,
+    "deportation_automatique_du_temps_restant_dans_une_nouvelle_fenetre": false
 }
