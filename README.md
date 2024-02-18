@@ -13,7 +13,8 @@ La fenêtre a une taille minimale de 1000×680 pixels et peut être agrandie et 
 - L'heure affichée en haut en grand
 - En dessous, un rectangle de couleur (vert par défaut) contenant le nom de l'application
 - Trois boutons (start, stop et pause) sous cette "time frame"
-- Enfin, encore en dessous, deux entrées (minutes/secondes) et un bouton pour les effacer rapidement.
+- Encore en dessous, deux entrées (minutes/secondes) et un bouton pour les effacer rapidement.
+- Enfin, un bouton pour déporter le temps restant dans une nouvelle fenêtre
 
 ## Fonctionnement
 ...
