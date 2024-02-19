@@ -67,9 +67,6 @@ class Application(tk.Tk):
         barre_de_menu.add_cascade(label="Fenêtre", menu=fenetre_menu)
         # ------------------------ création d'un second menu 'Commandes'
         commandes_menu = tk.Menu(barre_de_menu, tearoff=0)
-        commandes_menu.add_command(label="Start timer", command=self.start_timer)
-        commandes_menu.add_command(label="Pause timer", command=self.pause_timer) 
-        commandes_menu.add_command(label="Stop timer", command=self.stop_timer)
         commandes_menu.add_command(label="Clear entry", command=self.clear_entrees)
         commandes_menu.add_command(label="Déporter timer", command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
         barre_de_menu.add_cascade(label="Commandes", menu=commandes_menu)
@@ -168,8 +165,7 @@ Merci d'entrer un temps de durée inferieur !""")
             self.bouton_pause.config(state="normal")
             self.bouton_stop.config(state="normal")
             self.update_timer()
-            if parametres_fichier_json["deportation_automatique_du_temps_restant_dans_une_nouvelle_fenetre"] == True:
-                self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre()
+            self.deporter_temps_restant_auto()
 
     def update_timer(self):
         if self.time_remaining > 0 and not self.paused:
@@ -313,10 +309,8 @@ Merci d'entrer un temps de durée inferieur !""")
         self.frame_checkbuttons_parametres = tk.Frame(self.frame_parametres)
         self.frame_checkbuttons_parametres.pack(pady=20, padx=50, side="right")
         # ------------------------ Valeurs
-        self.parametre_checkbutton_select_sounds_on_or_off = tk.StringVar()
-        self.parametre_checkbutton_select_sounds_on_or_off.set(parametres_fichier_json["value_sounds"])
-        self.parametre_checkbutton_select_deporte_auto = tk.StringVar()
-        self.parametre_checkbutton_select_deporte_auto.set(parametres_fichier_json["deportation_automatique_du_temps_restant_dans_une_nouvelle_fenetre"])
+        self.parametre_checkbutton_select_sounds_on_or_off = tk.BooleanVar(value=parametres_fichier_json["value_sounds"])
+        self.parametre_checkbutton_select_deporte_auto = tk.BooleanVar(value=parametres_fichier_json["deportation_automatique_du_temps_restant_dans_une_nouvelle_fenetre"])
         # ------------------------ CheckButtons
         self.checkbutton_parametre_sons = tk.Checkbutton(self.frame_checkbuttons_parametres, text="Sons (Windows only)",
                                                          variable=self.parametre_checkbutton_select_sounds_on_or_off,
@@ -389,9 +383,14 @@ Merci d'entrer un temps de durée inferieur !""")
         self.temps_restant_label_fenetre_deporte = tk.Label(self.fenetre_deportee, text="Temps restant", font=("Arial", 35), bg=couleur_frame_minuteur_verte, fg="black")
         self.temps_restant_label_fenetre_deporte.pack(expand=True)
 
-    def fermer_fenetre_temps_restant_deporte(self, appel_depuis_le_protocol_de_fermeture_de_la_fenetre_deportee = None):
+    def fermer_fenetre_temps_restant_deporte(self):
         self.bouton_deporter_temps_restant.config(text="Déporter le temps restant dans une nouvelle fenêtre", activebackground=couleur_frame_minuteur_verte, command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
         self.fenetre_deportee.destroy()
+
+    def deporter_temps_restant_auto(self):
+        if parametres_fichier_json["deportation_automatique_du_temps_restant_dans_une_nouvelle_fenetre"]:
+            self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre()
+        else: pass
 
     def show_github(self):
         messagebox.showinfo(f"Source {nom_application}", f"Lien du GitHub du projet :\n{lien_du_github}")
