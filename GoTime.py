@@ -378,6 +378,7 @@ Merci d'entrer un temps de durée inferieur !""")
         self.fenetre_deportee.minsize(300, 200)
         self.fenetre_deportee.title(f"Temps restant - {nom_application}")
         self.fenetre_deportee.protocol("WM_DELETE_WINDOW", self.fermer_fenetre_temps_restant_deporte)
+        self.fenetre_deportee.wm_attributes("-topmost", 1)
         self.bouton_deporter_temps_restant.config(text="Fermer la fenêtre affichant le temps restant", activebackground=couleur_frame_minuteur_rouge, command=self.fermer_fenetre_temps_restant_deporte)
         # ------------------------ Afficher le temps restant au centre
         self.temps_restant_label_fenetre_deporte = tk.Label(self.fenetre_deportee, text="Temps restant", font=("Arial", 35), bg=couleur_frame_minuteur_verte, fg="black")
