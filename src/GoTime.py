@@ -1,46 +1,12 @@
 import tkinter as tk
 from datetime import datetime
-import platform
 import webbrowser
 from tkinter import messagebox
 import darkdetect
-from json import dump, load
-import os
 from sys import exit
-
-repertoire_courant = os.path.dirname(os.path.abspath(__file__))
-chemin_fichier_parametres = os.path.join(repertoire_courant, "settings.json")
-chemin_image_application = os.path.join(repertoire_courant, "icone_gotime.ico")
-chemin_fichier_licence = os.path.join(repertoire_courant, "LICENCE.txt")
-lien_du_github = "https://github.com/RP7-CODE/GoTime"
-nom_application = "GoTime"
-type_application = "DESKTOP"
-
-def load_config():
-    try:
-        with open(chemin_fichier_parametres, 'r') as file:
-            config = load(file)
-        return config
-    except FileNotFoundError:
-        messagebox.showerror(title=f"ERROR {nom_application}", message=f"Le fichier de paramètre de {nom_application} n'a pas été trouvé pour lecture.")
-        return None; exit()
-    
-def save_config(config):
-    try:
-        with open(chemin_fichier_parametres, 'w') as file:
-            dump(config, file, indent=4)
-    except FileNotFoundError:
-        messagebox.showerror(title=f"ERROR {nom_application}", message=f"Le fichier de paramètre de {nom_application} n'a pas été trouvé pour écriture.")
-        return None; exit()
-
-parametres_fichier_json = load_config()
-systeme_exploitation = platform.system()
-theme_sombre_couleur_hexa = "#242424"
-taille_de_la_fenetre = "1080x720"
-couleur_frame_minuteur_verte = "#73FF14"
-couleur_frame_minuteur_jaune = "#F4EF12"
-couleur_frame_minuteur_rouge = "#F84615"
-temps_max_supporte_par_le_minuteur = 3600*3 # 10800, donc 3h.
+# ------------------------ fichier de l'application
+from variables import *
+from FenetreLicence import FenetreLicence
 
 class Application(tk.Tk):
     def __init__(self):
@@ -50,47 +16,48 @@ class Application(tk.Tk):
         self.time_remaining = None
         self.valeur_state_bouton_start = None
         # ------------------------ Paramètrage de la fenêtre.
-        self.title(f"{nom_application} - Application {type_application} - {systeme_exploitation}")
-        self.geometry(taille_de_la_fenetre)
+        self.title(f"{nom_application} V{version_application}")
+        self.geometry("1080x720")
         self.minsize(1000, 680)
-        self.config(background=theme_sombre_couleur_hexa)
-        if systeme_exploitation == 'Windows': # à tester sur un windows !
+        self.config(background=theme_sombre)
+        if systeme_exploitation == 'Windows':
             self.iconbitmap(chemin_image_application)
-        else:
-            pass
+        else: pass
         # ------------------------ Barre de menu
         barre_de_menu = tk.Menu(self)
-        # ------------------------ création d'un premier menu 'Fenêtre'
+        # ------------------------ Création d'un menu 'Fenêtre'
         fenetre_menu = tk.Menu(barre_de_menu, tearoff=0)
         fenetre_menu.add_command(label="Paramètres", command=self.open_parametres)
-        fenetre_menu.add_command(label=f"Quitter {nom_application}", command=self.quit)
+        fenetre_menu.add_command(label="Quitter", command=self.quit)
         barre_de_menu.add_cascade(label="Fenêtre", menu=fenetre_menu)
-        # ------------------------ création d'un second menu 'Commandes'
+        # ------------------------ Création d'un second menu 'Commandes'
         commandes_menu = tk.Menu(barre_de_menu, tearoff=0)
         commandes_menu.add_command(label="Clear entry", command=self.clear_entrees)
         commandes_menu.add_command(label="Déporter timer", command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
         barre_de_menu.add_cascade(label="Commandes", menu=commandes_menu)
-        # ------------------------ création d'un troisième menu 'Source'
+        # ------------------------ Création d'un troisième menu 'Source'
         source_menu = tk.Menu(barre_de_menu, tearoff=0)
         source_menu.add_command(label="Open GitHub", command=self.open_github)
         source_menu.add_command(label="Show source", command=self.show_github)
-        source_menu.add_command(label="Show LICENCE", command=self.afficher_licence)
+        source_menu.add_command(label="Show LICENCE", command=lambda action: FenetreLicence())
         barre_de_menu.add_cascade(label="Source", menu=source_menu)
         # ------------------------ Ajout de la barre de menu à la fenêtre
         self.config(menu=barre_de_menu)
         # ------------------------ Affichage de l'heure en haut de la fenêtre
-        self.time_label = tk.Label(self, text="", font=("Arial", 24), bg=theme_sombre_couleur_hexa, fg="white")
-        self.time_label.pack(pady=20)
+        if parametres_fichier_json["value_affichage_heure"] == True:
+            self.time_label = tk.Label(self, text="", font=("Arial", 24))
+            self.time_label.pack(pady=20)
         # ------------------------ Création de la frame principale :
         self.frame_principale = tk.Frame(self, width=900)
         self.frame_principale.pack(padx=20, pady=(0, 20))
         # ------------------------ Création de la frame de couleur et affichage d'un texte dedans (ici le temps restant)
         self.time_frame = tk.Frame(self.frame_principale, bg=couleur_frame_minuteur_verte, height=80)
         self.time_frame.pack(fill="x", padx=20, pady=(0, 20))
-        self.temps_restant_label = tk.Label(self.time_frame, text=f"{nom_application}", font=("Arial", 24), bg=couleur_frame_minuteur_verte, fg="black")
+        self.temps_restant_label = tk.Label(self.time_frame, text=f"{nom_application}", font=("Arial", 24),
+                                            bg=couleur_frame_minuteur_verte, fg="black")
         self.temps_restant_label.pack(pady=20)
         # ------------------------ Boutons pour la gestion du minuteur
-        self.boutons_frame = tk.Frame(self.frame_principale, bg=theme_sombre_couleur_hexa, height=80)
+        self.boutons_frame = tk.Frame(self.frame_principale, height=80)
         self.boutons_frame.pack(fill="x", padx=20, pady=(0, 20))
         self.bouton_start = tk.Button(self.boutons_frame, text="START",
                                       activebackground=couleur_frame_minuteur_verte,
@@ -112,18 +79,19 @@ class Application(tk.Tk):
         self.bouton_pause.pack(side="left", padx=10, pady=10, expand=True)
         self.bouton_stop.pack(side="left", padx=10, pady=10, expand=True)
         # ------------------------ Entrées pour la gestion du temps du minuteur (minutes et secondes)
-        self.entrees_frame = tk.Frame(self.frame_principale, bg=theme_sombre_couleur_hexa)
+        self.entrees_frame = tk.Frame(self.frame_principale)
         self.entrees_frame.pack(padx=20, pady=(0, 20))
         # ------------ Entrée des minutes :
-        self.minutes_entry = tk.Entry(self.entrees_frame, width=40)
+        self.minutes_entry = tk.Spinbox(self.entrees_frame, width=40, from_=0, to=180)
         self.minutes_entry.insert(0, "0")
         self.minutes_entry.bind(sequence='<Return>', func=lambda event: self.start_timer())
         self.minutes_entry.pack(side="left", padx=(10, 10), expand=True)
         # ------------ Entrée des secondes :
-        self.seconds_entry = tk.Entry(self.entrees_frame, width=40)
+        self.seconds_entry = tk.Spinbox(self.entrees_frame, width=40, from_=0, to=10800)
         self.seconds_entry.insert(0, "0")
         self.seconds_entry.bind(sequence='<Return>', func=lambda event: self.start_timer())
         self.seconds_entry.pack(side="left", padx=(10, 20), expand=True)
+        self.clear_entrees()
         # ------------ Bouton pour effacer les entrées
         self.bouton_clear_entrees = tk.Button(self.entrees_frame, text="Effacer les entrées",
                                               activebackground=couleur_frame_minuteur_rouge,
@@ -140,22 +108,23 @@ class Application(tk.Tk):
         self.gestion_theme_par_defaut()
 
     def update_time(self):
-        current_time = datetime.now().strftime("%H:%M:%S")
-        self.time_label.config(text=current_time)
-        self.after(1000, self.update_time)  # Met à jour toutes les secondes
+        if hasattr(self, 'time_label'):
+            current_time = datetime.now().strftime("%H:%M:%S")
+            self.time_label.config(text=current_time)
+            self.after(1000, self.update_time)  # Met à jour toutes les secondes
+        else: pass
 
     def start_timer(self):
         minutes = int(self.minutes_entry.get())
         seconds = int(self.seconds_entry.get())
         self.total_seconds = minutes * 60 + seconds
         self.time_remaining = self.total_seconds
-        if self.time_remaining >= temps_max_supporte_par_le_minuteur:
-            messagebox.showwarning(f"WARNING {nom_application} !", f"""\
-Le temps total de seconde du minuteur ne peut pas dépasser \
-{temps_max_supporte_par_le_minuteur}s !\nTemps entré : {self.time_remaining}s\n\
-Merci d'entrer un temps de durée inferieur !""")
+        if self.time_remaining >= temps_max:
+            messagebox.showwarning("Avertissement", f"""\
+Le temps total de seconde du minuteur ne peut pas dépasser {int(temps_max / 60)} min !\n\
+Merci d'entrer une durée inférieure !""")
         elif self.time_remaining == 0:
-            messagebox.showwarning(f"WARNING {nom_application} !", "Merci d'entrer un temps avant de lancer le minuteur")
+            messagebox.showwarning(f"Avertissement", "Merci d'entrer une durée avant de lancer le minuteur")
         else:
             self.minutes_entry.config(state="disabled")
             self.seconds_entry.config(state="disabled")
@@ -165,7 +134,6 @@ Merci d'entrer un temps de durée inferieur !""")
             self.bouton_pause.config(state="normal")
             self.bouton_stop.config(state="normal")
             self.update_timer()
-            self.deporter_temps_restant_auto()
 
     def update_timer(self):
         if self.time_remaining > 0 and not self.paused:
@@ -236,10 +204,15 @@ Merci d'entrer un temps de durée inferieur !""")
         if hasattr(self, 'fenetre_deportee'):
             self.fenetre_deportee.config(background=couleur_frame_minuteur_verte)
             self.temps_restant_label_fenetre_deporte.config(text="Temps restant", font=("Arial", 35), bg=couleur_frame_minuteur_verte, fg="black")
+        # ------------------------ Gestion du son sur windows :
+        if systeme_exploitation == "Windows" and parametres_fichier_json["value_sounds"] == True:
+            try: import winsound
+            except ImportError: pass
+            winsound.Beep(1000, 500)
+        else: pass
         if parametre_appel_bouton_ou_non == None:
             self.update_timer()  # Arrêter la récursion de la fonction update_timer()
-        else:
-            pass
+        else: pass
 
     def gestion_theme_par_defaut(self):
         if parametres_fichier_json["value_theme"] == "DEFAULT":
@@ -252,25 +225,25 @@ Merci d'entrer un temps de durée inferieur !""")
         elif parametres_fichier_json["value_theme"] == "DARK":
             self.mettre_app_en_mode_dark()
         else:
-            messagebox.showerror(f"ERREUR {nom_application}", "La sélection automatique du thème de l'application a échoué... L'application va automatiquement se lancer en mode sombre.")
+            messagebox.showerror(f"Erreur", "La sélection automatique du thème de l'application a échoué... L'application va automatiquement se lancer en mode sombre.")
             self.mettre_app_en_mode_dark()
 
     def mettre_app_en_mode_dark(self):
-        self.config(bg=theme_sombre_couleur_hexa)
-        self.time_label.config(bg=theme_sombre_couleur_hexa, fg="white")
+        self.config(bg=theme_sombre)
+        if hasattr(self, 'time_label'): self.time_label.config(bg=theme_sombre, fg="white")
         self.time_frame.config()
-        self.frame_principale.config(bg=theme_sombre_couleur_hexa)
-        self.boutons_frame.config(bg=theme_sombre_couleur_hexa)
-        self.bouton_start.config(bg=theme_sombre_couleur_hexa, fg="white")
-        self.bouton_pause.config(bg=theme_sombre_couleur_hexa, fg="white")
-        self.bouton_stop.config(bg=theme_sombre_couleur_hexa, fg="white")
-        self.bouton_clear_entrees.config(bg=theme_sombre_couleur_hexa, fg="white")
-        self.entrees_frame.config(bg=theme_sombre_couleur_hexa)
-        self.bouton_deporter_temps_restant.config(bg=theme_sombre_couleur_hexa, fg="white")
+        self.frame_principale.config(bg=theme_sombre)
+        self.boutons_frame.config(bg=theme_sombre)
+        self.bouton_start.config(bg=theme_sombre, fg="white")
+        self.bouton_pause.config(bg=theme_sombre, fg="white")
+        self.bouton_stop.config(bg=theme_sombre, fg="white")
+        self.bouton_clear_entrees.config(bg=theme_sombre, fg="white")
+        self.entrees_frame.config(bg=theme_sombre)
+        self.bouton_deporter_temps_restant.config(bg=theme_sombre, fg="white")
 
     def mettre_app_en_mode_light(self):
         self.config(bg="white")
-        self.time_label.config(bg="white", fg="black")
+        if hasattr(self, 'time_label'): self.time_label.config(bg="white", fg="black")
         self.time_frame.config()
         self.frame_principale.config(bg="white")
         self.boutons_frame.config(bg="white")
@@ -283,7 +256,7 @@ Merci d'entrer un temps de durée inferieur !""")
 
     def open_parametres(self):
         self.fenetre_parametres = tk.Toplevel()
-        self.fenetre_parametres.title(f"{nom_application} - Paramètres")
+        self.fenetre_parametres.title(f"Paramètres")
         self.fenetre_parametres.geometry("600x400")
         self.fenetre_parametres.resizable(False, False)
         # ------------------------ Créer le titre de la page de paramètres
@@ -306,24 +279,23 @@ Merci d'entrer un temps de durée inferieur !""")
         self.selection_parametre_theme_os_dark.pack(anchor='w')
         self.selection_parametre_theme_os_light.pack(anchor='w')
         # ------------------------ Frame pour regrouper les checkbuttons entre eux
-        self.frame_checkbuttons_parametres = tk.Frame(self.frame_parametres)
-        self.frame_checkbuttons_parametres.pack(pady=20, padx=50, side="right")
+        self.frame_checkbuttons_parametres = tk.LabelFrame(self.frame_parametres, text="(nécessite de redémarrer)", fg="black")
+        self.frame_checkbuttons_parametres.pack(pady=20, padx=45, side="right")
         # ------------------------ Valeurs
         self.parametre_checkbutton_select_sounds_on_or_off = tk.BooleanVar(value=parametres_fichier_json["value_sounds"])
-        self.parametre_checkbutton_select_deporte_auto = tk.BooleanVar(value=parametres_fichier_json["deportation_automatique_du_temps_restant_dans_une_nouvelle_fenetre"])
+        self.parametre_checkbutton_afficher_heure_en_haut = tk.BooleanVar(value=parametres_fichier_json["value_affichage_heure"])
         # ------------------------ CheckButtons
-        self.checkbutton_parametre_sons = tk.Checkbutton(self.frame_checkbuttons_parametres, text="Sons (Windows only)",
+        self.checkbutton_parametre_sons = tk.Checkbutton(self.frame_checkbuttons_parametres, text="Sons (Windows seulement)",
                                                          variable=self.parametre_checkbutton_select_sounds_on_or_off,
                                                          onvalue = True, offvalue = False)
-        self.checkbutton_parametre_deporte_auto = tk.Checkbutton(self.frame_checkbuttons_parametres, text="Déportation auto       ",
-                                                                 variable=self.parametre_checkbutton_select_deporte_auto,
+        self.checkbutton_afficher_heure_en_haut = tk.Checkbutton(self.frame_checkbuttons_parametres, text="Afficher l'heure en haut",
+                                                                 variable=self.parametre_checkbutton_afficher_heure_en_haut,
                                                                  onvalue = True, offvalue = False)
-        self.checkbutton_parametre_sons.pack()
-        self.checkbutton_parametre_deporte_auto.pack(pady=10)
-        if systeme_exploitation == "Windows": # ------------- > Rahhh, ça c'est bien nul !
+        self.checkbutton_parametre_sons.pack(pady=5, padx=5)
+        self.checkbutton_afficher_heure_en_haut.pack(padx=5)
+        if systeme_exploitation == "Windows":
             self.checkbutton_parametre_sons.config(state="normal")
-        else:
-            self.checkbutton_parametre_sons.config(state="disabled")
+        else: self.checkbutton_parametre_sons.config(state="disabled")
         # ------------------------ Frame pour regrouper les boutons entre eux
         self.frame_boutons_parametres = tk.Frame(self.fenetre_parametres, width=200, height=400)
         self.frame_boutons_parametres.pack(fill="x", padx=20)
@@ -345,32 +317,13 @@ Merci d'entrer un temps de durée inferieur !""")
             if selected_state_sounds_for_windows != parametres_fichier_json["value_sounds"]:
                 parametres_fichier_json["value_sounds"] = selected_state_sounds_for_windows
                 save_config(parametres_fichier_json)
-        # Gestion de la déportation automatique du temps restant dans une nouvelle fenêtre depuis les paramètres
-        selected_state_deportation_auto = self.parametre_checkbutton_select_deporte_auto.get()
-        if selected_state_deportation_auto != parametres_fichier_json["deportation_automatique_du_temps_restant_dans_une_nouvelle_fenetre"]:
-            parametres_fichier_json["deportation_automatique_du_temps_restant_dans_une_nouvelle_fenetre"] = selected_state_deportation_auto
+        # Gestion de l'affichage de l'heure en haut de la fenêtre de l'application
+        selected_state_affichage_heure_en_haut = self.parametre_checkbutton_afficher_heure_en_haut.get()
+        if selected_state_affichage_heure_en_haut != parametres_fichier_json["value_affichage_heure"]:
+            parametres_fichier_json["value_affichage_heure"] = selected_state_affichage_heure_en_haut
             save_config(parametres_fichier_json)
+        # Fermer la fenêtre des paramètres
         self.fenetre_parametres.destroy()
-
-    def afficher_licence(self):
-        licence_window = tk.Toplevel(self)
-        licence_window.geometry("800x500")
-        licence_window.title(f"Licence de {nom_application}")
-        licence_window.resizable(False, False)
-        try:
-            with open(chemin_fichier_licence, "r") as file:
-                licence_content = file.read()
-            licence_text = tk.Text(licence_window, wrap="word")
-            licence_text.pack(side="top", fill="both", expand=True, padx=10, pady=10)
-            licence_text.insert("1.0", licence_content)
-            licence_text.config(state="disabled")
-        except FileNotFoundError:
-            licence_window.destroy()
-            messagebox.showwarning(title=f"WARNING {nom_application}", message="Une erreur s'est produite lors de la tentative de lecture du fichier de LICENCE. Celle-ci n'a pas été trouvée.")
-            return
-        close_button = tk.Button(licence_window, text="Fermer", activebackground=couleur_frame_minuteur_rouge,
-                                 width=100, justify="center", relief="groove", command=licence_window.destroy)
-        close_button.pack(side="bottom", padx=10, pady=10)
 
     def deporter_frame_temps_restant_dans_une_nouvelle_fenetre(self):
         self.fenetre_deportee = tk.Toplevel(self, background=couleur_frame_minuteur_verte)
@@ -388,16 +341,8 @@ Merci d'entrer un temps de durée inferieur !""")
         self.bouton_deporter_temps_restant.config(text="Déporter le temps restant dans une nouvelle fenêtre", activebackground=couleur_frame_minuteur_verte, command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
         self.fenetre_deportee.destroy()
 
-    def deporter_temps_restant_auto(self):
-        if parametres_fichier_json["deportation_automatique_du_temps_restant_dans_une_nouvelle_fenetre"]:
-            self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre()
-        else: pass
-
-    def show_github(self):
-        messagebox.showinfo(f"Source {nom_application}", f"Lien du GitHub du projet :\n{lien_du_github}")
-
-    def open_github(self):
-        webbrowser.open_new(lien_du_github)
+    def show_github(self): messagebox.showinfo(f"Source {nom_application}", f"Lien du GitHub du projet :\n{lien_du_github}")
+    def open_github(self): webbrowser.open_new(lien_du_github)
 
     def clear_entrees(self):
         self.minutes_entry.delete(0, tk.END)
@@ -409,6 +354,6 @@ if __name__ == "__main__":
     try:
         root = Application()
         root.mainloop()
-    except:
-        messagebox.showerror(title=f"ERROR {nom_application}", message="Hmm...something seems to have gone wrong.")
+    except Exception as e:
+        messagebox.showerror(title=f"Erreur", message=f"Hmm...something seems to have gone wrong.\nError is : {e}")
         exit()

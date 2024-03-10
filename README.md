@@ -1,20 +1,26 @@
 # Présentation
-Ce projet a débuté le 9 février 2024 dans le but de créer une application fonctionnelle de minuteur hors ligne pour les professeurs du collège. Le langage utilisé pour ce projet est Python.
+Ce projet est une application de minuteur ne nécessitant pas de connexion Internet, qui a débuté le 9 février 2024 pour les professeurs du collège.
 
 ## Licence
-Ce projet est sous licence BSL 1.0 (Boost Software License 1.0). Pour plus d'informations sur cette licence, veuillez vous référer à ce document : [Licence BSL 1.0](https://choosealicense.com/licenses/bsl-1.0/). J'autorise quiconque à utiliser, modifier et commercialiser le code, tant que l'auteur **R-P7 - CODE** est mentionné.
+Ce projet est sous [licence BSL 1.0](https://choosealicense.com/licenses/bsl-1.0/) (Boost Software License 1.0).
+J'autorise quiconque à utiliser, modifier et commercialiser le code, tant que l'auteur **R-P7 - CODE** est mentionné.
 
-## Présentation
-La fenêtre a une taille minimale de 1000×680 pixels et peut être agrandie et mise en plein écran facilement. Sur la fenêtre principale de l'application, on trouve :
-- Au niveau de la barre de menu, il y a trois onglets :
-  - **Fenêtre** -> Quitter, Paramètres
-  - **Commandes** -> Les commandes des boutons
-  - **Source** -> Lien vers le GitHub et affichage de la LICENCE
-- L'heure affichée en haut en grand
-- En dessous, un rectangle de couleur (vert par défaut) contenant le nom de l'application
-- Trois boutons (start, stop et pause) sous cette "time frame"
-- Encore en dessous, deux entrées (minutes/secondes) et un bouton pour les effacer rapidement.
-- Enfin, un bouton pour déporter le temps restant dans une nouvelle fenêtre
+## Interface
+GoTime peut être agrandi et mis en plein écran. Sur la fenêtre principale, est disponible, dans l'ordre :
+- Au niveau de la barre de menu, trois onglets :
+  - **Fenêtre** -> Propose des options pour l'interface et l'application
+  - **Commandes** -> Permet d'effectuer des actions
+  - **Source** -> Donne des informations sur l'application
+- L'heure, en grand, en haut (décalage de 1s environ normalement, possibilité de ne plus l'afficher dans les paramètres)
+- Un rectangle coloré contenant le nom de l'application, puis le temps restant pendant le décompte.
+- Trois boutons (start, stop et pause).
+- Deux entrées (minutes/secondes) et un bouton pour les effacer rapidement.
+- Un bouton pour déporter le temps restant dans une nouvelle fenêtre.
+
+## Bugs
+- Déportation non-fonctionnelle, si on clique sur "déporter le temps restant dans une nouvelle fenêtre", dans plusieurs cas l'application de fonctionne plus. Si on tente de lancer un nouveau décompte, le minuteur reste bloqué. Il faut arrêter l'application puis la relancer pour débloquer !
+- À tester sur Windows : l'icon de l'application, qui à été modifiée, et le son à la fin du minuteur si option activée !
+- À voir si autres...
 
 ## Fonctionnement
 ...
