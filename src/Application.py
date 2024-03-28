@@ -43,7 +43,7 @@ class Application(tk.Tk):
         source_menu = tk.Menu(barre_de_menu, tearoff=0)
         source_menu.add_command(label="Open GitHub", command=self.open_github)
         source_menu.add_command(label="Show source", command=self.show_github)
-        source_menu.add_command(label="Show LICENCE", command=lambda action: FenetreLicence())
+        source_menu.add_command(label="Show LICENCE", command=lambda: FenetreLicence())
         barre_de_menu.add_cascade(label="Source", menu=source_menu)
         # ------------------------ Ajout de la barre de menu à la fenêtre
         self.config(menu=barre_de_menu)
