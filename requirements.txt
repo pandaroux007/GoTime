@@ -1,0 +1,11 @@
+# du fichier GoTime.py
+tkinter
+datetime
+webbrowser
+darkdetect
+sys
+subprocess
+# du fichier variables.py
+os
+json
+platform

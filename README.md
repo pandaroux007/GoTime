@@ -17,9 +17,17 @@ GoTime peut être agrandi et mis en plein écran. Sur la fenêtre principale, es
 - Deux entrées (minutes/secondes) et un bouton pour les effacer rapidement.
 - Un bouton pour déporter le temps restant dans une nouvelle fenêtre.
 
+## Installation
+Attention, certains des modules utilisés par le projet ne sont pas inclus par défauts dans python. Pour les installer, il vous suffit de
+lancer la commande suivante (après vous être déplacé dans le répertoire du projet téléchargé - commande 'cd path' sous linux):
+```bat
+pip install -r requirements.txt
+```
+
 ## Bugs
-- Déportation non-fonctionnelle, si on clique sur "déporter le temps restant dans une nouvelle fenêtre", dans plusieurs cas l'application de fonctionne plus. Si on tente de lancer un nouveau décompte, le minuteur reste bloqué. Il faut arrêter l'application puis la relancer pour débloquer !
-- À tester sur Windows : l'icon de l'application, qui à été modifiée, et le son à la fin du minuteur si option activée !
+- À tester sur Windows : 
+  - l'icon de l'application, qui à été modifiée.
+  - le son à la fin du minuteur si option activée.
 - À voir si autres...
 
 ## Fonctionnement

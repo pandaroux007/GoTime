@@ -9,7 +9,7 @@ chemin_fichier_licence = path.join(path.dirname(repertoire_courant), "LICENCE.tx
 chemin_image_application = path.join(path.dirname(repertoire_courant), 'img', 'icon.ico')
 lien_du_github = "https://github.com/RP7-CODE/GoTime"
 nom_application = "GoTime"
-version_application = "0.29.1"
+version_application = "0.29.3"
 
 def load_config():
     try:
@@ -34,4 +34,4 @@ theme_sombre = "#242424"
 couleur_frame_minuteur_verte = "#73FF14"
 couleur_frame_minuteur_jaune = "#F4EF12"
 couleur_frame_minuteur_rouge = "#F84615"
-temps_max = 10800 # 3 heures
+temps_max = 10800 # 3 heures en secondes
