@@ -9,7 +9,7 @@ chemin_fichier_licence = path.join(path.dirname(repertoire_courant), "LICENCE.tx
 chemin_image_application = path.join(path.dirname(repertoire_courant), 'img', 'icon.ico')
 lien_du_github = "https://github.com/RP7-CODE/GoTime"
 nom_application = "GoTime"
-version_application = "0.29.3"
+version_application = "1.0"
 
 def load_config():
     try:

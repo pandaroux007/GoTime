@@ -13,9 +13,9 @@ GoTime peut être agrandi et mis en plein écran. Sur la fenêtre principale, es
   - **Source** -> Donne des informations sur l'application
 - L'heure, en grand, en haut (décalage de 1s environ normalement, possibilité de ne plus l'afficher dans les paramètres)
 - Un rectangle coloré contenant le nom de l'application, puis le temps restant pendant le décompte.
+- Un bouton pour déporter le temps restant dans une nouvelle fenêtre.
 - Trois boutons (start, stop et pause).
 - Deux entrées (minutes/secondes) et un bouton pour les effacer rapidement.
-- Un bouton pour déporter le temps restant dans une nouvelle fenêtre.
 
 ## Installation
 Attention, certains des modules utilisés par le projet ne sont pas inclus par défauts dans python. Pour les installer, il vous suffit de

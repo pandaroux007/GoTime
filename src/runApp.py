@@ -7,5 +7,5 @@ if __name__ == "__main__":
         root = Application()
         root.mainloop()
     except Exception as e:
-        messagebox.showerror(title=f"Erreur", message=f"Hmm...something seems to have gone wrong.\nError is : {e}")
+        messagebox.showerror(title=f"Erreur", message=f"Hmm...Quelque chose semble s'être mal passé...\nL'erreur est : {e}")
         exit()
