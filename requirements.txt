@@ -9,3 +9,5 @@ subprocess
 os
 json
 platform
+getpass
+socket

@@ -2,9 +2,13 @@ from os import path
 from tkinter import messagebox
 from json import load, dump
 from platform import system
+import getpass
+import socket
+from datetime import datetime
 
 repertoire_courant = path.dirname(path.abspath(__file__))
-chemin_fichier_parametres = path.join(repertoire_courant, "settings.json")
+chemin_fichier_parametres = path.join(path.dirname(repertoire_courant), "log", "settings.json")
+chemin_fichier_logs = path.join(path.dirname(repertoire_courant), 'log', "error_log.csv")
 chemin_fichier_licence = path.join(path.dirname(repertoire_courant), "LICENCE.txt")
 chemin_image_application = path.join(path.dirname(repertoire_courant), 'img', 'icon.ico')
 lien_du_github = "https://github.com/RP7-CODE/GoTime"
@@ -27,6 +31,20 @@ def save_config(config):
     except FileNotFoundError:
         messagebox.showerror(title=f"Erreur", message=f"Le fichier de paramètre de {nom_application} n'a pas été trouvé pour écriture.")
         return None; exit()
+
+def log_error(error_message):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    username = getpass.getuser()
+    hostname = socket.gethostname()
+
+    error_data = f"{timestamp}   |   {username} sur {hostname}   |   {error_message}"
+
+    with open(chemin_fichier_logs, mode='a', newline='') as file:
+        if file.tell() == 0:  # Vérifie si le fichier est vide
+            header = "Date + Heure   |   User et hostname   |   Erreur"
+            file.write(f"{header}\n")
+        
+        file.write(f"{error_data}\n")
 
 parametres_fichier_json = load_config()
 systeme_exploitation = system()
