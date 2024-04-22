@@ -9,11 +9,13 @@ from datetime import datetime
 repertoire_courant = path.dirname(path.abspath(__file__))
 chemin_fichier_parametres = path.join(path.dirname(repertoire_courant), "log", "settings.json")
 chemin_fichier_logs = path.join(path.dirname(repertoire_courant), 'log', "error_log.csv")
+chemin_image_application = path.join(path.dirname(repertoire_courant), 'dep', 'icon.ico')
+chemin_image_checkmark = path.join(path.dirname(repertoire_courant), 'dep', 'checkmark.png')
+chemin_fichier_wav_fin_temps = path.join(path.dirname(repertoire_courant), 'dep', 'digital-clock-alarm.wav')
 chemin_fichier_licence = path.join(path.dirname(repertoire_courant), "LICENCE.txt")
-chemin_image_application = path.join(path.dirname(repertoire_courant), 'img', 'icon.ico')
 lien_du_github = "https://github.com/RP7-CODE/GoTime"
 nom_application = "GoTime"
-version_application = "1.0"
+version_application = "1.1.2"
 
 def load_config():
     try:
@@ -45,6 +47,20 @@ def log_error(error_message):
             file.write(f"{header}\n")
         
         file.write(f"{error_data}\n")
+
+sonnerie_actuelle = None
+def jouer_sonnerie(etat_jouer_son):
+    try:
+        from pygame import mixer
+        mixer.init()
+    except ImportError: pass
+    global sonnerie_actuelle
+    if sonnerie_actuelle is None:
+        sonnerie_actuelle = mixer.Sound(chemin_fichier_wav_fin_temps)
+    if etat_jouer_son:
+        sonnerie_actuelle.play()
+    else:
+        sonnerie_actuelle.stop()
 
 parametres_fichier_json = load_config()
 systeme_exploitation = system()

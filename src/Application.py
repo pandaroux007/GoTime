@@ -9,6 +9,7 @@ import subprocess # pour la fonction restart de l'application.
 # ------------------------ fichiers de l'application
 from variables import * # fichier contenant toutes les variables
 from FenetreLicence import FenetreLicence # fichier contenant la fenêtre d'affichage de la licence
+from Parametres import FenetreParametres # fichier contenant la fenêtre d'affichage des paramètres
 
 class Application(tk.Tk):
     def __init__(self):
@@ -16,7 +17,6 @@ class Application(tk.Tk):
         # ------------------------ Variables
         self.paused = False # pour le bouton pause
         self.time_remaining = None # pour le temps restant
-        self.valeur_state_bouton_start = None
         self.pause_verrouillage = False # pour éviter les bugs du minuteur après des doubles cliques sur le bp pause
         # ------------------------ Paramètrage de la fenêtre.
         self.title(f"{nom_application} V{version_application}")
@@ -36,14 +36,14 @@ class Application(tk.Tk):
         barre_de_menu.add_cascade(label="Fenêtre", menu=fenetre_menu)
         # ------------------------ Création d'un second menu 'Commandes'
         commandes_menu = tk.Menu(barre_de_menu, tearoff=0)
-        commandes_menu.add_command(label="Clear entry", command=self.clear_entrees)
+        commandes_menu.add_command(label="Effacer les entrées", command=self.clear_entrees)
         commandes_menu.add_command(label="Déporter timer", command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
         barre_de_menu.add_cascade(label="Commandes", menu=commandes_menu)
         # ------------------------ Création d'un troisième menu 'Source'
         source_menu = tk.Menu(barre_de_menu, tearoff=0)
-        source_menu.add_command(label="Open GitHub", command=self.open_github)
-        source_menu.add_command(label="Show source", command=self.show_github)
-        source_menu.add_command(label="Show LICENCE", command=lambda: FenetreLicence())
+        source_menu.add_command(label="Ouvrir GitHub", command=self.open_github)
+        source_menu.add_command(label="Afficher GitHub", command=lambda: FenetreInfoAffichageLienGitHub())
+        source_menu.add_command(label="Afficher LICENCE", command=lambda: FenetreLicence())
         barre_de_menu.add_cascade(label="Source", menu=source_menu)
         # ------------------------ Ajout de la barre de menu à la fenêtre
         self.config(menu=barre_de_menu)
@@ -73,7 +73,6 @@ class Application(tk.Tk):
                                       state="normal", width=30, height=2,
                                       justify="center", relief="groove",
                                       command=self.start_timer)
-        self.valeur_state_bouton_start = False
         self.bouton_pause = tk.Button(self.boutons_frame, text="PAUSE",
                                       activebackground=couleur_frame_minuteur_jaune,
                                       state="disabled", width=30, height=2,
@@ -102,11 +101,13 @@ class Application(tk.Tk):
         self.titre_section_temps_entry.pack(pady=10)
         # ------------ Entrée des minutes :
         self.minutes_entry = tk.Spinbox(self.entrees_frame, width=40, from_=0, to=180)
+        self.minutes_entry.configure(validate="key", validatecommand=(self.minutes_entry.register(self.validate_numeric_input), "%P"))
         self.minutes_entry.insert(0, "0")
         self.minutes_entry.bind(sequence='<Return>', func=lambda event: self.start_timer())
         self.minutes_entry.pack(side="left", padx=(10, 10), expand=True)
         # ------------ Entrée des secondes :
         self.seconds_entry = tk.Spinbox(self.entrees_frame, width=40, from_=0, to=10800)
+        self.seconds_entry.configure(validate="key", validatecommand=(self.seconds_entry.register(self.validate_numeric_input), "%P"))
         self.seconds_entry.insert(0, "0")
         self.seconds_entry.bind(sequence='<Return>', func=lambda event: self.start_timer())
         self.seconds_entry.pack(side="left", padx=(10, 20), expand=True)
@@ -116,7 +117,7 @@ class Application(tk.Tk):
                                               activebackground=couleur_frame_minuteur_rouge,
                                               width=15,command=self.clear_entrees)
         self.bouton_clear_entrees.pack(side="right", padx=10, pady=20, expand=True)
-        # ------------------------ Mise à jour de l'heure, gestion du thème et activation de la gestion des entrées
+        # ------------------------ Mise à jour de l'heure et gestion du thème
         self.update_time()
         self.gestion_theme_par_defaut()
 
@@ -128,10 +129,13 @@ class Application(tk.Tk):
         else: pass
 
     def start_timer(self):
+        self.deselectionner_les_entry()
+        # ------------------------ Récupération de la valeur du minuteur en secondes
         minutes = int(self.minutes_entry.get())
         seconds = int(self.seconds_entry.get())
         self.total_seconds = minutes * 60 + seconds
         self.time_remaining = self.total_seconds
+        # ------------------------ Gestion des erreurs (**temporaire** !)
         if self.time_remaining >= temps_max:
             messagebox.showwarning("Avertissement", f"""\
     Le temps total de seconde du minuteur ne peut pas dépasser {int(temps_max / 60)} min !\n\
@@ -139,13 +143,14 @@ class Application(tk.Tk):
         elif self.time_remaining == 0:
             messagebox.showwarning(f"Avertissement", "Merci d'entrer une durée avant de lancer le minuteur")
         else:
+            # ------------------------ Configuration de l'état des boutons et entrées
             self.minutes_entry.config(state="disabled")
             self.seconds_entry.config(state="disabled")
             self.bouton_start.config(state="disabled")
-            self.valeur_state_bouton_start = False
             self.bouton_clear_entrees.config(state="disabled")
             self.bouton_pause.config(state="normal")
             self.bouton_stop.config(state="normal")
+            # ------------------------ Lancement de la fonction de renouvellement du timer
             self.update_timer()
 
     def update_timer(self):
@@ -191,6 +196,7 @@ class Application(tk.Tk):
             self.stop_timer(True)
 
     def pause_timer(self):
+        self.deselectionner_les_entry()
         if self.pause_verrouillage: return # si la fonction est verrouillée, on ne rentre pas dedans !
         self.pause_verrouillage = True # Verrouillez la fonction pour empêcher d'autres exécutions simultanées
         if not hasattr(self, 'paused'):
@@ -206,30 +212,29 @@ class Application(tk.Tk):
         self.after(1000, lambda: setattr(self, 'pause_verrouillage', False))
 
     def stop_timer(self, parametre_appel_bouton_ou_non = None):
+        self.deselectionner_les_entry()
         self.paused = False
         self.bouton_pause.config(text="PAUSE")
         self.time_remaining = 0  # Réinitialiser le temps restant
+        # ------------------------ Configuration de l'état des entrées et des boutons
         self.bouton_start.config(state="normal")
-        self.valeur_state_bouton_start = True
         self.bouton_pause.config(state="disabled")
         self.bouton_stop.config(state="disabled")
         self.minutes_entry.config(state="normal")
         self.seconds_entry.config(state="normal")
         self.bouton_clear_entrees.config(state="normal")
+        # ------------------------ Gestion affichage temps restant à effacer
         self.time_frame.config(bg=couleur_frame_minuteur_verte)
         self.temps_restant_label.config(text=f"{nom_application}", font=("Arial", 24), bg=couleur_frame_minuteur_verte, fg="black")
         if hasattr(self, 'fenetre_deportee') and self.fenetre_deportee.winfo_exists():
             self.fenetre_deportee.config(background=couleur_frame_minuteur_verte)
             self.temps_restant_label_fenetre_deporte.config(text="Temps restant", font=("Arial", 35), bg=couleur_frame_minuteur_verte, fg="black")
-        # ------------------------ Gestion du son sur windows :
-        if systeme_exploitation == "Windows" and parametres_fichier_json["value_sounds"] == True:
-            try: 
-                import winsound
-                winsound.Beep(1000, 500)
-            except ImportError: pass
+        # ------------------------ Gestion du son :
+        if parametres_fichier_json["value_sounds"] == True:
+            jouer_sonnerie(True) # Jouer la sonnerie à la fin du timer
         else: pass
         if parametre_appel_bouton_ou_non == None:
-            self.update_timer()  # Arrêter la récursion de la fonction update_timer()
+            self.update_timer() # Arrêter la récursion de la fonction update_timer()
         else: pass
 
     def gestion_theme_par_defaut(self):
@@ -277,83 +282,9 @@ class Application(tk.Tk):
         self.titre_section_temps_entry.config(bg="white", fg="black")
 
     def open_parametres(self):
-        self.fenetre_parametres = tk.Toplevel()
-        self.fenetre_parametres.title(f"Paramètres")
-        self.fenetre_parametres.geometry("600x400")
-        if systeme_exploitation == 'Windows':
-            self.fenetre_parametres.iconbitmap(chemin_image_application)
-        else: pass
-        self.fenetre_parametres.resizable(False, False)
-        # ------------------------ Créer le titre de la page de paramètres
-        self.label_titre_parametres = tk.Label(self.fenetre_parametres, text=f"{nom_application} - Paramètres", font=("Arial", 24))
-        self.label_titre_parametres.pack(pady=10)
-        # ------------------------ Frame pour regrouper tous les paramètres entre eux
-        self.frame_parametres = tk.Frame(self.fenetre_parametres)
-        self.frame_parametres.pack(pady=20)
-        # ------------------------ Frame pour regrouper les radiobuttons entre eux
-        self.frame_selection_theme = tk.LabelFrame(self.frame_parametres, text="Paramètre du thème", fg="black")
-        self.frame_selection_theme.pack(pady=20, padx=45, side=tk.LEFT, expand=True)
-        # ------------------------ Valeur
-        self.parametre_radiobutton_select_theme_value = tk.StringVar()
-        self.parametre_radiobutton_select_theme_value.set(parametres_fichier_json["value_theme"])
-        # ------------------------ RadioButtons
-        self.selection_parametre_theme_os_default = tk.Radiobutton(self.frame_selection_theme, text=f"{nom_application} mode Default", value="DEFAULT", variable=self.parametre_radiobutton_select_theme_value)
-        self.selection_parametre_theme_os_dark = tk.Radiobutton(self.frame_selection_theme, text=f"{nom_application} mode Dark", value="DARK", variable=self.parametre_radiobutton_select_theme_value)
-        self.selection_parametre_theme_os_light = tk.Radiobutton(self.frame_selection_theme, text=f"{nom_application} mode Light", value="LIGHT", variable=self.parametre_radiobutton_select_theme_value)
-        self.selection_parametre_theme_os_default.pack(anchor='w', pady=2)
-        self.selection_parametre_theme_os_dark.pack(anchor='w', pady=2)
-        self.selection_parametre_theme_os_light.pack(anchor='w', pady=2)
-        # ------------------------ Frame pour regrouper les checkbuttons entre eux
-        self.frame_checkbuttons_parametres = tk.LabelFrame(self.frame_parametres, text="(nécessite de redémarrer)", fg="black")
-        self.frame_checkbuttons_parametres.pack(pady=20, padx=45, side=tk.RIGHT, expand=True)
-        # ------------------------ Valeurs
-        self.parametre_checkbutton_select_sounds_on_or_off = tk.BooleanVar(value=parametres_fichier_json["value_sounds"])
-        self.parametre_checkbutton_afficher_heure_en_haut = tk.BooleanVar(value=parametres_fichier_json["value_affichage_heure"])
-        # ------------------------ CheckButtons
-        self.checkbutton_parametre_sons = tk.Checkbutton(self.frame_checkbuttons_parametres, text="Sons (Windows seulement)",
-                                                         variable=self.parametre_checkbutton_select_sounds_on_or_off,
-                                                         onvalue = True, offvalue = False)
-        self.checkbutton_afficher_heure_en_haut = tk.Checkbutton(self.frame_checkbuttons_parametres, text="Afficher l'heure en haut",
-                                                                 variable=self.parametre_checkbutton_afficher_heure_en_haut,
-                                                                 onvalue = True, offvalue = False)
-        self.checkbutton_parametre_sons.pack(side='top', padx=(0, 5), pady=2, anchor='w')
-        self.checkbutton_afficher_heure_en_haut.pack(side='top', padx=(0, 5), pady=2, anchor='w')
-        if systeme_exploitation == "Windows":
-            self.checkbutton_parametre_sons.config(state="normal")
-        else: self.checkbutton_parametre_sons.config(state="disabled")
-        # ------------------------ Frame pour regrouper les boutons entre eux
-        self.frame_boutons_parametres = tk.Frame(self.fenetre_parametres, width=200, height=400)
-        self.frame_boutons_parametres.pack(fill="x", padx=20)
-        self.bouton_validation_parametre = tk.Button(self.frame_boutons_parametres, text="Appliquer les paramètres et quitter", activebackground=couleur_frame_minuteur_verte, command=self.apply_parametres)
-        self.bouton_validation_parametre.pack(fill="x", padx=20)
-        self.bouton_validation_parametre = tk.Button(self.frame_boutons_parametres, text="Annuler", activebackground=couleur_frame_minuteur_rouge, command=self.fenetre_parametres.destroy)
-        self.bouton_validation_parametre.pack(fill="x", padx=20)
-
-    def apply_parametres(self):
-        # Gestion du thème depuis les paramètres
-        reboot_app_ou_non = False
-        selected_theme = self.parametre_radiobutton_select_theme_value.get()
-        if selected_theme != parametres_fichier_json["value_theme"]:
-            parametres_fichier_json["value_theme"] = selected_theme
-            save_config(parametres_fichier_json)
-            self.gestion_theme_par_defaut()  # Met à jour le thème en temps réel
-        # Gestion du son depuis les paramètres
-        if systeme_exploitation == "Windows":
-            selected_state_sounds_for_windows = self.parametre_checkbutton_select_sounds_on_or_off.get()
-            if selected_state_sounds_for_windows != parametres_fichier_json["value_sounds"]:
-                parametres_fichier_json["value_sounds"] = selected_state_sounds_for_windows
-                save_config(parametres_fichier_json)
-                reboot_app_ou_non = True
-        # Gestion de l'affichage de l'heure en haut de la fenêtre de l'application
-        selected_state_affichage_heure_en_haut = self.parametre_checkbutton_afficher_heure_en_haut.get()
-        if selected_state_affichage_heure_en_haut != parametres_fichier_json["value_affichage_heure"]:
-            parametres_fichier_json["value_affichage_heure"] = selected_state_affichage_heure_en_haut
-            save_config(parametres_fichier_json)
-            reboot_app_ou_non = True
-        # Fermer la fenêtre des paramètres
-        self.fenetre_parametres.destroy()
-        if reboot_app_ou_non == True:
-            self.restart()
+        def changement_du_theme(): self.gestion_theme_par_defaut()
+        def gestion_restart_apres_modif_parametres(): self.restart()
+        FenetreParametres(callback_theme=changement_du_theme, callback_restart=gestion_restart_apres_modif_parametres)
 
     def deporter_frame_temps_restant_dans_une_nouvelle_fenetre(self):
         self.fenetre_deportee = tk.Toplevel(self, background=couleur_frame_minuteur_verte)
@@ -371,7 +302,6 @@ class Application(tk.Tk):
         self.bouton_deporter_temps_restant.config(text="Déporter le temps restant dans une nouvelle fenêtre", activebackground=couleur_frame_minuteur_verte, command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
         self.fenetre_deportee.destroy()
 
-    def show_github(self): messagebox.showinfo(f"Source {nom_application}", f"Lien du GitHub du projet :\n{lien_du_github}")
     def open_github(self): webbrowser.open_new(lien_du_github)
 
     def restart(self):
@@ -380,8 +310,64 @@ class Application(tk.Tk):
             subprocess.Popen([sys.executable] + sys.argv) # Redémarre l'application en exécutant à nouveau l'exécutable
         else: return
 
+    def deselectionner_les_entry(self): self.focus_set()
     def clear_entrees(self):
         self.minutes_entry.delete(0, tk.END)
         self.seconds_entry.delete(0, tk.END)
         self.minutes_entry.insert(0, "0")
         self.seconds_entry.insert(0, "0")
+        self.deselectionner_les_entry()
+
+    def validate_numeric_input(self, text):
+        return text.isdigit() or text == ""
+
+class FenetreInfoAffichageLienGitHub(tk.Toplevel):
+    def __init__(self):
+        super().__init__()
+        self.title("Information")
+        self.geometry("340x170")
+        self.config(background="white")
+        # ------------------------ Configuration du style ttk
+        self.style = ttk.Style()
+        self.style.theme_use('clam')
+        # ------------------------ Affichage du texte
+        self.texte_avant_le_lien = tk.Label(self, text="Lien vers le dépôt GitHub de GoTime :\n", font=("Arial", 12),
+                                            bg="white", fg="black", justify='center')
+        self.texte_avant_le_lien.pack(pady=(5, 0))
+        # ------------------------ Afficher le lien
+        self.lien_vers_le_github = ttk.Entry(self, width=32)
+        self.lien_vers_le_github.insert(0, lien_du_github)
+        self.lien_vers_le_github.pack(pady=(0, 5))
+        # ------------------------ Affichage des deux boutons dans une frame
+        self.frame_bouton_fenetre_info = tk.Frame(self, background="white", borderwidth=0)
+        self.frame_bouton_fenetre_info.pack(pady=(10, 0))
+        # Bouton pour quitter la fenetre
+        self.bouton_quitter_fenetre = tk.Button(self.frame_bouton_fenetre_info, text="Quitter",
+                                                activebackground=couleur_frame_minuteur_rouge, command=self.destroy)
+        self.bouton_quitter_fenetre.pack(side=tk.LEFT, padx=(5, 5), expand=True)
+        # Bouton pour copier le lien dans le presse papier
+        self.bouton_copier_le_lien = tk.Button(self.frame_bouton_fenetre_info, text="Copier le lien", cursor="hand2",
+                                               activebackground=couleur_frame_minuteur_jaune,command=self.copier_lien_dans_presse_papier)
+        self.bouton_copier_le_lien.pack(side=tk.RIGHT, padx=(5, 5), expand=True)
+        self.couleur_original_bp_tkinter = self.bouton_copier_le_lien.cget("background")
+
+    def copier_lien_dans_presse_papier(self):
+        # ------------------------ Copier le lien dans le presse papier
+        self.clipboard_clear()
+        self.clipboard_append(lien_du_github)
+        # ------------------------ Changer l'apparence du bouton après la copie
+        self.bouton_copier_le_lien.config(text="Lien Copié !", activebackground=couleur_frame_minuteur_verte, background=couleur_frame_minuteur_verte)
+        try:
+            from PIL import Image, ImageTk
+            # ------------------------ convertir l'image svg en format compatible tk
+            checkmark = Image.open(chemin_image_checkmark)
+            checkmark = checkmark.resize((20, 20), Image.ANTIALIAS)
+            checkmark = ImageTk.PhotoImage(checkmark)
+            self.bouton_copier_le_lien.config(image=checkmark, compound=tk.LEFT, command=None)
+            self.bouton_copier_le_lien.image = checkmark
+            self.after(2000, self.modifier_bouton_apres_deux_secondes_copie)
+        except FileNotFoundError: pass
+
+    def modifier_bouton_apres_deux_secondes_copie(self):
+        self.bouton_copier_le_lien.configure(image="", text="Copier le lien", compound=tk.CENTER, background=self.couleur_original_bp_tkinter,
+                                          activebackground=couleur_frame_minuteur_jaune, command=self.copier_lien_dans_presse_papier)

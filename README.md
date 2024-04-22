@@ -25,9 +25,8 @@ pip install -r requirements.txt
 ```
 
 ## Bugs
-- À tester sur Windows : 
+- À tester sur Windows :
   - l'icon de l'application, qui à été modifiée.
-  - le son à la fin du minuteur si option activée.
 - À voir si autres...
 
 ## Fonctionnement

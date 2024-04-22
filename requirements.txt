@@ -5,6 +5,7 @@ webbrowser
 darkdetect
 sys
 subprocess
+pygame
 # du fichier variables.py
 os
 json
