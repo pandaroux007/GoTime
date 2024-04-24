@@ -70,7 +70,7 @@ class Application(tk.Tk):
         self.boutons_frame.pack(fill="x", padx=20, pady=(0, 20))
         self.bouton_start = tk.Button(self.boutons_frame, text="LANCER",
                                       activebackground=couleur_frame_minuteur_verte,
-                                      state="normal", width=30, height=2,
+                                      state="disabled", width=30, height=2,
                                       justify="center", relief="groove",
                                       command=self.start_timer)
         self.bouton_pause = tk.Button(self.boutons_frame, text="PAUSE",
@@ -94,22 +94,26 @@ class Application(tk.Tk):
         self.bouton_deporter_temps_restant.pack(expand=True, pady=(5, 20))
         # ------------------------ Entrées pour la gestion du temps du minuteur (minutes et secondes)
         self.entrees_frame = tk.Frame(self.frame_principale)
-        # self.entrees_frame.bind_all("<Button-1>", lambda event: event.widget.focus_set())
         self.entrees_frame.pack(padx=20)
+        # ------------------------ Variables dynamiques
+        self.variable_entree_minutes = tk.StringVar(self)
+        self.variable_entree_minutes.trace_add("write", self.gestion_etat_bouton_start_en_fonction_du_temps_entre)
+        self.variable_entree_secondes = tk.StringVar(self)
+        self.variable_entree_secondes.trace_add("write", self.gestion_etat_bouton_start_en_fonction_du_temps_entre)
         # ------------------------ Ajouter un titre à cette section
         self.titre_section_temps_entry = tk.Label(self.entrees_frame, text="Entrez un temps ici :", font=("Arial", 20), background="white")
         self.titre_section_temps_entry.pack(pady=10)
         # ------------ Entrée des minutes :
         self.labelframe_entree_minutes = tk.LabelFrame(self.entrees_frame, text="min", border=0, labelanchor="e")
         self.labelframe_entree_minutes.pack(side="left", padx=(10, 10))
-        self.minutes_entry = tk.Spinbox(self.labelframe_entree_minutes, width=37, from_=0, to=60)
+        self.minutes_entry = tk.Spinbox(self.labelframe_entree_minutes, width=37, from_=0, to=60, textvariable=self.variable_entree_minutes)
         self.minutes_entry.configure(validate="key", validatecommand=(self.minutes_entry.register(self.validate_numeric_input), "%P"))
         self.minutes_entry.bind(sequence='<Return>', func=lambda event: self.start_timer())
         self.minutes_entry.pack(padx=(0, 5), expand=True)
         # ------------ Entrée des secondes :
         self.labelframe_entree_secondes = tk.LabelFrame(self.entrees_frame, text="s", border=0, labelanchor="e")
         self.labelframe_entree_secondes.pack(side="left", padx=(10, 20))
-        self.seconds_entry = tk.Spinbox(self.labelframe_entree_secondes, width=38, from_=0, to=10800)
+        self.seconds_entry = tk.Spinbox(self.labelframe_entree_secondes, width=38, from_=0, to=10800, textvariable=self.variable_entree_secondes)
         self.seconds_entry.configure(validate="key", validatecommand=(self.seconds_entry.register(self.validate_numeric_input), "%P"))
         self.seconds_entry.bind(sequence='<Return>', func=lambda event: self.start_timer())
         self.seconds_entry.pack(padx=(0, 5), expand=True)
@@ -137,23 +141,15 @@ class Application(tk.Tk):
         seconds = int(self.seconds_entry.get())
         self.total_seconds = minutes * 60 + seconds
         self.time_remaining = self.total_seconds
-        # ------------------------ Gestion des erreurs (**temporaire** !)
-        if self.time_remaining >= temps_max:
-            messagebox.showwarning("Avertissement", f"""\
-    Le temps total de seconde du minuteur ne peut pas dépasser {int(temps_max / 60)} min !\n\
-    Merci d'entrer une durée inférieure !""")
-        elif self.time_remaining == 0:
-            messagebox.showwarning(f"Avertissement", "Merci d'entrer une durée avant de lancer le minuteur")
-        else:
-            # ------------------------ Configuration de l'état des boutons et entrées
-            self.minutes_entry.config(state="disabled")
-            self.seconds_entry.config(state="disabled")
-            self.bouton_start.config(state="disabled")
-            self.bouton_clear_entrees.config(state="disabled")
-            self.bouton_pause.config(state="normal")
-            self.bouton_stop.config(state="normal")
-            # ------------------------ Lancement de la fonction de renouvellement du timer
-            self.update_timer()
+        # ------------------------ Configuration de l'état des boutons et entrées
+        self.minutes_entry.config(state="disabled")
+        self.seconds_entry.config(state="disabled")
+        self.bouton_start.config(state="disabled")
+        self.bouton_clear_entrees.config(state="disabled")
+        self.bouton_pause.config(state="normal")
+        self.bouton_stop.config(state="normal")
+        # ------------------------ Lancement de la fonction de renouvellement du timer
+        self.update_timer()
 
     def update_timer(self):
         if self.time_remaining > 0 and not self.paused:
@@ -324,6 +320,20 @@ class Application(tk.Tk):
 
     def validate_numeric_input(self, text):
         return text.isdigit() or text == ""
+    
+    def gestion_etat_bouton_start_en_fonction_du_temps_entre(self, *args):
+        minutes_str = self.variable_entree_minutes.get()
+        seconds_str = self.variable_entree_secondes.get()
+        # Convertir le contenu des spinbox en entier
+        if minutes_str and seconds_str:
+            minutes = int(minutes_str)
+            seconds = int(seconds_str)
+        else: minutes = 0; seconds = 0
+        total_secondes = minutes * 60 + seconds
+        # gestion état bouton "Start" en fonction du total des secondes
+        if total_secondes >= 5 and total_secondes <= temps_max:
+            self.bouton_start.config(state="normal")
+        else: self.bouton_start.config(state="disabled")
 
 class FenetreInfoAffichageLienGitHub(tk.Toplevel):
     def __init__(self):

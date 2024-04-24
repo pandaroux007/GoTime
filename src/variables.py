@@ -15,7 +15,7 @@ chemin_fichier_wav_fin_temps = path.join(path.dirname(repertoire_courant), 'dep'
 chemin_fichier_licence = path.join(path.dirname(repertoire_courant), "LICENCE.txt")
 lien_du_github = "https://github.com/RP7-CODE/GoTime"
 nom_application = "GoTime"
-version_application = "0.2.1"
+version_application = "1.0.1"
 
 def load_config():
     try:

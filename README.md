@@ -53,37 +53,6 @@ Maintenant qu'il n'y a plus de bugs d'après les tests fait récemment, voici un
   étant trop long, et manquant de choix de widget. Si vous voulez voir à quoi ressemble `ttkbootstrap`, installez-le avec la commande
   `pip install ttkbootstrap` puis effectuez la commande `python3 -m ttkbootstrap`.
 
-- Ensuite, changement du système de gestion du temps entré. Ici l'utilisateur peut appuyer sur le bouton pour lancer le minuteur même
-  si il n'a pas entré de temps auparavent. Si il fait cela, une `messagebox` type erreur s'ouvre. Idem quand le temps entré dépasse
-  le maximum autorisé de 3h (10800s). D'un point de vu purement ergonomique, ce n'est pas bon. L'objectif va être de faire une gestion dynamique
-  du bouton en fonction du temps entré, commande dans cet exemple ou le bouton est désactivé si il n'y a pas plus de 5 caractères dans l'entrée :
-  ```py
-  # This program comes from this site : https://www.plus2net.com/python/tkinter-button.php
-  import tkinter as tk
-  # Création de la fenêtre
-  root = tk.Tk()
-  root.geometry('237x50')
-  # Création de la variable dynamique et de l'entrée
-  variable_str = tk.StringVar(root)
-  entree = tk.Entry(root,textvariable=variable_str)
-  entree.grid(row=0,column=0)
-  # Création du bouton
-  bouton = tk.Button(root,text='Button',state='disabled')
-  bouton.grid(row=0,column=1)
-  # Fonction appellée à chaque changement dans l'entrée
-  def fonction_de_verification(*args):
-      if(len(variable_str.get())>4): # Minimum de 5 caractères
-          bouton.config(state='normal') # Activer le bouton
-      else:
-          bouton.config(state='disabled') # Désactiver le bouton
-  # Ajout du "tracage" de l'entrée via la variable dynamique de tkinter
-  variable_str.trace_add("write",fonction_de_verification)
-  # Affichage de la fenêtre
-  root.mainloop()
-  ```
-  Dans le cas de l'application, si le temps est entre 5s et 10800s, alors le bouton LANCER sera utilisable, sinon, il sera grisé.
-  Pour l'instant, je n'ai pas réussi à intégrer cette fonctionnalité, **ce sera pour le prochain commit probablement**.
-
 - Ajout d'un système permettant à l'utilisateur d'enregistrer des temps (par exemple ceux qu'il utilise régulièrement), en
   plus du système initial avec les entrées/`spinbox`. Cela consisterai en un menu déroulant de type `combobox`, qui ne
   s'afficherai que si au moins un temps est déjà enregistré, sinon un bouton pour créer un nouveau temps prédéfini.
