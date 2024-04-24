@@ -2,13 +2,14 @@
 tkinter
 datetime
 webbrowser
-darkdetect
 sys
 subprocess
-pygame
+darkdetect
+PIL
 # du fichier variables.py
 os
 json
 platform
 getpass
 socket
+pygame

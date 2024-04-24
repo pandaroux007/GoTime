@@ -15,7 +15,7 @@ chemin_fichier_wav_fin_temps = path.join(path.dirname(repertoire_courant), 'dep'
 chemin_fichier_licence = path.join(path.dirname(repertoire_courant), "LICENCE.txt")
 lien_du_github = "https://github.com/RP7-CODE/GoTime"
 nom_application = "GoTime"
-version_application = "1.1.2"
+version_application = "0.2.1"
 
 def load_config():
     try:
@@ -53,14 +53,14 @@ def jouer_sonnerie(etat_jouer_son):
     try:
         from pygame import mixer
         mixer.init()
+        global sonnerie_actuelle
+        if sonnerie_actuelle is None:
+            sonnerie_actuelle = mixer.Sound(chemin_fichier_wav_fin_temps)
+        if etat_jouer_son:
+            sonnerie_actuelle.play()
+        else:
+            sonnerie_actuelle.stop()
     except ImportError: pass
-    global sonnerie_actuelle
-    if sonnerie_actuelle is None:
-        sonnerie_actuelle = mixer.Sound(chemin_fichier_wav_fin_temps)
-    if etat_jouer_son:
-        sonnerie_actuelle.play()
-    else:
-        sonnerie_actuelle.stop()
 
 parametres_fichier_json = load_config()
 systeme_exploitation = system()

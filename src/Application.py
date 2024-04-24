@@ -37,11 +37,11 @@ class Application(tk.Tk):
         # ------------------------ Création d'un second menu 'Commandes'
         commandes_menu = tk.Menu(barre_de_menu, tearoff=0)
         commandes_menu.add_command(label="Effacer les entrées", command=self.clear_entrees)
-        commandes_menu.add_command(label="Déporter timer", command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
+        commandes_menu.add_command(label="Déporter minuteur", command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
         barre_de_menu.add_cascade(label="Commandes", menu=commandes_menu)
         # ------------------------ Création d'un troisième menu 'Source'
         source_menu = tk.Menu(barre_de_menu, tearoff=0)
-        source_menu.add_command(label="Ouvrir GitHub", command=self.open_github)
+        source_menu.add_command(label="Ouvrir GitHub", command=lambda: webbrowser.open_new_tab(lien_du_github))
         source_menu.add_command(label="Afficher GitHub", command=lambda: FenetreInfoAffichageLienGitHub())
         source_menu.add_command(label="Afficher LICENCE", command=lambda: FenetreLicence())
         barre_de_menu.add_cascade(label="Source", menu=source_menu)
@@ -68,7 +68,7 @@ class Application(tk.Tk):
         # ------------------------ Boutons pour la gestion du minuteur
         self.boutons_frame = tk.Frame(self.frame_principale, height=80)
         self.boutons_frame.pack(fill="x", padx=20, pady=(0, 20))
-        self.bouton_start = tk.Button(self.boutons_frame, text="START",
+        self.bouton_start = tk.Button(self.boutons_frame, text="LANCER",
                                       activebackground=couleur_frame_minuteur_verte,
                                       state="normal", width=30, height=2,
                                       justify="center", relief="groove",
@@ -78,7 +78,7 @@ class Application(tk.Tk):
                                       state="disabled", width=30, height=2,
                                       justify="center", relief="groove",
                                       command=self.pause_timer)
-        self.bouton_stop = tk.Button(self.boutons_frame, text="STOP",
+        self.bouton_stop = tk.Button(self.boutons_frame, text="ARRÊTER",
                                      activebackground=couleur_frame_minuteur_rouge,
                                      state="disabled", width=30, height=2,
                                      justify="center", relief="groove",
@@ -100,17 +100,19 @@ class Application(tk.Tk):
         self.titre_section_temps_entry = tk.Label(self.entrees_frame, text="Entrez un temps ici :", font=("Arial", 20), background="white")
         self.titre_section_temps_entry.pack(pady=10)
         # ------------ Entrée des minutes :
-        self.minutes_entry = tk.Spinbox(self.entrees_frame, width=40, from_=0, to=180)
+        self.labelframe_entree_minutes = tk.LabelFrame(self.entrees_frame, text="min", border=0, labelanchor="e")
+        self.labelframe_entree_minutes.pack(side="left", padx=(10, 10))
+        self.minutes_entry = tk.Spinbox(self.labelframe_entree_minutes, width=37, from_=0, to=60)
         self.minutes_entry.configure(validate="key", validatecommand=(self.minutes_entry.register(self.validate_numeric_input), "%P"))
-        self.minutes_entry.insert(0, "0")
         self.minutes_entry.bind(sequence='<Return>', func=lambda event: self.start_timer())
-        self.minutes_entry.pack(side="left", padx=(10, 10), expand=True)
+        self.minutes_entry.pack(padx=(0, 5), expand=True)
         # ------------ Entrée des secondes :
-        self.seconds_entry = tk.Spinbox(self.entrees_frame, width=40, from_=0, to=10800)
+        self.labelframe_entree_secondes = tk.LabelFrame(self.entrees_frame, text="s", border=0, labelanchor="e")
+        self.labelframe_entree_secondes.pack(side="left", padx=(10, 20))
+        self.seconds_entry = tk.Spinbox(self.labelframe_entree_secondes, width=38, from_=0, to=10800)
         self.seconds_entry.configure(validate="key", validatecommand=(self.seconds_entry.register(self.validate_numeric_input), "%P"))
-        self.seconds_entry.insert(0, "0")
         self.seconds_entry.bind(sequence='<Return>', func=lambda event: self.start_timer())
-        self.seconds_entry.pack(side="left", padx=(10, 20), expand=True)
+        self.seconds_entry.pack(padx=(0, 5), expand=True)
         self.clear_entrees()
         # ------------ Bouton pour effacer les entrées
         self.bouton_clear_entrees = tk.Button(self.entrees_frame, text="Effacer les entrées",
@@ -263,6 +265,8 @@ class Application(tk.Tk):
         self.bouton_stop.config(bg=theme_sombre, fg="white")
         self.bouton_clear_entrees.config(bg=theme_sombre, fg="white")
         self.entrees_frame.config(bg=theme_sombre)
+        self.labelframe_entree_minutes.config(background=theme_sombre, fg="white")
+        self.labelframe_entree_secondes.config(background=theme_sombre, fg="white")
         self.bouton_deporter_temps_restant.config(bg=theme_sombre, fg="white")
         self.titre_section_temps_entry.config(bg=theme_sombre, fg="white")
 
@@ -278,6 +282,8 @@ class Application(tk.Tk):
         self.bouton_stop.config(bg="lightblue", fg="black")
         self.bouton_clear_entrees.config(bg="lightblue", fg="black")
         self.entrees_frame.config(bg="white")
+        self.labelframe_entree_minutes.config(background="white", fg="black")
+        self.labelframe_entree_secondes.config(background="white", fg="black")
         self.bouton_deporter_temps_restant.config(bg="lightblue", fg="black")
         self.titre_section_temps_entry.config(bg="white", fg="black")
 
@@ -301,8 +307,6 @@ class Application(tk.Tk):
     def fermer_fenetre_temps_restant_deporte(self):
         self.bouton_deporter_temps_restant.config(text="Déporter le temps restant dans une nouvelle fenêtre", activebackground=couleur_frame_minuteur_verte, command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
         self.fenetre_deportee.destroy()
-
-    def open_github(self): webbrowser.open_new(lien_du_github)
 
     def restart(self):
         if messagebox.askyesno(title="Redémarrer ?", message=f"Voulez vous vraiment redémarrer l'application {nom_application} ?"):
@@ -347,14 +351,12 @@ class FenetreInfoAffichageLienGitHub(tk.Toplevel):
         self.bouton_quitter_fenetre.pack(side=tk.LEFT, padx=(5, 5), expand=True)
         # Bouton pour copier le lien dans le presse papier
         self.bouton_copier_le_lien = tk.Button(self.frame_bouton_fenetre_info, text="Copier le lien", cursor="hand2",
-                                               activebackground=couleur_frame_minuteur_jaune,command=self.copier_lien_dans_presse_papier)
+                                               activebackground=couleur_frame_minuteur_jaune,command=self.copier_lien_et_update_bouton)
         self.bouton_copier_le_lien.pack(side=tk.RIGHT, padx=(5, 5), expand=True)
         self.couleur_original_bp_tkinter = self.bouton_copier_le_lien.cget("background")
 
-    def copier_lien_dans_presse_papier(self):
-        # ------------------------ Copier le lien dans le presse papier
-        self.clipboard_clear()
-        self.clipboard_append(lien_du_github)
+    def copier_lien_et_update_bouton(self):
+        self.copier_le_lien_dans_le_presse_papier()
         # ------------------------ Changer l'apparence du bouton après la copie
         self.bouton_copier_le_lien.config(text="Lien Copié !", activebackground=couleur_frame_minuteur_verte, background=couleur_frame_minuteur_verte)
         try:
@@ -370,4 +372,8 @@ class FenetreInfoAffichageLienGitHub(tk.Toplevel):
 
     def modifier_bouton_apres_deux_secondes_copie(self):
         self.bouton_copier_le_lien.configure(image="", text="Copier le lien", compound=tk.CENTER, background=self.couleur_original_bp_tkinter,
-                                          activebackground=couleur_frame_minuteur_jaune, command=self.copier_lien_dans_presse_papier)
+                                          activebackground=couleur_frame_minuteur_jaune, command=self.copier_lien_et_update_bouton)
+        
+    def copier_le_lien_dans_le_presse_papier(self):
+        self.clipboard_clear()
+        self.clipboard_append(lien_du_github)
