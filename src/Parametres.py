@@ -20,15 +20,25 @@ class FenetreParametres(tk.Toplevel):
         # ------------------------ Créer le titre de la page de paramètres
         self.label_titre_parametres = tk.Label(self, text=f"{nom_application} - Paramètres", font=("Arial", 24))
         self.label_titre_parametres.pack(pady=10)
-        # ------------------------ Frame pour regrouper tous les paramètres entre eux
-        self.frame_parametres = tk.Frame(self)
-        self.frame_parametres.pack(pady=20)
+        # ------------------------ Créer les onglets noteboo0k et frame ttk
+        self.style = ttk.Style()
+        self.style.theme_use('clam')
+        self.onglets = ttk.Notebook(self)
+        self.onglets.focus_set()
+        self.onglet_theme = tk.Frame(self.onglets)
+        self.onglet_sons = tk.Frame(self.onglets)
+        self.onglets.add(child=self.onglet_theme, text="Thème et Apparence")
+        self.onglets.add(child=self.onglet_sons, text="Sonnerie")
+        self.onglets.pack(fill="x", padx=40, pady=(10, 20))
+
+        # ------------------------------------------------ Onglet apparence et thème
         # ------------------------ Frame pour regrouper les radiobuttons entre eux
-        self.frame_selection_theme = tk.LabelFrame(self.frame_parametres, text="Paramètre du thème", fg="black")
+        self.frame_selection_theme = tk.Frame(self.onglet_theme, border=0)
         self.frame_selection_theme.pack(pady=20, padx=45, side=tk.LEFT, expand=True)
         # ------------------------ Valeur
-        self.parametre_radiobutton_select_theme_value = tk.StringVar()
-        self.parametre_radiobutton_select_theme_value.set(parametres_fichier_json["value_theme"])
+        self.parametre_radiobutton_select_theme_value = tk.StringVar(value=parametres_fichier_json["value_theme"])
+        self.parametre_checkbutton_select_sounds_on_or_off = tk.BooleanVar(value=parametres_fichier_json["value_sounds"])
+        self.parametre_checkbutton_afficher_heure_en_haut = tk.BooleanVar(value=parametres_fichier_json["value_affichage_heure"])
         # ------------------------ RadioButtons
         self.selection_parametre_theme_os_default = tk.Radiobutton(self.frame_selection_theme, text=f"{nom_application} mode Default", value="DEFAULT", variable=self.parametre_radiobutton_select_theme_value)
         self.selection_parametre_theme_os_dark = tk.Radiobutton(self.frame_selection_theme, text=f"{nom_application} mode Dark", value="DARK", variable=self.parametre_radiobutton_select_theme_value)
@@ -36,23 +46,26 @@ class FenetreParametres(tk.Toplevel):
         self.selection_parametre_theme_os_default.pack(anchor='w', pady=2)
         self.selection_parametre_theme_os_dark.pack(anchor='w', pady=2)
         self.selection_parametre_theme_os_light.pack(anchor='w', pady=2)
-        # ------------------------ Frame pour regrouper les checkbuttons entre eux
-        self.frame_checkbuttons_parametres = tk.LabelFrame(self.frame_parametres, text="Sons et Affichage", fg="black")
-        self.frame_checkbuttons_parametres.pack(pady=20, padx=45, side=tk.RIGHT, expand=True)
-        # ------------------------ Valeurs
-        self.parametre_checkbutton_select_sounds_on_or_off = tk.BooleanVar(value=parametres_fichier_json["value_sounds"])
-        self.parametre_checkbutton_afficher_heure_en_haut = tk.BooleanVar(value=parametres_fichier_json["value_affichage_heure"])
-        # ------------------------ CheckButtons
-        self.checkbutton_parametre_sons = tk.Checkbutton(self.frame_checkbuttons_parametres, text="Sonnerie/Alarme",
-                                                         variable=self.parametre_checkbutton_select_sounds_on_or_off,
-                                                         onvalue = True, offvalue = False)
-        self.checkbutton_afficher_heure_en_haut = tk.Checkbutton(self.frame_checkbuttons_parametres, text="Afficher l'heure en haut\n(nécéssite de redémarrer)",
+        # ------------------------ checkbutton
+        self.checkbutton_afficher_heure_en_haut = tk.Checkbutton(self.onglet_theme, text="Afficher l'heure en haut\n(nécéssite de redémarrer)",
                                                                  variable=self.parametre_checkbutton_afficher_heure_en_haut,
                                                                  onvalue = True, offvalue = False)
+        self.checkbutton_afficher_heure_en_haut.pack(side=tk.RIGHT, anchor="w", padx=(0, 45))
+
+        # ------------------------------------------------ Onglet sonnerie
+        # ------------------------ Frame pour regrouper les éléments de gauche
+        self.frame_selection_sonnerie_et_volume_a_gauche = tk.Frame(self.onglet_sons)
+        self.frame_selection_sonnerie_et_volume_a_gauche.pack(pady=20, padx=(45, 20), side=tk.LEFT)
+        # ------------------------ Frame pour regrouper les éléments de droite
+        self.frame_selection_sonnerie_et_volume_a_droite = tk.Frame(self.onglet_sons)
+        self.frame_selection_sonnerie_et_volume_a_droite.pack(pady=20, padx=(20, 45), side=tk.RIGHT)
+        # ------------------------ CheckButton sélection sonnerie ou pas
+        self.checkbutton_parametre_sons = tk.Checkbutton(self.frame_selection_sonnerie_et_volume_a_gauche, text="Sonnerie/Alarme",
+                                                         variable=self.parametre_checkbutton_select_sounds_on_or_off,
+                                                         onvalue = True, offvalue = False)
         self.checkbutton_parametre_sons.pack(side='top', padx=(0, 5), pady=2, anchor='w')
-        self.checkbutton_afficher_heure_en_haut.pack(side='top', padx=(0, 5), pady=2, anchor='w')
         # ------------------------ Bouton pour tester la sonnerie
-        self.bouton_tester_la_sonnerie = tk.Button(self.frame_checkbuttons_parametres, text="Essayer la sonnerie",
+        self.bouton_tester_la_sonnerie = tk.Button(self.frame_selection_sonnerie_et_volume_a_droite, text="Essayer la sonnerie",
                                                    activebackground=couleur_frame_minuteur_jaune, command=lambda: FenetreEssayerSonnerie())
         self.bouton_tester_la_sonnerie.pack(side='top', padx=(0, 5), pady=2, anchor='w', fill="x")
         # ------------------------ Frame pour regrouper les boutons entre eux
@@ -66,14 +79,14 @@ class FenetreParametres(tk.Toplevel):
         self.bouton_validation_parametre.pack(fill="x", padx=20)
 
     def apply_parametres(self):
-        # Gestion du thème depuis les paramètres
+        # Gestion du thème clair ou sombre
         self.reboot_app_ou_non = False
         selected_theme = self.parametre_radiobutton_select_theme_value.get()
         if selected_theme != parametres_fichier_json["value_theme"]:
             parametres_fichier_json["value_theme"] = selected_theme
             save_config(parametres_fichier_json)
             if self.callback_theme: self.callback_theme()
-        # Gestion du son depuis les paramètres
+        # Gestion de l'activation de la sonnerie
         selected_state_sounds_for_windows = self.parametre_checkbutton_select_sounds_on_or_off.get()
         if selected_state_sounds_for_windows != parametres_fichier_json["value_sounds"]:
             parametres_fichier_json["value_sounds"] = selected_state_sounds_for_windows

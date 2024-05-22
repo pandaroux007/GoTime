@@ -1,4 +1,4 @@
-from os import path
+import os
 from tkinter import messagebox
 from json import load, dump
 from platform import system
@@ -6,16 +6,16 @@ import getpass
 import socket
 from datetime import datetime
 
-repertoire_courant = path.dirname(path.abspath(__file__))
-chemin_fichier_parametres = path.join(path.dirname(repertoire_courant), "log", "settings.json")
-chemin_fichier_logs = path.join(path.dirname(repertoire_courant), 'log', "error_log.csv")
-chemin_image_application = path.join(path.dirname(repertoire_courant), 'dep', 'icon.ico')
-chemin_image_checkmark = path.join(path.dirname(repertoire_courant), 'dep', 'checkmark.png')
-chemin_fichier_wav_fin_temps = path.join(path.dirname(repertoire_courant), 'dep', 'digital-clock-alarm.wav')
-chemin_fichier_licence = path.join(path.dirname(repertoire_courant), "LICENCE.txt")
-lien_du_github = "https://github.com/RP7-CODE/GoTime"
+repertoire_courant = os.path.dirname(os.path.abspath(os.path.realpath(__file__)))
+chemin_fichier_parametres = os.path.join(os.path.dirname(repertoire_courant), "dep", "settings.json")
+chemin_fichier_logs = os.path.join(os.path.dirname(repertoire_courant), 'log', "error_log.csv")
+chemin_image_application = os.path.join(os.path.dirname(repertoire_courant), 'dep', 'icon.ico')
+chemin_image_checkmark = os.path.join(os.path.dirname(repertoire_courant), 'dep', 'checkmark.png')
+chemin_fichier_wav_fin_temps = os.path.join(os.path.dirname(repertoire_courant), 'sons', 'digital-clock-alarm.wav')
+chemin_fichier_licence = os.path.join(os.path.dirname(repertoire_courant), "LICENCE.txt")
+lien_du_github = "https://github.com/pandaroux007/GoTime"
 nom_application = "GoTime"
-version_application = "1.0.1"
+version_application = "1.0.2"
 
 def load_config():
     try:
@@ -60,7 +60,7 @@ def jouer_sonnerie(etat_jouer_son):
             sonnerie_actuelle.play()
         else:
             sonnerie_actuelle.stop()
-    except ImportError: pass
+    except Exception as e: log_error(e); pass
 
 parametres_fichier_json = load_config()
 systeme_exploitation = system()
