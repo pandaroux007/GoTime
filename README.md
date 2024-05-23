@@ -2,7 +2,11 @@
 ## Projet
 Ce projet est une application de minuteur ne nécessitant pas de connexion Internet, qui a débuté le 9 février 2024 pour les professeurs du collège.
 Je place le code et tout élément associé au projet sur GitHub, à ce lien : [https://github.com/pandaroux007/GoTime](https://github.com/pandaroux007/GoTime)
-Pour tout signalement de bug ou proposition de nouvelle.s fonctionnalitée.s, merci de créer une [issue](https://github.com/pandaroux007/GoTime/issues).
+
+
+> [!TIP]
+> Pour tout signalement de bug ou proposition de nouvelle.s fonctionnalitée.s, merci
+> de créer une [issue](https://github.com/pandaroux007/GoTime/issues).
 
 <div align="center">
 <a href="https://www.python.org/" style="text-decoration:none">
