@@ -4,6 +4,21 @@ Ce projet est une application de minuteur ne nécessitant pas de connexion Inter
 Je place le code et tout élément associé au projet sur GitHub, à ce lien : [https://github.com/pandaroux007/GoTime](https://github.com/pandaroux007/GoTime)
 Pour tout signalement de bug ou proposition de nouvelle.s fonctionnalitée.s, merci de créer une [issue](https://github.com/pandaroux007/GoTime/issues).
 
+<div align="center">
+<a href="https://www.python.org/" style="text-decoration:none">
+  <img src="https://img.shields.io/badge/built%20with-Python3-green.svg" alt="built with Python3"/>
+</a>
+<a href="https://github.com/pandaroux007/GoTime/commits/main/" style="text-decoration:none">
+  <img src="https://img.shields.io/github/commit-activity/t/pandaroux007/GoTime">
+</a>
+<a href="https://github.com/pandaroux007/GoTime/blob/main/LICENCE.txt" style="text-decoration:none">
+  <img src="https://img.shields.io/badge/License-Boost_1.0-default_color.svg">
+</a>
+<a href="https://github.com/pandaroux007/GoTime" style="text-decoration:none">
+  <img src="https://img.shields.io/github/stars/pandaroux007/GoTime.svg?style=social&label=Stars">
+</a>
+</div>
+
 ## Licence
 Ce projet est sous [licence BSL 1.0](https://choosealicense.com/licenses/bsl-1.0/) (Boost Software License 1.0).
 J'autorise quiconque à utiliser, modifier et commercialiser le code, tant que l'auteur **Pandaroux007** est mentionné.
