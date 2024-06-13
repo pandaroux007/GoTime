@@ -3,7 +3,6 @@
 Ce projet est une application de minuteur ne nécessitant pas de connexion Internet, qui a débuté le 9 février 2024 pour les professeurs du collège.
 Je place le code et tout élément associé au projet sur GitHub, à ce lien : [https://github.com/pandaroux007/GoTime](https://github.com/pandaroux007/GoTime)
 
-
 > [!TIP]
 > Pour tout signalement de bug ou proposition de nouvelle.s fonctionnalitée.s, merci
 > de créer une [issue](https://github.com/pandaroux007/GoTime/issues).
@@ -28,13 +27,14 @@ Ce projet est sous [licence BSL 1.0](https://choosealicense.com/licenses/bsl-1.0
 J'autorise quiconque à utiliser, modifier et commercialiser le code, tant que l'auteur **Pandaroux007** est mentionné.
 
 ## Crédits
-Merci à tous les développeurs des modules utilisés dans ce projet pour leurs travaux et leurs contributions à la communauté open-source;
-Merci à ma professeur d'anglais, qui a lancer l'idée et qui m'a fait confiance pour réaliser ce projet;
-Merci à `Lounys` pour son aide sur le bug du bouton 'copier le lien' dans Source;
-Merci à `Techvij/Solme` pour son soutien pendant les longues phases de correction de bugs;
-Merci à `Roucoule/PandaR09` pour son aide au début de mon apprentissage de tkinter;
-Merci à `PetitOurs` pour ses conseils sur l'ergonomie et pour le module py vers exe;
-Enfin, merci à tous les créateurs de contenus techniques sur internet qui m'ont permis de trouver de la documentation pour chaque éléments des modules.
+1. Merci à ma professeur d'anglais, qui a lancer l'idée et qui m'a fait confiance pour réaliser ce projet;
+2. Merci à `Lounys` pour son aide sur le bug du bouton 'copier le lien' dans Source;
+3. Merci à `Techvij/Solme` pour son soutien pendant les longues phases de correction de bugs;
+4. Merci à `Roucoule/PandaR09` pour son aide au début de mon apprentissage de tkinter;
+5. Merci à `PetitOurs` pour ses conseils sur l'ergonomie et pour le module py vers exe;
+6. Merci au développeur de [ce programme](https://github.com/Akascape/tkinter-toolkit/blob/main/tkinter-toolkit.py#L40) qui m'a permis de découvrir comment faire en sorte que quand on clique hors d'une entrée cela lui retire le focus, mais que pour les boutons cela ne fasse rien (pas de contours noir du focus quand on clique dessus)
+7. Merci à tous les développeurs des modules utilisés dans ce projet pour leurs travaux et leurs contributions à la communauté open-source;
+8. Enfin, merci à tous les créateurs de contenus techniques sur internet qui m'ont permis de trouver de la documentation pour chaque éléments des modules.
 
 # Apparence globale
 ## Interface
@@ -68,9 +68,8 @@ restera apparente).
 
 ## Améliorations et Ajouts
 Maintenant qu'il n'y a plus de bugs **dans le code python** d'après les tests fait récemment, voici une petite liste non exhaustive des futurs améliorations.
-- Premièrement, utilisation du module complémentaire `ttkbootstrap` pour rendre plus modernes les widgets de l'application, le module
-  complémentaire `ttk` n'étant pas adapté, trop complexe à implémenter, et l'utilisation d'un autre module de GUI comme `CustomTkinter`
-  étant trop long, et manquant de choix de widget. Si vous voulez voir à quoi ressemble `ttkbootstrap`, installez-le avec la commande
+- Premièrement, utilisation du module `ttkbootstrap` pour rendre plus modernes les widgets de l'application, le module
+  complémentaire `ttk` n'étant pas adapté, trop complexe à implémenter, et l'utilisation d'un autre module de GUI comme `CustomTkinter` manquant de choix de widget. Si vous souhaitez voir à quoi ressemble `ttkbootstrap`, installez-le avec la commande
   `pip install ttkbootstrap` puis effectuez la commande `python3 -m ttkbootstrap`.
 
 - Ajout d'un système permettant à l'utilisateur d'enregistrer des temps (par exemple ceux qu'il utilise régulièrement), en

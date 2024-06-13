@@ -26,6 +26,7 @@ class Application(tk.Tk):
         if systeme_exploitation == 'Windows':
             self.iconbitmap(chemin_image_application)
         else: pass
+        self.bind("<1>", lambda event: event.widget.focus_set())
         # ------------------------ Barre de menu
         barre_de_menu = tk.Menu(self)
         # ------------------------ Création d'un menu 'Fenêtre'

@@ -15,7 +15,7 @@ chemin_fichier_wav_fin_temps = os.path.join(os.path.dirname(repertoire_courant),
 chemin_fichier_licence = os.path.join(os.path.dirname(repertoire_courant), "LICENCE.txt")
 lien_du_github = "https://github.com/pandaroux007/GoTime"
 nom_application = "GoTime"
-version_application = "1.0.2"
+version_application = "0.36.2" # passera à 1.0.0 quand une version compilée, distribuable et fonctionnelle à 100% sortira
 
 def load_config():
     try:
