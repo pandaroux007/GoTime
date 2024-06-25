@@ -1,2 +1,7 @@
 src/__pycache__
+src/GoTime
+en_cours.txt
 output
+runApp.build
+runApp.dist
+runApp.onefile-build

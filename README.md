@@ -23,16 +23,15 @@ Je place le code et tout élément associé au projet sur GitHub, à ce lien : [
 </div>
 
 ## Licence
-Ce projet est sous [licence BSL 1.0](https://choosealicense.com/licenses/bsl-1.0/) (Boost Software License 1.0).
-J'autorise quiconque à utiliser, modifier et commercialiser le code, tant que l'auteur **Pandaroux007** est mentionné.
+Ce projet est sous [Licence MIT](LICENCE.txt) - [The MIT License (MIT)](https://choosealicense.com/licenses/mit/).
 
 ## Crédits
-1. Merci à ma professeur d'anglais, qui a lancer l'idée et qui m'a fait confiance pour réaliser ce projet;
-2. Merci à `Lounys` pour son aide sur le bug du bouton 'copier le lien' dans Source;
-3. Merci à `Techvij/Solme` pour son soutien pendant les longues phases de correction de bugs;
-4. Merci à `Roucoule/PandaR09` pour son aide au début de mon apprentissage de tkinter;
-5. Merci à `PetitOurs` pour ses conseils sur l'ergonomie et pour le module py vers exe;
-6. Merci au développeur de [ce programme](https://github.com/Akascape/tkinter-toolkit/blob/main/tkinter-toolkit.py#L40) qui m'a permis de découvrir comment faire en sorte que quand on clique hors d'une entrée cela lui retire le focus, mais que pour les boutons cela ne fasse rien (pas de contours noir du focus quand on clique dessus)
+1. Merci à `Lounys` pour son aide sur le bug du bouton 'copier le lien' dans Source;
+2. Merci à `Techvij/Solme` pour son soutien pendant les longues phases de correction de bugs;
+3. Merci à `Roucoule/PandaR09` pour son aide au début de mon apprentissage de tkinter;
+4. Merci à `Petitours` pour ses conseils sur l'ergonomie et pour le module py vers exe;
+5. Merci à `kayhayen` (https://github.com/kayhayen) pour son fantastique module de compilation de programme python nuitka;
+6. Merci à ma professeur d'anglais, qui a lancer l'idée et qui m'a fait confiance pour réaliser ce projet;
 7. Merci à tous les développeurs des modules utilisés dans ce projet pour leurs travaux et leurs contributions à la communauté open-source;
 8. Enfin, merci à tous les créateurs de contenus techniques sur internet qui m'ont permis de trouver de la documentation pour chaque éléments des modules.
 
@@ -68,10 +67,6 @@ restera apparente).
 
 ## Améliorations et Ajouts
 Maintenant qu'il n'y a plus de bugs **dans le code python** d'après les tests fait récemment, voici une petite liste non exhaustive des futurs améliorations.
-- Premièrement, utilisation du module `ttkbootstrap` pour rendre plus modernes les widgets de l'application, le module
-  complémentaire `ttk` n'étant pas adapté, trop complexe à implémenter, et l'utilisation d'un autre module de GUI comme `CustomTkinter` manquant de choix de widget. Si vous souhaitez voir à quoi ressemble `ttkbootstrap`, installez-le avec la commande
-  `pip install ttkbootstrap` puis effectuez la commande `python3 -m ttkbootstrap`.
-
 - Ajout d'un système permettant à l'utilisateur d'enregistrer des temps (par exemple ceux qu'il utilise régulièrement), en
   plus du système initial avec les entrées/`spinbox`. Cela consisterai en un menu déroulant de type `combobox`, qui ne
   s'afficherai que si au moins un temps est déjà enregistré, sinon un bouton pour créer un nouveau temps prédéfini.
@@ -85,19 +80,6 @@ Maintenant qu'il n'y a plus de bugs **dans le code python** d'après les tests f
 - Choix de la sonnerie. Dans les versions à venir de l'application, il sera possible de choisir la sonnerie via un sélecteur dans les
   paramètres, de type `combobox`. Ce sélecteur sera géré dynamiquement via la variable `tkinter` du `checkbutton` permettant d'activer la
   sonnerie. Concrètement, si la sonnerie est désactivé alors le sélecteur sera grisé, inutilisable.
-
-## Bug compilation
-Aujourd'hui je ne peux pas créer de version binaire du projet pour le distribuer car il y a un bug dans les chemins de fichiers.
-Quand je compile, et ce sur `nuitka`, `auto-py-to-exe`, ou un autre, que ce soit en mode `onefile` ou en `standalone`, et que j'exécute
-le binaire au bon endroit dans l'arborescence (au même endroit que les fichiers python du code source), il ne trouve pas le fichier
-de paramètre sans lequel l'application ne peut pas démarrer. Si quelqu'un tombe sur le projet et est tenté de trouver la solution
-maintenant, les chemins de fichiers sont créés et modifiés dans le fichier `variables.py` avec le module `os`.
-Pour voir le bug, voici la commande utilisée pour compiler en binaire le code avec `nuitka` (chemins à adapter):
-```sh
-python3 -m nuitka --run --onefile --output-filename="GoTime" --disable-console --follow-imports --linux-icon="dep/icon.ico" --macos-app-icon="dep/icon.ico" --windows-icon-from-ico="dep/icon.ico" runApp.py
-```
-Il est probable que la méthode utilisée pour les chemins et la manipulations des fichiers ainsi que l'arborescence ne soit pas bonne.
-Si c'est le cas, vous pouvez créer une [issue](https://github.com/pandaroux007/GoTime/issues) GitHub pour présenter votre façon de corriger le problème.
 
 # Développement
 ## Installation
@@ -115,5 +97,14 @@ on utilise cette commande (l.130)
 ```py
 self.after(1000, self.update_time)  # Met à jour toutes les secondes
 ```
-Cela crée une boucle qui met à jour l'heure toutes les 1000ms, soit 1s. C'est le même principe qui est utilisé pour le rafraichissement du minuteur
+Cela crée une boucle qui met à jour l'heure toutes les 1000ms, soit 1s. **C'est le même principe qui est utilisé pour le rafraichissement du minuteur.**
+Pour ce qui est des paramètres, l'application fonctionne grâce à une lecture/écriture dans un fichier json ([settings.json](dep/settings.json)).
 Tout le reste de l'application n'est qu'une question d'apparence et de widgets, la base fonctionne comme ceci.
+
+## Compilation
+Pour compiler et distribuer l'application, j'utilise [`nuitka`](https://github.com/Nuitka/Nuitka), avec cette commande :
+```sh
+python3 -m nuitka --run --onefile --output-filename="GoTime" --disable-console --follow-imports --enable-plugin=tk-inter --linux-icon="dep/icon.ico" --macos-app-icon="dep/icon.ico" --windows-icon-from-ico="dep/icon.ico" runApp.py
+```
+**ASTUCE NUITKA** : Si vous ne souhaitez pas passer 10 ans à attendre que nuitka compile deux fois les mêmes fichiers, vous pouvez utiliser `ccache`.
+Nuitka vous l'indiquera si vous ne l'utilisez pas.

@@ -1,21 +1,23 @@
 import os
+import sys
 from tkinter import messagebox
 from json import load, dump
 from platform import system
 import getpass
 import socket
 from datetime import datetime
-
-repertoire_courant = os.path.dirname(os.path.abspath(os.path.realpath(__file__)))
+# https://stackoverflow.com/questions/59427353/how-to-get-the-current-path-of-compiled-binary-from-python-using-nuitka
+repertoire_courant = os.path.dirname(os.path.abspath(os.path.realpath(sys.argv[0])))
 chemin_fichier_parametres = os.path.join(os.path.dirname(repertoire_courant), "dep", "settings.json")
 chemin_fichier_logs = os.path.join(os.path.dirname(repertoire_courant), 'log', "error_log.csv")
 chemin_image_application = os.path.join(os.path.dirname(repertoire_courant), 'dep', 'icon.ico')
 chemin_image_checkmark = os.path.join(os.path.dirname(repertoire_courant), 'dep', 'checkmark.png')
 chemin_fichier_wav_fin_temps = os.path.join(os.path.dirname(repertoire_courant), 'sons', 'digital-clock-alarm.wav')
 chemin_fichier_licence = os.path.join(os.path.dirname(repertoire_courant), "LICENCE.txt")
+
 lien_du_github = "https://github.com/pandaroux007/GoTime"
 nom_application = "GoTime"
-version_application = "0.36.2" # passera à 1.0.0 quand une version compilée, distribuable et fonctionnelle à 100% sortira
+version_application = "1.0.0" # version compilée, distribuable et fonctionnelle à 100%
 
 def load_config():
     try:
@@ -23,7 +25,7 @@ def load_config():
             config = load(file)
         return config
     except FileNotFoundError:
-        messagebox.showerror(title=f"Erreur", message=f"Le fichier de paramètre de {nom_application} n'a pas été trouvé pour lecture.")
+        messagebox.showerror(title=f"Erreur", message=f"Le fichier de paramètre de {nom_application} n'a pas été trouvé pour lecture.\r\n {chemin_fichier_parametres}")
         return None; exit()
     
 def save_config(config):
