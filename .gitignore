@@ -1,7 +1,16 @@
+# fichier système macOS-X
+.DS_Store
+# fichier système Windows
+Thumbs.db
+# compilation + cache de python
 src/__pycache__
 src/GoTime
-en_cours.txt
 output
 runApp.build
 runApp.dist
 runApp.onefile-build
+# fichier perso de developpement
+en_cours.txt
+# fichier d'installation en cours d'écriture
+install.sh
+install.bat

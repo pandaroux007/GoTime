@@ -1,38 +1,29 @@
+<div align="center">
+
+[![LICENSE](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/pandaroux007/GoTime/blob/main/LICENCE.txt)
+[![Built with Python3](https://img.shields.io/badge/built%20with-Python3-green.svg)](https://www.python.org/)
+[![Commit](https://img.shields.io/github/commit-activity/t/pandaroux007/GoTime)](https://github.com/pandaroux007/GoTime/commits/main/)
+[![Stars](https://img.shields.io/github/stars/pandaroux007/GoTime.svg?style=social&label=Stars)](https://github.com/pandaroux007/GoTime)
+</div>
+
 # Présentation
 ## Projet
 Ce projet est une application de minuteur ne nécessitant pas de connexion Internet, qui a débuté le 9 février 2024 pour les professeurs du collège.
 Je place le code et tout élément associé au projet sur GitHub, à ce lien : [https://github.com/pandaroux007/GoTime](https://github.com/pandaroux007/GoTime)
-
-> [!TIP]
-> Pour tout signalement de bug ou proposition de nouvelle.s fonctionnalitée.s, merci
-> de créer une [issue](https://github.com/pandaroux007/GoTime/issues).
-
-<div align="center">
-<a href="https://www.python.org/" style="text-decoration:none">
-  <img src="https://img.shields.io/badge/built%20with-Python3-green.svg" alt="built with Python3"/>
-</a>
-<a href="https://github.com/pandaroux007/GoTime/commits/main/" style="text-decoration:none">
-  <img src="https://img.shields.io/github/commit-activity/t/pandaroux007/GoTime">
-</a>
-<a href="https://github.com/pandaroux007/GoTime/blob/main/LICENCE.txt" style="text-decoration:none">
-  <img src="https://img.shields.io/badge/License-Boost_1.0-default_color.svg">
-</a>
-<a href="https://github.com/pandaroux007/GoTime" style="text-decoration:none">
-  <img src="https://img.shields.io/github/stars/pandaroux007/GoTime.svg?style=social&label=Stars">
-</a>
-</div>
+Pour tout signalement de bug ou proposition de nouvelle.s fonctionnalitée.s, merci de créer une [issue](https://github.com/pandaroux007/GoTime/issues).
 
 ## Licence
 Ce projet est sous [Licence MIT](LICENCE.txt) - [The MIT License (MIT)](https://choosealicense.com/licenses/mit/).
+Retrouvez les détails de cette licence sur le site officiel : https://opensource.org/licenses/MIT.
 
 ## Crédits
 1. Merci à `Lounys` pour son aide sur le bug du bouton 'copier le lien' dans Source;
 2. Merci à `Techvij/Solme` pour son soutien pendant les longues phases de correction de bugs;
 3. Merci à `Roucoule/PandaR09` pour son aide au début de mon apprentissage de tkinter;
 4. Merci à `Petitours` pour ses conseils sur l'ergonomie et pour le module py vers exe;
-5. Merci à `kayhayen` (https://github.com/kayhayen) pour son fantastique module de compilation de programme python nuitka;
+5. Merci à `kayhayen` pour son fantastique module de compilation de programme python *nuitka*;
 6. Merci à ma professeur d'anglais, qui a lancer l'idée et qui m'a fait confiance pour réaliser ce projet;
-7. Merci à tous les développeurs des modules utilisés dans ce projet pour leurs travaux et leurs contributions à la communauté open-source;
+7. Merci à tous les développeurs des modules utilisés ici pour leurs travaux et leurs contributions à la communauté open-source;
 8. Enfin, merci à tous les créateurs de contenus techniques sur internet qui m'ont permis de trouver de la documentation pour chaque éléments des modules.
 
 # Apparence globale
@@ -106,5 +97,4 @@ Pour compiler et distribuer l'application, j'utilise [`nuitka`](https://github.c
 ```sh
 python3 -m nuitka --run --onefile --output-filename="GoTime" --disable-console --follow-imports --enable-plugin=tk-inter --linux-icon="dep/icon.ico" --macos-app-icon="dep/icon.ico" --windows-icon-from-ico="dep/icon.ico" runApp.py
 ```
-**ASTUCE NUITKA** : Si vous ne souhaitez pas passer 10 ans à attendre que nuitka compile deux fois les mêmes fichiers, vous pouvez utiliser `ccache`.
-Nuitka vous l'indiquera si vous ne l'utilisez pas.
+**Sous Windows, j'ai eu beaucoup de problème avec un antivirus (Avast) qui supprimait l'exécutable sous prétexte que c'était un cheval de trois. Si vous compilez l'application, je vous conseille de désactiver votre antivirus (je ne souhaitais pas le faire au début mais j'y ai été contraint, c'est la seule solution - même créer des exceptions ne fonctionne pas!)**
