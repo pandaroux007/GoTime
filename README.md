@@ -1,9 +1,10 @@
 <div align="center">
 
-[![LICENSE](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/pandaroux007/GoTime/blob/main/LICENCE.txt)
+[![Licence](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/pandaroux007/GoTime/blob/main/LICENCE.txt)
 [![Built with Python3](https://img.shields.io/badge/built%20with-Python3-green.svg)](https://www.python.org/)
-[![Commit](https://img.shields.io/github/commit-activity/t/pandaroux007/GoTime)](https://github.com/pandaroux007/GoTime/commits/main/)
+[![Commits](https://img.shields.io/github/commit-activity/t/pandaroux007/GoTime)](https://github.com/pandaroux007/GoTime/commits/main/)
 [![Stars](https://img.shields.io/github/stars/pandaroux007/GoTime.svg?style=social&label=Stars)](https://github.com/pandaroux007/GoTime)
+
 </div>
 
 # Présentation
@@ -92,9 +93,30 @@ Cela crée une boucle qui met à jour l'heure toutes les 1000ms, soit 1s. **C'es
 Pour ce qui est des paramètres, l'application fonctionne grâce à une lecture/écriture dans un fichier json ([settings.json](dep/settings.json)).
 Tout le reste de l'application n'est qu'une question d'apparence et de widgets, la base fonctionne comme ceci.
 
+## Dépendance
+Pour fonctionner l'application requiert les modules suivants.
+Quelques uns ne sont pas inclus par défaut dans python3, ils sont listés dans le fichier [requirements.txt](requirements.txt).
+1. tkinter
+2. datetime
+3. webbrowser
+4. sys
+5. subprocess
+6. darkdetect
+7. PIL (pillow)
+8. os
+9. json
+10. platform
+11. getpass
+12. socket
+13. pygame
+
 ## Compilation
 Pour compiler et distribuer l'application, j'utilise [`nuitka`](https://github.com/Nuitka/Nuitka), avec cette commande :
 ```sh
 python3 -m nuitka --run --onefile --output-filename="GoTime" --disable-console --follow-imports --enable-plugin=tk-inter --linux-icon="dep/icon.ico" --macos-app-icon="dep/icon.ico" --windows-icon-from-ico="dep/icon.ico" runApp.py
 ```
-**Sous Windows, j'ai eu beaucoup de problème avec un antivirus (Avast) qui supprimait l'exécutable sous prétexte que c'était un cheval de trois. Si vous compilez l'application, je vous conseille de désactiver votre antivirus (je ne souhaitais pas le faire au début mais j'y ai été contraint, c'est la seule solution - même créer des exceptions ne fonctionne pas!)**
+**Sous Windows, j'ai eu beaucoup de problème avec un antivirus (Avast) qui supprimait l'exécutable sous prétexte que c'était un cheval de trois. Si vous compilez l'application, je vous conseille de désactiver votre antivirus (je ne souhaitais pas le faire au début mais j'y ai été contraint, c'est la seule solution - même créer des exceptions ne fonctionne pas!).** <span style="color:red">**De plus, comme les pirates informatiques utilisent beaucoup nuitka pour compiler leurs virus, mon application a la même signature qu'un programme malveillant et se fait donc bloquer par les antivirus!**<span>
+
+*Si un message d'erreur vous indique que python n'existe pas ou n'est pas reconnu ou autre, essayez de changer `python3` en `python` au début de la commande.*
+
+**TIP** : Installez nuitka avec `pip install nuitka`, puis installez l'utilitaire de compression d'exécutables si il n'est pas installé (`pip install zstandard`), configurez le cache des fichiers `C` (ccache), puis lancez la commande indiquez plus haut.

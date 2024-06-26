@@ -1,15 +1,3 @@
-# du fichier GoTime.py
-tkinter
-datetime
-webbrowser
-sys
-subprocess
+pillow
 darkdetect
-PIL
-# du fichier variables.py
-os
-json
-platform
-getpass
-socket
 pygame
