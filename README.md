@@ -19,13 +19,12 @@ Retrouvez les détails de cette licence sur le site officiel : https://opensourc
 
 ## Crédits
 1. Merci à `Lounys` pour son aide sur le bug du bouton 'copier le lien' dans Source;
-2. Merci à `Techvij/Solme` pour son soutien pendant les longues phases de correction de bugs;
+2. Merci à `Solme` pour son soutien pendant les longues phases de correction de bugs;
 3. Merci à `Roucoule/PandaR09` pour son aide au début de mon apprentissage de tkinter;
 4. Merci à `Petitours` pour ses conseils sur l'ergonomie et pour le module py vers exe;
-5. Merci à `kayhayen` pour son fantastique module de compilation de programme python *nuitka*;
-6. Merci à ma professeur d'anglais, qui a lancer l'idée et qui m'a fait confiance pour réaliser ce projet;
-7. Merci à tous les développeurs des modules utilisés ici pour leurs travaux et leurs contributions à la communauté open-source;
-8. Enfin, merci à tous les créateurs de contenus techniques sur internet qui m'ont permis de trouver de la documentation pour chaque éléments des modules.
+5. Merci à ma professeur d'anglais, qui a lancer l'idée et qui m'a fait confiance pour réaliser ce projet;
+6. Merci à tous les développeurs des modules utilisés ici pour leurs travaux et leurs contributions à la communauté open-source;
+7. Enfin, merci à tous les créateurs de contenus techniques sur internet qui m'ont permis de trouver de la documentation pour chaque éléments des modules.
 
 # Apparence globale
 ## Interface
@@ -73,6 +72,8 @@ Maintenant qu'il n'y a plus de bugs **dans le code python** d'après les tests f
   paramètres, de type `combobox`. Ce sélecteur sera géré dynamiquement via la variable `tkinter` du `checkbutton` permettant d'activer la
   sonnerie. Concrètement, si la sonnerie est désactivé alors le sélecteur sera grisé, inutilisable.
 
+- Si un jour, une fois l'application terminée completement avec toutes les améliorations présentées ci-haut, j'ai envie de perdre mon temps, je passerai probablement sur une version 4 cross-platform, avec wxWidgets ou **Toga**. Mais comme cela nécessite de refaire toute l'interface, je ne le ferai probablement pas avant longtemps (j'en profiterai pour changer quelques détails pour rendre l'application plus conviviale).
+
 # Développement
 ## Installation
 Attention, **certains des modules utilisés par le projet ne sont pas inclus par défauts dans python**. Pour les installer, il vous suffit de
@@ -111,12 +112,4 @@ Quelques uns ne sont pas inclus par défaut dans python3, ils sont listés dans 
 13. pygame
 
 ## Compilation
-Pour compiler et distribuer l'application, j'utilise [`nuitka`](https://github.com/Nuitka/Nuitka), avec cette commande :
-```sh
-python3 -m nuitka --run --onefile --output-filename="GoTime" --disable-console --follow-imports --enable-plugin=tk-inter --linux-icon="dep/icon.ico" --macos-app-icon="dep/icon.ico" --windows-icon-from-ico="dep/icon.ico" runApp.py
-```
-**Sous Windows, j'ai eu beaucoup de problème avec un antivirus (Avast) qui supprimait l'exécutable sous prétexte que c'était un cheval de trois. Si vous compilez l'application, je vous conseille de désactiver votre antivirus (je ne souhaitais pas le faire au début mais j'y ai été contraint, c'est la seule solution - même créer des exceptions ne fonctionne pas!).** <span style="color:red">**De plus, comme les pirates informatiques utilisent beaucoup nuitka pour compiler leurs virus, mon application a la même signature qu'un programme malveillant et se fait donc bloquer par les antivirus!**<span>
-
-*Si un message d'erreur vous indique que python n'existe pas ou n'est pas reconnu ou autre, essayez de changer `python3` en `python` au début de la commande.*
-
-**TIP** : Installez nuitka avec `pip install nuitka`, puis installez l'utilitaire de compression d'exécutables si il n'est pas installé (`pip install zstandard`), configurez le cache des fichiers `C` (ccache), puis lancez la commande indiquez plus haut.
+Pour compiler et distribuer l'application, j'utilise `auto-py-to-exe` (j'utilisais auparavent `nuitka` mais l'exécutable en découlant déclanchait les antivirus sur Windows - en savoir plus : https://github.com/Nuitka/Nuitka/issues/2701).

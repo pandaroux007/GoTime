@@ -5,7 +5,6 @@ import webbrowser # pour l'ouverture du navigateur avec le lien du github de l'
 from tkinter import messagebox # pour les erreur et les validations
 import darkdetect # pour la détection du thème de l'OS
 import sys # Pour les fonctions suivantes : "exit", "executable", et "argv"
-import subprocess # pour la fonction restart de l'application.
 # ------------------------ fichiers de l'application
 from variables import * # fichier contenant toutes les variables
 from FenetreLicence import FenetreLicence # fichier contenant la fenêtre d'affichage de la licence
@@ -26,9 +25,10 @@ class Application(tk.Tk):
         self.geometry(f"{self.width}x{self.height}")
         self.minsize(1000, 680)
         self.config(background=theme_sombre)
-        if systeme_exploitation == 'Windows':
-            self.iconbitmap(chemin_image_application)
-        else: pass
+        self.wm_iconbitmap()
+        self.logo = tk.PhotoImage(file=chemin_image_application)
+        self.iconphoto(False, self.logo)
+        # self.call('wm', 'iconphoto', self._w, self.logo)
         self.bind("<1>", lambda event: event.widget.focus_set())
         # ------------------------ Barre de menu
         barre_de_menu = tk.Menu(self)
@@ -313,7 +313,11 @@ class Application(tk.Tk):
     def restart(self):
         if messagebox.askyesno(title="Redémarrer ?", message=f"Voulez vous vraiment redémarrer l'application {nom_application} ?"):
             self.destroy()
-            subprocess.Popen([sys.executable] + sys.argv) # Redémarre l'application en exécutant à nouveau l'exécutable
+            try:
+                python = sys.executable
+                os.execl(python, python, *sys.argv)
+            except Exception as e:
+                messagebox.showerror(title="Erreur", message=f"Erreur lors du redémarrage du programme : {e}")
         else: return
 
     def deselectionner_les_entry(self): self.focus_set()
@@ -367,9 +371,9 @@ class FenetreInfoAffichageLienGitHub(tk.Toplevel):
         self.bouton_quitter_fenetre.pack(side=tk.LEFT, padx=(5, 5), expand=True)
         # Bouton pour copier le lien dans le presse papier
         self.bouton_copier_le_lien = tk.Button(self.frame_bouton_fenetre_info, text="Copier le lien", cursor="hand2",
-                                               activebackground=couleur_frame_minuteur_jaune,command=self.copier_lien_et_update_bouton)
+                                               activebackground=couleur_frame_minuteur_jaune, command=self.copier_lien_et_update_bouton)
         self.bouton_copier_le_lien.pack(side=tk.RIGHT, padx=(5, 5), expand=True)
-        self.couleur_original_bp_tkinter = self.bouton_copier_le_lien.cget("background")
+        self.couleur_original_bp_copier_le_lien = self.bouton_copier_le_lien.cget("background")
 
     def copier_lien_et_update_bouton(self):
         self.copier_le_lien_dans_le_presse_papier()
@@ -379,7 +383,7 @@ class FenetreInfoAffichageLienGitHub(tk.Toplevel):
             from PIL import Image, ImageTk
             # ------------------------ convertir l'image svg en format compatible tk
             checkmark = Image.open(chemin_image_checkmark)
-            checkmark = checkmark.resize((20, 20), Image.ANTIALIAS)
+            checkmark = checkmark.resize((24, 18))
             checkmark = ImageTk.PhotoImage(checkmark)
             self.bouton_copier_le_lien.config(image=checkmark, compound=tk.LEFT, command=None)
             self.bouton_copier_le_lien.image = checkmark
@@ -387,7 +391,7 @@ class FenetreInfoAffichageLienGitHub(tk.Toplevel):
         except FileNotFoundError: pass
 
     def modifier_bouton_apres_deux_secondes_copie(self):
-        self.bouton_copier_le_lien.configure(image="", text="Copier le lien", compound=tk.CENTER, background=self.couleur_original_bp_tkinter,
+        self.bouton_copier_le_lien.configure(image="", text="Copier le lien", compound=tk.CENTER, background=self.couleur_original_bp_copier_le_lien,
                                           activebackground=couleur_frame_minuteur_jaune, command=self.copier_lien_et_update_bouton)
         
     def copier_le_lien_dans_le_presse_papier(self):

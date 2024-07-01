@@ -14,3 +14,6 @@ en_cours.txt
 # fichier d'installation en cours d'écriture
 install.sh
 install.bat
+# fichier LibreOffice Draw de l'icone de l'appli
+icon.odg
+.~lock.icon.odg#

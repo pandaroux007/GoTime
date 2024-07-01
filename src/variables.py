@@ -10,14 +10,14 @@ from datetime import datetime
 repertoire_courant = os.path.dirname(os.path.abspath(os.path.realpath(sys.argv[0])))
 chemin_fichier_parametres = os.path.join(os.path.dirname(repertoire_courant), "dep", "settings.json")
 chemin_fichier_logs = os.path.join(os.path.dirname(repertoire_courant), 'log', "error_log.csv")
-chemin_image_application = os.path.join(os.path.dirname(repertoire_courant), 'dep', 'icon.ico')
+chemin_image_application = os.path.join(os.path.dirname(repertoire_courant), 'dep', 'icon.png')
 chemin_image_checkmark = os.path.join(os.path.dirname(repertoire_courant), 'dep', 'checkmark.png')
 chemin_fichier_wav_fin_temps = os.path.join(os.path.dirname(repertoire_courant), 'sons', 'digital-clock-alarm.wav')
 chemin_fichier_licence = os.path.join(os.path.dirname(repertoire_courant), "LICENCE.txt")
 
 lien_du_github = "https://github.com/pandaroux007/GoTime"
 nom_application = "GoTime"
-version_application = "1.0.0" # version compilée, distribuable et fonctionnelle à 100%
+version_application = "1.0.1"
 
 def load_config():
     try:
