@@ -52,7 +52,7 @@ L'application peut être agrandie et mise en plein écran.
 
 **Détails sur la déportation du temps restant** :
 Comme indiqué plus haut, sur la fenêtre se trouve un bouton permettant de "déporter le temps restant". Concrètement cela signifie ouvrir
-une nouvelle fenêtre avec afficher seulement le temps restant, sur un fond de couleur. Cette fenêtre à l'avantage d'être beaucoup plus
+une nouvelle fenêtre avec affiché seulement le temps restant, sur un fond de couleur. Cette fenêtre à l'avantage d'être beaucoup plus
 visible que l'affichage de l'application, mais aussi le fait qu'elle reste toujours au premier plan (même si vous cliquez à côté, elle
 restera apparente).
 
