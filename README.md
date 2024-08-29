@@ -16,6 +16,24 @@ Pour tout signalement de bug ou proposition de nouvelle.s fonctionnalitée.s, me
 ## Licence
 Ce projet est sous [Licence MIT](LICENCE.txt) - [The MIT License (MIT)](https://choosealicense.com/licenses/mit/).
 Retrouvez les détails de cette licence sur le site officiel : https://opensource.org/licenses/MIT.
+___
+## Installation
+1. Téléchargez la dernière version de l'application au format zip sur GitHub à ce lien : https://github.com/pandaroux007/GoTime/releases
+2. Décompressez le fichier zip, puis placez vous dans le dossier ainsi optenu.
+### Sous linux
+#### *Via* l'interface graphique si disponible
+1. Sélectionnez le fichier `install.sh`, puis faites un clique droit.
+2. Rendez vous dans `Propriétés > Permissions > Autoriser l'exécution du fichier comme un programme`.
+3. Fermez la fenêtre et double-cliquez sur ce même fichier `install.sh`. L'installation se lance.
+#### *Via* le terminal de commandes
+1. Placez vous dans le repertoire décompressé avec `cd` si ce n'est pas déjà fait.
+2. Exécutez la commande `chmod +x install.sh` pour autoriser l'exécution du fichier comme un programme.
+3. Lancer le programme d'installation avec la commande `sudo ./install.sh`
+
+### Sous Microsoft Windows
+1. Sélectionnez le fichier `install.bat`, puis faite un clique droit.
+2. Sélectionnez `Exécuter en tant qu'administrateur`.
+___
 
 ## Crédits
 1. Merci à `Lounys` pour son aide sur le bug du bouton 'copier le lien' dans Source;
@@ -75,7 +93,7 @@ Maintenant qu'il n'y a plus de bugs **dans le code python** d'après les tests f
 - Si un jour, une fois l'application terminée completement avec toutes les améliorations présentées ci-haut, j'ai envie de perdre mon temps, je passerai probablement sur une version 4 cross-platform, avec wxWidgets (**wxPython**) ou Toga (?). Mais comme cela nécessite de refaire toute l'interface, je ne le ferai probablement pas avant longtemps (j'en profiterai pour changer quelques détails pour rendre l'application plus conviviale).
 
 # Développement
-## Installation
+## Installation des dépendances
 Attention, **certains des modules utilisés par le projet ne sont pas inclus par défauts dans python**. Pour les installer, il vous suffit de
 lancer la commande suivante (après vous être déplacé dans le répertoire du projet téléchargé - commande '*cd path*' sous Windows et Unix):
 ```sh
@@ -117,7 +135,9 @@ Pour compiler et distribuer l'application, j'utilise [`nuitka`](https://github.c
 python3 -m nuitka --run --onefile --output-filename="GoTime" --windows-console-mode=disable --follow-imports --enable-plugin=tk-inter --linux-icon="dep/icon.ico" --macos-app-icon="dep/icon.ico" --windows-icon-from-ico="dep/icon.ico" runApp.py
 ```
 **Sous Windows, j'ai eu beaucoup de problème avec un antivirus (Avast) qui supprimait l'exécutable sous prétexte que c'était un cheval de trois. Si vous compilez l'application, je vous conseille de désactiver votre antivirus (je ne souhaitais pas le faire au début mais j'y ai été contraint, c'est la seule solution - même créer des exceptions ne fonctionne pas!).** <span style="color:red">**De plus, comme les pirates informatiques utilisent beaucoup nuitka pour compiler leurs virus, mon application a la même signature qu'un programme malveillant et se fait donc bloquer par les antivirus!**<span>
+
 Pour essayer de corriger ce problème, je vais tenter d'ajouter `--mingw64` lors de la compilation sous windows pour changer de compilateur.
+
 *Si un message d'erreur vous indique que python n'existe pas ou n'est pas reconnu ou autre, essayez de changer `python3` en `python` au début de la commande.*
 
 **TIP** : Installez nuitka avec `pip install nuitka`, puis installez l'utilitaire de compression d'exécutables si il n'est pas installé (`pip install zstandard`), configurez le cache des fichiers `C` (ccache), puis lancez la commande indiquez plus haut.

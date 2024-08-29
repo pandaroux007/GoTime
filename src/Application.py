@@ -18,7 +18,7 @@ class Application(tk.Tk):
         self.time_remaining = None # pour le temps restant
         self.pause_verrouillage = False # pour éviter les bugs du minuteur après des doubles cliques sur le bp pause
         # ------------------------ Paramètrage de la fenêtre.
-        self.title(f"{nom_application} V{version_application}")
+        self.title(f"{nom_application} v{version_application}")
         # self.geometry("1080x720")
         self.width = int(self.winfo_screenwidth()/2.5)
         self.height = int(self.winfo_screenheight()/1.5)
