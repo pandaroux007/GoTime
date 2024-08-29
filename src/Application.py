@@ -25,10 +25,9 @@ class Application(tk.Tk):
         self.geometry(f"{self.width}x{self.height}")
         self.minsize(1000, 680)
         self.config(background=theme_sombre)
-        self.wm_iconbitmap()
         self.logo = tk.PhotoImage(file=chemin_image_application)
         self.iconphoto(False, self.logo)
-        # self.call('wm', 'iconphoto', self._w, self.logo)
+        self.call('wm', 'iconphoto', self._w, self.logo)
         self.bind("<1>", lambda event: event.widget.focus_set())
         # ------------------------ Barre de menu
         barre_de_menu = tk.Menu(self)
@@ -43,7 +42,9 @@ class Application(tk.Tk):
         commandes_menu = tk.Menu(barre_de_menu, tearoff=0)
         commandes_menu.add_command(label="Effacer les entrées", command=self.clear_entrees)
         commandes_menu.add_command(label="Déporter minuteur", command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
-        commandes_menu.add_command(label="Plein écran", command=lambda: self.geometry("{}x{}".format(self.winfo_screenwidth(), self.winfo_screenheight())))
+        # à essayer : win.eval('tk::PlaceWindow . center')
+        # vu à ce lien : https://www.tutorialspoint.com/how-to-center-a-window-on-the-screen-in-tkinter
+        if systeme_exploitation != "Windows": commandes_menu.add_command(label="Plein écran", command=lambda: self.geometry("{}x{}".format(self.winfo_screenwidth(), self.winfo_screenheight())))
         barre_de_menu.add_cascade(label="Commandes", menu=commandes_menu)
         # ------------------------ Création d'un troisième menu 'Source'
         source_menu = tk.Menu(barre_de_menu, tearoff=0)
@@ -301,6 +302,7 @@ class Application(tk.Tk):
         self.fenetre_deportee.title(f"Temps restant - {nom_application}")
         self.fenetre_deportee.protocol("WM_DELETE_WINDOW", self.fermer_fenetre_temps_restant_deporte)
         self.fenetre_deportee.wm_attributes("-topmost", 1)
+        self.wm_iconbitmap(); self.fenetre_deportee.iconphoto(False, self.logo)
         self.bouton_deporter_temps_restant.config(text="Fermer la fenêtre affichant le temps restant", activebackground=couleur_frame_minuteur_rouge, command=self.fermer_fenetre_temps_restant_deporte)
         # ------------------------ Afficher le temps restant au centre
         self.temps_restant_label_fenetre_deporte = tk.Label(self.fenetre_deportee, text="Temps restant", font=("Arial", 35), bg=couleur_frame_minuteur_verte, fg="black")
@@ -350,7 +352,12 @@ class FenetreInfoAffichageLienGitHub(tk.Toplevel):
         super().__init__()
         self.title("Information")
         self.geometry("340x170")
+        self.resizable(False, False)
         self.config(background="white")
+        self.wm_iconbitmap()
+        self.logo = tk.PhotoImage(file=chemin_image_application)
+        self.iconphoto(False, self.logo)
+        self.bind("<1>", lambda event: event.widget.focus_set())
         # ------------------------ Configuration du style ttk
         self.style = ttk.Style()
         self.style.theme_use('clam')
@@ -359,20 +366,20 @@ class FenetreInfoAffichageLienGitHub(tk.Toplevel):
                                             bg="white", fg="black", justify='center')
         self.texte_avant_le_lien.pack(pady=(5, 0))
         # ------------------------ Afficher le lien
-        self.lien_vers_le_github = ttk.Entry(self, width=32)
+        self.lien_vers_le_github = ttk.Entry(self, width=38)
         self.lien_vers_le_github.insert(0, lien_du_github)
         self.lien_vers_le_github.pack(pady=(0, 5))
         # ------------------------ Affichage des deux boutons dans une frame
-        self.frame_bouton_fenetre_info = tk.Frame(self, background="white", borderwidth=0)
+        self.frame_bouton_fenetre_info = tk.Frame(self, background="white", borderwidth=0, width=38)
         self.frame_bouton_fenetre_info.pack(pady=(10, 0))
         # Bouton pour quitter la fenetre
         self.bouton_quitter_fenetre = tk.Button(self.frame_bouton_fenetre_info, text="Quitter",
                                                 activebackground=couleur_frame_minuteur_rouge, command=self.destroy)
-        self.bouton_quitter_fenetre.pack(side=tk.LEFT, padx=(5, 5), expand=True)
+        self.bouton_quitter_fenetre.pack(side=tk.LEFT, padx=(0, 5), expand=True)
         # Bouton pour copier le lien dans le presse papier
         self.bouton_copier_le_lien = tk.Button(self.frame_bouton_fenetre_info, text="Copier le lien", cursor="hand2",
                                                activebackground=couleur_frame_minuteur_jaune, command=self.copier_lien_et_update_bouton)
-        self.bouton_copier_le_lien.pack(side=tk.RIGHT, padx=(5, 5), expand=True)
+        self.bouton_copier_le_lien.pack(side=tk.RIGHT, padx=(5, 0), expand=True)
         self.couleur_original_bp_copier_le_lien = self.bouton_copier_le_lien.cget("background")
 
     def copier_lien_et_update_bouton(self):
@@ -394,6 +401,6 @@ class FenetreInfoAffichageLienGitHub(tk.Toplevel):
         self.bouton_copier_le_lien.configure(image="", text="Copier le lien", compound=tk.CENTER, background=self.couleur_original_bp_copier_le_lien,
                                           activebackground=couleur_frame_minuteur_jaune, command=self.copier_lien_et_update_bouton)
         
-    def copier_le_lien_dans_le_presse_papier(self):
+    def copier_le_lien_dans_le_presse_papier(self): # ne semble pas fonctionner sous windows ? Peut-être cette fonction gère t-elle un pressepapier interne à tkinter ?
         self.clipboard_clear()
         self.clipboard_append(lien_du_github)

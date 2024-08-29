@@ -17,6 +17,9 @@ class FenetreParametres(tk.Toplevel):
             self.iconbitmap(chemin_image_application)
         else: pass
         self.resizable(False, False)
+        self.wm_iconbitmap()
+        self.logo = tk.PhotoImage(file=chemin_image_application)
+        self.iconphoto(False, self.logo)
         # ------------------------ Créer le titre de la page de paramètres
         self.label_titre_parametres = tk.Label(self, text=f"{nom_application} - Paramètres", font=("Arial", 24))
         self.label_titre_parametres.pack(pady=10)
@@ -108,14 +111,17 @@ class FenetreEssayerSonnerie(tk.Toplevel):
         super().__init__()
         # ------------------------ Configuration de la fenêtre
         self.title("Essayer la sonnerie")
-        self.geometry("340x100")
+        # self.geometry("340x100")
         self.resizable(False, False)
+        self.wm_iconbitmap()
+        self.logo = tk.PhotoImage(file=chemin_image_application)
+        self.iconphoto(False, self.logo)
         self.protocol("WM_DELETE_WINDOW", self.fermer_fenetre_essayer_sonnerie_et_arreter_sonnerie)
         # ------------------------ Configuration du style ttk
         self.style = ttk.Style()
         self.style.theme_use('clam')
         # ------------------------ Frame pour les boutons
-        self.frame_boutons = ttk.Frame(self)
+        self.frame_boutons = tk.Frame(self) # si je fais une frame ttk la couleur de fond est grise
         self.frame_boutons.pack(padx=20, pady=20, fill=tk.BOTH, expand=True)
         # ------------------------ Bouton pour jouer la sonnerie
         self.bouton_jouer_sonnerie = ttk.Button(self.frame_boutons, text="Jouer la sonnerie", command=lambda: jouer_sonnerie(True))

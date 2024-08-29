@@ -114,10 +114,10 @@ Quelques uns ne sont pas inclus par défaut dans python3, ils sont listés dans 
 ## Compilation
 Pour compiler et distribuer l'application, j'utilise [`nuitka`](https://github.com/Nuitka/Nuitka), avec cette commande :
 ```sh
-python3 -m nuitka --run --onefile --output-filename="GoTime" --disable-console --follow-imports --enable-plugin=tk-inter --linux-icon="dep/icon.ico" --macos-app-icon="dep/icon.ico" --windows-icon-from-ico="dep/icon.ico" runApp.py
+python3 -m nuitka --run --onefile --output-filename="GoTime" --windows-console-mode=disable --follow-imports --enable-plugin=tk-inter --linux-icon="dep/icon.ico" --macos-app-icon="dep/icon.ico" --windows-icon-from-ico="dep/icon.ico" runApp.py
 ```
 **Sous Windows, j'ai eu beaucoup de problème avec un antivirus (Avast) qui supprimait l'exécutable sous prétexte que c'était un cheval de trois. Si vous compilez l'application, je vous conseille de désactiver votre antivirus (je ne souhaitais pas le faire au début mais j'y ai été contraint, c'est la seule solution - même créer des exceptions ne fonctionne pas!).** <span style="color:red">**De plus, comme les pirates informatiques utilisent beaucoup nuitka pour compiler leurs virus, mon application a la même signature qu'un programme malveillant et se fait donc bloquer par les antivirus!**<span>
-Pour tenter de corriger ce problème, je vais tenter d'ajouter `--mingw64` lors de la compilation sous windows pour changer de compilateur.
+Pour essayer de corriger ce problème, je vais tenter d'ajouter `--mingw64` lors de la compilation sous windows pour changer de compilateur.
 *Si un message d'erreur vous indique que python n'existe pas ou n'est pas reconnu ou autre, essayez de changer `python3` en `python` au début de la commande.*
 
 **TIP** : Installez nuitka avec `pip install nuitka`, puis installez l'utilitaire de compression d'exécutables si il n'est pas installé (`pip install zstandard`), configurez le cache des fichiers `C` (ccache), puis lancez la commande indiquez plus haut.
