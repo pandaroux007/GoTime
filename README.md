@@ -20,7 +20,8 @@ ___
 ## Installation
 1. Téléchargez la dernière version de l'application au format zip sur GitHub à ce lien : https://github.com/pandaroux007/GoTime/releases
 2. Décompressez le fichier zip, puis placez vous dans le dossier ainsi optenu.
-### Sous linux
+### Sous Linux
+(doit fonctionner sous debian et ses sous-distributions)
 #### *Via* l'interface graphique si disponible
 1. Sélectionnez le fichier `install.sh`, puis faites un clique droit.
 2. Rendez vous dans `Propriétés > Permissions > Autoriser l'exécution du fichier comme un programme`.
@@ -30,9 +31,57 @@ ___
 2. Exécutez la commande `chmod +x install.sh` pour autoriser l'exécution du fichier comme un programme.
 3. Lancer le programme d'installation avec la commande `sudo ./install.sh`
 
+<span style="color:red">**Attention, je n'ai pas encore pu essayer les script `install.sh` et `uninstall.sh`, soyez donc prudent (et si un contributeur peut les tester dans une machine virtuelle ou sur sa distribution (?), ce serait super!).**</span> Dites moi dans les issues si vous trouvez un problème dans ce fichier d'installation ou si vous l'avez essayer (en précisant votre distribution dans ce cas)!
+
 ### Sous Microsoft Windows
-1. Sélectionnez le fichier `install.bat`, puis faite un clique droit.
-2. Sélectionnez `Exécuter en tant qu'administrateur`.
+1. Lancer le fichier d'installation `gotime-win-v1.0.2-beta-install.exe`, puis suivez les instructions.
+
+### Sous MacOS-X
+L'application n'est pas compilée sous Mac pour l'instant, vous pouvez l'exécuter depuis python3 si vous souhaitez l'utiliser (`python3 -m runApp.py`).
+
+## Désinstallation
+### Sous Linux
+Créez un fichier `uninstall.sh`, puis copier coller ce script shell bash dedant.
+```sh
+#!/bin/bash
+
+if [ "$EUID" -ne 0 ]; then # verif si l'utilisateur a les droits root
+  echo "Ce script doit être exécuté en tant que root (utiliser la commande 'sudo ./uninstall.sh')"
+  exit 1
+fi
+
+# chemins de l'appli
+APP_NAME="GoTime"
+INSTALL_DIR="/opt/$APP_NAME"
+DESKTOP_FILE="/usr/share/applications/$APP_NAME.desktop"
+
+# supprimer le répertoire d'installation
+if [ -d "$INSTALL_DIR" ]; then
+  rm -rf "$INSTALL_DIR"
+  echo "Répertoire d'installation supprimé : $INSTALL_DIR"
+else
+  echo "Le répertoire d'installation n'existe pas : $INSTALL_DIR"
+fi
+
+# Supprimer l'entrée .desktop dans le menu démarrer
+if [ -f "$DESKTOP_FILE" ]; then
+  rm "$DESKTOP_FILE"
+  echo "Fichier .desktop supprimé : $DESKTOP_FILE"
+else
+  echo "Le fichier .desktop n'existe pas : $DESKTOP_FILE"
+fi
+
+# Mise à jour de la base de données des applications
+update-desktop-database
+
+echo "Désinstallation de $APP_NAME terminée avec succès ! Vous pouvez maintenant supprimer ce fichier."
+```
+Une fois ceci fait, vous pouvez autoriser l'exécution du fichier comme un programme comme décrit dans le [chapitre Installation](#installation), puis le lancer avec la commande `sudo ./uninstall.sh`.
+
+*Vous pouvez également ouvrir votre explorateur de fichier en mode superutilisateur et supprimer manuellement le répertoire d'installation dans `/opt/GoTime` et l'entrée du menu démarrer `/usr/share/applications/GoTime.desktop`*
+
+### Sous Microsoft Windows
+Rendez-vous dans vos Paramètres, puis dans le menu Application recherchez "*GoTime*" (si vous ne le trouvez pas c'est que l'application est déjà désinstallée - pour vous en assurer aller dans votre explorateur de fichier, dans `C:\Programmes (x86)` et regardez si le dossier *GoTime* existe.), puis cliquez sur désinstaller.
 ___
 
 ## Crédits
@@ -134,9 +183,9 @@ Pour compiler et distribuer l'application, j'utilise [`nuitka`](https://github.c
 ```sh
 python3 -m nuitka --run --onefile --output-filename="GoTime" --windows-console-mode=disable --follow-imports --enable-plugin=tk-inter --linux-icon="dep/icon.ico" --macos-app-icon="dep/icon.ico" --windows-icon-from-ico="dep/icon.ico" runApp.py
 ```
-**Sous Windows, j'ai eu beaucoup de problème avec un antivirus (Avast) qui supprimait l'exécutable sous prétexte que c'était un cheval de trois. Si vous compilez l'application, je vous conseille de désactiver votre antivirus (je ne souhaitais pas le faire au début mais j'y ai été contraint, c'est la seule solution - même créer des exceptions ne fonctionne pas!).** <span style="color:red">**De plus, comme les pirates informatiques utilisent beaucoup nuitka pour compiler leurs virus, mon application a la même signature qu'un programme malveillant et se fait donc bloquer par les antivirus!**<span>
+**Sous Windows, j'ai eu beaucoup de problème avec un antivirus (Avast) qui supprimait l'exécutable sous prétexte que c'était un cheval de trois. Si vous compilez l'application, je vous conseille de désactiver votre antivirus (je ne souhaitais pas le faire au début mais j'y ai été contraint, c'est la seule solution - même créer des exceptions ne fonctionne pas!).**
 
-Pour essayer de corriger ce problème, je vais tenter d'ajouter `--mingw64` lors de la compilation sous windows pour changer de compilateur.
+<span style="color:red">**De plus, comme [les pirates informatiques utilisent beaucoup nuitka](https://github.com/Nuitka/Nuitka/issues/2701) pour compiler leurs virus, mon application a la même signature qu'un programme malveillant et se fait donc bloquer par les antivirus (testé sur [virustotal](https://www.virustotal.com/gui/home/upload))!**</span> Pour essayer de corriger ce problème, je vais tenter d'ajouter `--mingw64` lors de la compilation sous windows pour changer de compilateur.
 
 *Si un message d'erreur vous indique que python n'existe pas ou n'est pas reconnu ou autre, essayez de changer `python3` en `python` au début de la commande.*
 

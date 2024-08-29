@@ -14,3 +14,8 @@ en_cours.txt
 # fichier LibreOffice Draw de l'icone de l'appli
 icon.odg
 .~lock.icon.odg#
+# dossier contenant des éléments de développement
+dev
+# fichier pascal d'inno-setup
+gotime-innosetup.iss
+# fichier d'installation sous Linux
