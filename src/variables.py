@@ -17,7 +17,7 @@ chemin_fichier_licence = os.path.join(os.path.dirname(repertoire_courant), "LICE
 
 lien_du_github = "https://github.com/pandaroux007/GoTime"
 nom_application = "GoTime"
-version_application = "1.0.2-bêta"
+version_application = "1.0.3-bêta"
 
 def load_config():
     try:
@@ -50,7 +50,6 @@ def log_error(error_message):
         
         file.write(f"{error_data}\n")
 
-# voir pour utiliser "https://docs.activestate.com/activetcl/8.6/tcl/snack/python-man.html" ?
 sonnerie_actuelle = None
 def jouer_sonnerie(etat_jouer_son):
     try:

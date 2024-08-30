@@ -13,7 +13,7 @@ APP_NAME="GoTime"
 INSTALL_DIR="/opt/$APP_NAME"
 DESKTOP_FILE="/usr/share/applications/$APP_NAME.desktop"
 ICON_FILE="$INSTALL_DIR/dep/icon.png"
-EXEC_NAME="gotime-linux-v1.0.2-beta"
+EXEC_NAME="gotime-linux"
 
 echo "Merci d'avoir téléchargé et installé $APP_NAME! Démarrage du programme d'installation..."
 # verif fichiers sources

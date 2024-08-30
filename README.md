@@ -31,8 +31,6 @@ ___
 2. Exécutez la commande `chmod +x install.sh` pour autoriser l'exécution du fichier comme un programme.
 3. Lancer le programme d'installation avec la commande `sudo ./install.sh`
 
-<span style="color:red">**Attention, je n'ai pas encore pu essayer les script `install.sh` et `uninstall.sh`, soyez donc prudent (et si un contributeur peut les tester dans une machine virtuelle ou sur sa distribution (?), ce serait super!).**</span> Dites moi dans les issues si vous trouvez un problème dans ce fichier d'installation ou si vous l'avez essayer (en précisant votre distribution dans ce cas)!
-
 ### Sous Microsoft Windows
 1. Lancer le fichier d'installation `gotime-win-v1.0.2-beta-install.exe`, puis suivez les instructions.
 
@@ -46,7 +44,7 @@ Créez un fichier `uninstall.sh`, puis copier coller ce script shell bash dedant
 #!/bin/bash
 
 if [ "$EUID" -ne 0 ]; then # verif si l'utilisateur a les droits root
-  echo "Ce script doit être exécuté en tant que root (utiliser la commande 'sudo ./uninstall.sh')"
+  echo -e "\e[1;31mERREUR! Ce script doit être exécuté en tant que superutilisateur (utiliser la commande 'sudo ./install.sh')"
   exit 1
 fi
 
@@ -63,7 +61,6 @@ else
   echo "Le répertoire d'installation n'existe pas : $INSTALL_DIR"
 fi
 
-# Supprimer l'entrée .desktop dans le menu démarrer
 if [ -f "$DESKTOP_FILE" ]; then
   rm "$DESKTOP_FILE"
   echo "Fichier .desktop supprimé : $DESKTOP_FILE"
@@ -71,9 +68,8 @@ else
   echo "Le fichier .desktop n'existe pas : $DESKTOP_FILE"
 fi
 
-# Mise à jour de la base de données des applications
-update-desktop-database
-
+# mise à jour de la base de données des applications
+update-desktop-database && echo "Mise à jour de la base de données des applis..."
 echo "Désinstallation de $APP_NAME terminée avec succès ! Vous pouvez maintenant supprimer ce fichier."
 ```
 Une fois ceci fait, vous pouvez autoriser l'exécution du fichier comme un programme comme décrit dans le [chapitre Installation](#installation), puis le lancer avec la commande `sudo ./uninstall.sh`.
@@ -123,6 +119,14 @@ une nouvelle fenêtre avec affiché seulement le temps restant, sur un fond de c
 visible que l'affichage de l'application, mais aussi le fait qu'elle reste toujours au premier plan (même si vous cliquez à côté, elle
 restera apparente).
 
+Voici l'application à la version v1.0.3-bêta en mode clair (light) :
+
+![gotime version 1.0.3-bêta clair](screenshots/gotime-light-screenshot.png)
+___
+Et la voici en mode sombre (dark) :
+
+![gotime version 1.0.3-bêta sombre](screenshots/gotime-dark-screenshot.png)
+
 ## Améliorations et Ajouts
 Maintenant qu'il n'y a plus de bugs **dans le code python** d'après les tests fait récemment, voici une petite liste non exhaustive des futurs améliorations.
 - Ajout d'un système permettant à l'utilisateur d'enregistrer des temps (par exemple ceux qu'il utilise régulièrement), en
@@ -140,6 +144,8 @@ Maintenant qu'il n'y a plus de bugs **dans le code python** d'après les tests f
   sonnerie. Concrètement, si la sonnerie est désactivé alors le sélecteur sera grisé, inutilisable.
 
 - Si un jour, une fois l'application terminée completement avec toutes les améliorations présentées ci-haut, j'ai envie de perdre mon temps, je passerai probablement sur une version 4 cross-platform, avec wxWidgets (**wxPython**) ou Toga (?). Mais comme cela nécessite de refaire toute l'interface, je ne le ferai probablement pas avant longtemps (j'en profiterai pour changer quelques détails pour rendre l'application plus conviviale).
+
+- Remplacer `pygame.mixer` (module utilisé pour la sonnerie) par un autre module de son installé par défaut dans Python3 et plus adapté/plus léger (je pensais à la base à `TkSnack` mais celui-ci est écrit en Python2 et n'est plus maintenu, donc j'envisage d'utiliser `pyAudio` - à voir si elle est légère, multiplaforme, avec `play()` et `stop()`, non bloquante, et sans dépendance.)
 
 # Développement
 ## Installation des dépendances
@@ -169,24 +175,24 @@ Quelques uns ne sont pas inclus par défaut dans python3, ils sont listés dans 
 3. webbrowser
 4. sys
 5. subprocess
-6. darkdetect
-7. PIL (pillow)
+6. **darkdetect**
+7. **PIL (pillow)**
 8. os
 9. json
 10. platform
 11. getpass
 12. socket
-13. pygame
+13. **pygame**
 
 ## Compilation
 Pour compiler et distribuer l'application, j'utilise [`nuitka`](https://github.com/Nuitka/Nuitka), avec cette commande :
 ```sh
-python3 -m nuitka --run --onefile --output-filename="GoTime" --windows-console-mode=disable --follow-imports --enable-plugin=tk-inter --linux-icon="dep/icon.ico" --macos-app-icon="dep/icon.ico" --windows-icon-from-ico="dep/icon.ico" runApp.py
+python3 -m nuitka --run --onefile --output-filename="GoTime" --windows-console-mode=disable --follow-imports --enable-plugin=tk-inter --nofollow-import-to=pygame.tests --linux-icon="dep/icon.ico" --macos-app-icon="dep/icon.ico" --windows-icon-from-ico="dep/icon.ico" runApp.py
 ```
-**Sous Windows, j'ai eu beaucoup de problème avec un antivirus (Avast) qui supprimait l'exécutable sous prétexte que c'était un cheval de trois. Si vous compilez l'application, je vous conseille de désactiver votre antivirus (je ne souhaitais pas le faire au début mais j'y ai été contraint, c'est la seule solution - même créer des exceptions ne fonctionne pas!).**
+*Sous Windows, si un message d'erreur vous indique que python n'existe pas ou n'est pas reconnu ou autre, essayez de changer `python3` en `python` au début de la commande.*
 
-<span style="color:red">**De plus, comme [les pirates informatiques utilisent beaucoup nuitka](https://github.com/Nuitka/Nuitka/issues/2701) pour compiler leurs virus, mon application a la même signature qu'un programme malveillant et se fait donc bloquer par les antivirus (testé sur [virustotal](https://www.virustotal.com/gui/home/upload))!**</span> Pour essayer de corriger ce problème, je vais tenter d'ajouter `--mingw64` lors de la compilation sous windows pour changer de compilateur.
+<span style="color:red">**Attention, comme [les pirates informatiques utilisent beaucoup nuitka](https://github.com/Nuitka/Nuitka/issues/2701) pour compiler leurs virus, l'application a la même signature qu'un programme malveillant</span> et se fait donc bloquer par les antivirus (testée sur [virustotal](https://www.virustotal.com/gui/home/upload), et considérée comme étant un cheval de troie par beaucoup, dont Avast)!**
 
-*Si un message d'erreur vous indique que python n'existe pas ou n'est pas reconnu ou autre, essayez de changer `python3` en `python` au début de la commande.*
+**EDIT** : Après tests, il se trouve que l'ajout de `--mingw64` lors de la compilation sous Windows ne change rien, l'application et son installation se font toujours flaguer. Je conseille donc à ceux qui installent l'application ou qui la compile **de désactiver pour quelques minutes leurs antivirus**.
 
 **TIP** : Installez nuitka avec `pip install nuitka`, puis installez l'utilitaire de compression d'exécutables si il n'est pas installé (`pip install zstandard`), configurez le cache des fichiers `C` (ccache), puis lancez la commande indiquez plus haut.

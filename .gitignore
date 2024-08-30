@@ -13,3 +13,5 @@ icon.odg
 .~lock.icon.odg#
 # dossier contenant des éléments de développement
 dev
+# dossier d'environnement python au cas ou
+gotimeEnv

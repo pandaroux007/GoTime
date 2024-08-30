@@ -4,11 +4,12 @@ from datetime import datetime # pour la gestion du temps et du minuteur
 import webbrowser # pour l'ouverture du navigateur avec le lien du github de l'application
 from tkinter import messagebox # pour les erreur et les validations
 import darkdetect # pour la détection du thème de l'OS
-import sys # Pour les fonctions suivantes : "exit", "executable", et "argv"
+import sys # Pour les fonctions "exit", "executable", et "argv"
 # ------------------------ fichiers de l'application
 from variables import * # fichier contenant toutes les variables
 from FenetreLicence import FenetreLicence # fichier contenant la fenêtre d'affichage de la licence
 from Parametres import FenetreParametres # fichier contenant la fenêtre d'affichage des paramètres
+from FenetreInfo import FenetreInfoAffichageLienGitHub # fichier contenant la fenêtre d'affichage du lien du dépôt GitHub
 
 class Application(tk.Tk):
     def __init__(self):
@@ -312,16 +313,45 @@ class Application(tk.Tk):
         self.bouton_deporter_temps_restant.config(text="Déporter le temps restant dans une nouvelle fenêtre", activebackground=couleur_frame_minuteur_verte, command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
         self.fenetre_deportee.destroy()
 
-    # fonctionnelle dans la v1.0.0, à tester en compilé
     def restart(self):
         if messagebox.askyesno(title="Redémarrer ?", message=f"Voulez vous vraiment redémarrer l'application {nom_application} ?"):
-            self.destroy()
             try:
-                python = sys.executable
-                os.execl(python, python, *sys.argv)
+                import subprocess
+                # Annule tous les événements "after" en attente
+                for after_id in self.tk.eval('after info').split():
+                    self.after_cancel(after_id)
+
+                # Obtient le chemin de l'exécutable
+                if getattr(sys, 'frozen', False):
+                    # Le programme est compilé
+                    if hasattr(sys, '_MEIPASS'):
+                        # PyInstaller
+                        application_path = sys.executable
+                    else:
+                        # Nuitka
+                        application_path = sys.argv[0]
+                else:
+                    # Le programme est exécuté avec Python
+                    application_path = sys.executable
+
+                # Prépare la commande pour redémarrer
+                if sys.platform.startswith('win'):
+                    # Windows
+                    args = [application_path] + sys.argv[1:]
+                    creationflags = subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS
+                    subprocess.Popen(args, creationflags=creationflags, close_fds=True)
+                else:
+                    # Linux/Unix
+                    args = [application_path] + sys.argv
+                    subprocess.Popen(args, start_new_session=True)
+
+                # Détruit la fenêtre principale et quitte le programme actuel
+                self.destroy()
+                os._exit(0)
             except Exception as e:
                 messagebox.showerror(title="Erreur", message=f"Erreur lors du redémarrage du programme : {e}")
-        else: return
+        else:
+            return
 
     def deselectionner_les_entry(self): self.focus_set()
     def clear_entrees(self):
@@ -347,61 +377,3 @@ class Application(tk.Tk):
         if total_secondes >= 5 and total_secondes <= temps_max:
             self.bouton_start.config(state="normal")
         else: self.bouton_start.config(state="disabled")
-
-class FenetreInfoAffichageLienGitHub(tk.Toplevel):
-    def __init__(self):
-        super().__init__()
-        self.title("Information")
-        self.geometry("340x170")
-        self.resizable(False, False)
-        self.config(background="white")
-        self.wm_iconbitmap()
-        self.logo = tk.PhotoImage(file=chemin_image_application)
-        self.iconphoto(False, self.logo)
-        self.bind("<1>", lambda event: event.widget.focus_set())
-        # ------------------------ Configuration du style ttk
-        self.style = ttk.Style()
-        self.style.theme_use('clam')
-        # ------------------------ Affichage du texte
-        self.texte_avant_le_lien = tk.Label(self, text="Lien vers le dépôt GitHub de GoTime :\n", font=("Arial", 12),
-                                            bg="white", fg="black", justify='center')
-        self.texte_avant_le_lien.pack(pady=(5, 0))
-        # ------------------------ Afficher le lien
-        self.lien_vers_le_github = ttk.Entry(self, width=38)
-        self.lien_vers_le_github.insert(0, lien_du_github)
-        self.lien_vers_le_github.pack(pady=(0, 5))
-        # ------------------------ Affichage des deux boutons dans une frame
-        self.frame_bouton_fenetre_info = tk.Frame(self, background="white", borderwidth=0, width=38)
-        self.frame_bouton_fenetre_info.pack(pady=(10, 0))
-        # Bouton pour quitter la fenetre
-        self.bouton_quitter_fenetre = tk.Button(self.frame_bouton_fenetre_info, text="Quitter",
-                                                activebackground=couleur_frame_minuteur_rouge, command=self.destroy)
-        self.bouton_quitter_fenetre.pack(side=tk.LEFT, padx=(0, 5), expand=True)
-        # Bouton pour copier le lien dans le presse papier
-        self.bouton_copier_le_lien = tk.Button(self.frame_bouton_fenetre_info, text="Copier le lien", cursor="hand2",
-                                               activebackground=couleur_frame_minuteur_jaune, command=self.copier_lien_et_update_bouton)
-        self.bouton_copier_le_lien.pack(side=tk.RIGHT, padx=(5, 0), expand=True)
-        self.couleur_original_bp_copier_le_lien = self.bouton_copier_le_lien.cget("background")
-
-    def copier_lien_et_update_bouton(self):
-        self.copier_le_lien_dans_le_presse_papier()
-        # ------------------------ Changer l'apparence du bouton après la copie
-        self.bouton_copier_le_lien.config(text="Lien Copié !", activebackground=couleur_frame_minuteur_verte, background=couleur_frame_minuteur_verte)
-        try:
-            from PIL import Image, ImageTk
-            # ------------------------ convertir l'image svg en format compatible tk
-            checkmark = Image.open(chemin_image_checkmark)
-            checkmark = checkmark.resize((24, 18))
-            checkmark = ImageTk.PhotoImage(checkmark)
-            self.bouton_copier_le_lien.config(image=checkmark, compound=tk.LEFT, command=None)
-            self.bouton_copier_le_lien.image = checkmark
-            self.after(2000, self.modifier_bouton_apres_deux_secondes_copie)
-        except FileNotFoundError: pass
-
-    def modifier_bouton_apres_deux_secondes_copie(self):
-        self.bouton_copier_le_lien.configure(image="", text="Copier le lien", compound=tk.CENTER, background=self.couleur_original_bp_copier_le_lien,
-                                          activebackground=couleur_frame_minuteur_jaune, command=self.copier_lien_et_update_bouton)
-        
-    def copier_le_lien_dans_le_presse_papier(self): # ne semble pas fonctionner sous windows ? Peut-être cette fonction gère t-elle un pressepapier interne à tkinter ?
-        self.clipboard_clear()
-        self.clipboard_append(lien_du_github)
