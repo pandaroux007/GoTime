@@ -312,21 +312,15 @@ class Application(tk.Tk):
         self.bouton_deporter_temps_restant.config(text="Déporter le temps restant dans une nouvelle fenêtre", activebackground=couleur_frame_minuteur_verte, command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
         self.fenetre_deportee.destroy()
 
-    # tentative de mise en application de ce correctif pour les erreurs de redémarrage de l'appli :
-    # https://stackoverflow.com/questions/72868924/restart-compiled-python-script-with-pyinstaller
-    # résultat des tests : ne fonctionne ni sur linux mint 22 ni sur windows 11.
+    # fonctionnelle dans la v1.0.0, à tester en compilé
     def restart(self):
         if messagebox.askyesno(title="Redémarrer ?", message=f"Voulez vous vraiment redémarrer l'application {nom_application} ?"):
             self.destroy()
             try:
-                executable_filename = os.path.split(sys.executable)[1]
-                if executable_filename.lower().startswith('python'):
-                    python = sys.executable
-                    os.execv(python, [python, ] + sys.argv)
-                    pass
-                else: os.execv(sys.executable, sys.argv); pass
-                pass
-            except Exception as e: messagebox.showerror(title="Erreur", message=f"Erreur lors du redémarrage du programme : {e}")
+                python = sys.executable
+                os.execl(python, python, *sys.argv)
+            except Exception as e:
+                messagebox.showerror(title="Erreur", message=f"Erreur lors du redémarrage du programme : {e}")
         else: return
 
     def deselectionner_les_entry(self): self.focus_set()

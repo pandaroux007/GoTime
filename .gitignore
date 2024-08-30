@@ -4,18 +4,12 @@
 Thumbs.db
 # compilation + cache de python
 src/__pycache__
-src/GoTime
 output
 runApp.build
 runApp.dist
 runApp.onefile-build
-# fichier perso de developpement
-en_cours.txt
 # fichier LibreOffice Draw de l'icone de l'appli
 icon.odg
 .~lock.icon.odg#
 # dossier contenant des éléments de développement
 dev
-# fichier pascal d'inno-setup
-gotime-innosetup.iss
-# fichier d'installation sous Linux
