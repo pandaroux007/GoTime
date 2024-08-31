@@ -152,22 +152,7 @@ lancer la commande suivante (après vous être déplacé dans le répertoire du 
 ```sh
 pip install -r requirements.txt
 ```
-Cette commande installera tous les modules listés dans le fichier *requirements.txt*, utilisés par les programmes Python de l'application.
-
-## Fonctionnement
-GoTime fonctionne avec la fonction `after` de `tkinter`. L'affichage de l'heure fonctionne de cette manière et le minuteur également.
-Cette méthode permet d'appeller une fonction un certain temps plus tard, temps défini en ms. Pour modifier chaque seconde l'heure, par exemple,
-on utilise cette commande (l.130)
-```py
-self.after(1000, self.update_time)  # Met à jour toutes les secondes
-```
-Cela crée une boucle qui met à jour l'heure toutes les 1000ms, soit 1s. **C'est le même principe qui est utilisé pour le rafraichissement du minuteur.**
-Pour ce qui est des paramètres, l'application fonctionne grâce à une lecture/écriture dans un fichier json ([settings.json](dep/settings.json)).
-Tout le reste de l'application n'est qu'une question d'apparence et de widgets, la base fonctionne comme ceci.
-
-## Dépendance
-Pour fonctionner l'application requiert les modules suivants.
-Quelques uns ne sont pas inclus par défaut dans python3, ils sont listés dans le fichier [requirements.txt](requirements.txt).
+Cette commande installera les modules listés dans le fichier *requirements.txt*, utilisés par l'application mais qui ne sont pas inclue par défaut dans python3. Tous les modules utilisés par l'application sont listé ci-dessous :
 1. tkinter
 2. datetime
 3. webbrowser
@@ -181,6 +166,23 @@ Quelques uns ne sont pas inclus par défaut dans python3, ils sont listés dans 
 11. getpass
 12. socket
 13. **pygame**
+
+## Fonctionnement
+GoTime fonctionne avec la fonction `after` de `tkinter`. L'affichage de l'heure fonctionne de cette manière et le minuteur également.
+Cette méthode permet d'appeller une fonction un certain temps plus tard, temps défini en ms. Pour modifier chaque seconde l'heure, par exemple,
+on utilise cette commande (l.130)
+```py
+self.after(1000, self.update_time)  # Met à jour toutes les secondes
+```
+Cela crée une boucle qui met à jour l'heure toutes les 1000ms, soit 1s. **C'est le même principe qui est utilisé pour le rafraichissement du minuteur.**
+Pour ce qui est des paramètres, l'application fonctionne grâce à une lecture/écriture dans un fichier json ([settings.json](dep/settings.json)).
+Tout le reste de l'application n'est qu'une question d'apparence et de widgets, la base fonctionne comme ceci.
+
+## Bugs
+Il y a deux bug principal actuellement.
+1. Bien entendu, le bug des antivirus sur Windows persiste et c'est l'un des plus gros problèmes de l'application. Cepandant il est aussi très simple à contourner : il suffit de désactiver son antivirus le temps d'installer le logiciel et le réactiver ensuite (ce qui prouve leur inutilité sur ce point). Je conseille d'utiliser la fonction "disable for 10mn" pour ne pas oublier ensuite de le réactiver.
+
+2. Il y a également un bug sur la fonction de redémarrage de l'application, utilisée dans le menu et aussi par la fenêtre de paramètre pour appliquer certains changement (redémarrer permet de faire relire à au logiciel le fichier de paramètre). Malgré de nombreux essais et méthodes, je n'arrive pas à trouver quelque chose qui fonctionne à la fois sur l'interpréteur python (pour les développeurs et pour les utilisateurs d'appareil Apple...) et avec [le programme compilé](#compilation). Toutes les techniques testé jusqu'ici (visible dans les commit précédents à celui de l'ajout de [ce chapitre bugs](#bugs)) ne sont fonctionnelles qu'avec l'interpréteur python. La fonction utilisée s'appelle `restart` est est placée dans le fichier [`Application.py`](src/Application.py)
 
 ## Compilation
 Pour compiler et distribuer l'application, j'utilise [`nuitka`](https://github.com/Nuitka/Nuitka), avec cette commande :
