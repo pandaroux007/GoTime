@@ -43,9 +43,9 @@ class Application(tk.Tk):
         commandes_menu = tk.Menu(barre_de_menu, tearoff=0)
         commandes_menu.add_command(label="Effacer les entrées", command=self.clear_entrees)
         commandes_menu.add_command(label="Déporter minuteur", command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
-        # à essayer : win.eval('tk::PlaceWindow . center')
-        # vu à ce lien : https://www.tutorialspoint.com/how-to-center-a-window-on-the-screen-in-tkinter
-        if systeme_exploitation != "Windows": commandes_menu.add_command(label="Plein écran", command=lambda: self.geometry("{}x{}".format(self.winfo_screenwidth(), self.winfo_screenheight())))
+        if systeme_exploitation != "Windows":
+            commandes_menu.add_command(label="Plein écran", command=lambda: self.geometry("{}x{}".format(self.winfo_screenwidth(), self.winfo_screenheight())))
+            self.eval('tk::PlaceWindow . center')
         barre_de_menu.add_cascade(label="Commandes", menu=commandes_menu)
         # ------------------------ Création d'un troisième menu 'Source'
         source_menu = tk.Menu(barre_de_menu, tearoff=0)
@@ -317,41 +317,23 @@ class Application(tk.Tk):
         if messagebox.askyesno(title="Redémarrer ?", message=f"Voulez vous vraiment redémarrer l'application {nom_application} ?"):
             try:
                 import subprocess
-                # Annule tous les événements "after" en attente
-                for after_id in self.tk.eval('after info').split():
-                    self.after_cancel(after_id)
-
-                # Obtient le chemin de l'exécutable
-                if getattr(sys, 'frozen', False):
-                    # Le programme est compilé
-                    if hasattr(sys, '_MEIPASS'):
-                        # PyInstaller
-                        application_path = sys.executable
-                    else:
-                        # Nuitka
-                        application_path = sys.argv[0]
-                else:
-                    # Le programme est exécuté avec Python
-                    application_path = sys.executable
-
-                # Prépare la commande pour redémarrer
-                if sys.platform.startswith('win'):
-                    # Windows
-                    args = [application_path] + sys.argv[1:]
+                # annule tous les événements "after" en attente
+                for after_id in self.tk.eval('after info').split(): self.after_cancel(after_id)
+                if getattr(sys, 'frozen', False): # programme compilé
+                    if hasattr(sys, '_MEIPASS'): chemin_prog_app = sys.executable # avec PyInstaller
+                    else: chemin_prog_app = sys.argv[0] # avec Nuitka
+                else: chemin_prog_app = sys.executable # programme python
+                # crée la commande pour redémarrer
+                if systeme_exploitation == "Windows":
+                    args = [chemin_prog_app] + sys.argv[1:]
                     creationflags = subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS
                     subprocess.Popen(args, creationflags=creationflags, close_fds=True)
-                else:
-                    # Linux/Unix
-                    args = [application_path] + sys.argv
+                else: # Linux/Unix
+                    args = [chemin_prog_app] + sys.argv
                     subprocess.Popen(args, start_new_session=True)
-
-                # Détruit la fenêtre principale et quitte le programme actuel
-                self.destroy()
-                os._exit(0)
-            except Exception as e:
-                messagebox.showerror(title="Erreur", message=f"Erreur lors du redémarrage du programme : {e}")
-        else:
-            return
+                self.destroy(); del subprocess, chemin_prog_app; os._exit(0)
+            except Exception as e: messagebox.showerror(title="Erreur", message=f"Erreur lors du redémarrage du programme : {e}")
+        else: return
 
     def deselectionner_les_entry(self): self.focus_set()
     def clear_entrees(self):

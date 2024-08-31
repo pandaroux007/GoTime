@@ -1,6 +1,5 @@
-# fichier système macOS-X
+# fichier système macOS-X, Windows
 .DS_Store
-# fichier système Windows
 Thumbs.db
 # compilation + cache de python
 src/__pycache__
@@ -8,10 +7,9 @@ output
 runApp.build
 runApp.dist
 runApp.onefile-build
-# fichier LibreOffice Draw de l'icone de l'appli
-icon.odg
-.~lock.icon.odg#
 # dossier contenant des éléments de développement
 dev
-# dossier d'environnement python au cas ou
+# dossier d'environnement python au cas où
 gotimeEnv
+# fichier contenant les screenshots de l'appli
+screenshots/

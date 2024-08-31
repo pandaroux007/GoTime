@@ -119,13 +119,13 @@ une nouvelle fenêtre avec affiché seulement le temps restant, sur un fond de c
 visible que l'affichage de l'application, mais aussi le fait qu'elle reste toujours au premier plan (même si vous cliquez à côté, elle
 restera apparente).
 
-Voici l'application à la version v1.0.3-bêta en mode clair (light) :
-
-![gotime version 1.0.3-bêta clair](screenshots/gotime-light-screenshot.png)
-___
-Et la voici en mode sombre (dark) :
-
-![gotime version 1.0.3-bêta sombre](screenshots/gotime-dark-screenshot.png)
+<p float="left">
+  <img src="screenshots/gotime-light-screenshot.png" width="49%" alt="GoTime version 1.0.3-bêta en mode clair" title="GoTime version 1.0.3-bêta en mode clair"/>
+  <img src="screenshots/gotime-dark-screenshot.png" width="49%" alt="GoTime version 1.0.3-bêta en mode sombre" title="GoTime version 1.0.3-bêta en mode sombre"/>
+</p>
+<p align="center">
+  <em>À gauche : GoTime v1.0.3-bêta en mode clair | À droite : GoTime v1.0.3-bêta en mode sombre</em>
+</p>
 
 ## Améliorations et Ajouts
 Maintenant qu'il n'y a plus de bugs **dans le code python** d'après les tests fait récemment, voici une petite liste non exhaustive des futurs améliorations.

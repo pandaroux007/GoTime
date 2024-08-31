@@ -3,10 +3,9 @@ import sys
 from tkinter import messagebox
 from json import load, dump
 from platform import system
-import getpass
 import socket
 from datetime import datetime
-# https://stackoverflow.com/questions/59427353/how-to-get-the-current-path-of-compiled-binary-from-python-using-nuitka
+
 repertoire_courant = os.path.dirname(os.path.abspath(os.path.realpath(sys.argv[0])))
 chemin_fichier_parametres = os.path.join(os.path.dirname(repertoire_courant), "dep", "settings.json")
 chemin_fichier_logs = os.path.join(os.path.dirname(repertoire_courant), 'log', "error_log.csv")
@@ -14,6 +13,13 @@ chemin_image_application = os.path.join(os.path.dirname(repertoire_courant), 'de
 chemin_image_checkmark = os.path.join(os.path.dirname(repertoire_courant), 'dep', 'checkmark.png')
 chemin_fichier_wav_fin_temps = os.path.join(os.path.dirname(repertoire_courant), 'sons', 'digital-clock-alarm.wav')
 chemin_fichier_licence = os.path.join(os.path.dirname(repertoire_courant), "LICENCE.txt")
+""" # version des chemins de fichier lors de la compilation
+chemin_fichier_parametres = os.path.join(repertoire_courant, "dep", "settings.json")
+chemin_fichier_logs = os.path.join(repertoire_courant, 'log', "error_log.csv")
+chemin_image_application = os.path.join(repertoire_courant, 'dep', 'icon.png')
+chemin_image_checkmark = os.path.join(repertoire_courant, 'dep', 'checkmark.png')
+chemin_fichier_wav_fin_temps = os.path.join(repertoire_courant, 'sons', 'digital-clock-alarm.wav')
+chemin_fichier_licence = os.path.join(repertoire_courant, "LICENCE.txt") """
 
 lien_du_github = "https://github.com/pandaroux007/GoTime"
 nom_application = "GoTime"
@@ -37,18 +43,17 @@ def save_config(config):
         return None; exit()
 
 def log_error(error_message):
+    import getpass
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     username = getpass.getuser()
     hostname = socket.gethostname()
-
     error_data = f"{timestamp}   |   {username} sur {hostname}   |   {error_message}"
-
     with open(chemin_fichier_logs, mode='a', newline='') as file:
-        if file.tell() == 0:  # Vérifie si le fichier est vide
+        if file.tell() == 0:  # verif si le fichier est vide
             header = "Date + Heure   |   User et hostname   |   Erreur"
             file.write(f"{header}\n")
-        
         file.write(f"{error_data}\n")
+    del getpass
 
 sonnerie_actuelle = None
 def jouer_sonnerie(etat_jouer_son):
@@ -58,10 +63,8 @@ def jouer_sonnerie(etat_jouer_son):
         global sonnerie_actuelle
         if sonnerie_actuelle is None:
             sonnerie_actuelle = mixer.Sound(chemin_fichier_wav_fin_temps)
-        if etat_jouer_son:
-            sonnerie_actuelle.play()
-        else:
-            sonnerie_actuelle.stop()
+        if etat_jouer_son: sonnerie_actuelle.play()
+        else: sonnerie_actuelle.stop()
     except Exception as e: log_error(e); pass
 
 parametres_fichier_json = load_config()
