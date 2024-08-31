@@ -179,7 +179,7 @@ Pour ce qui est des paramètres, l'application fonctionne grâce à une lecture/
 Tout le reste de l'application n'est qu'une question d'apparence et de widgets, la base fonctionne comme ceci.
 
 ## Bugs
-Il y a deux bug principal actuellement.
+Il y a deux bug actuellement découverts.
 1. Bien entendu, le bug des antivirus sur Windows persiste et c'est l'un des plus gros problèmes de l'application. Cepandant il est aussi très simple à contourner : il suffit de désactiver son antivirus le temps d'installer le logiciel et le réactiver ensuite (ce qui prouve leur inutilité sur ce point). Je conseille d'utiliser la fonction "disable for 10mn" pour ne pas oublier ensuite de le réactiver.
 
 2. Il y a également un bug sur la fonction de redémarrage de l'application, utilisée dans le menu et aussi par la fenêtre de paramètre pour appliquer certains changement (redémarrer permet de faire relire à au logiciel le fichier de paramètre). Malgré de nombreux essais et méthodes, je n'arrive pas à trouver quelque chose qui fonctionne à la fois sur l'interpréteur python (pour les développeurs et pour les utilisateurs d'appareil Apple...) et avec [le programme compilé](#compilation). Toutes les techniques testé jusqu'ici (visible dans les commit précédents à celui de l'ajout de [ce chapitre bugs](#bugs)) ne sont fonctionnelles qu'avec l'interpréteur python. La fonction utilisée s'appelle `restart` est est placée dans le fichier [`Application.py`](src/Application.py)
