@@ -313,7 +313,7 @@ class Application(tk.Tk):
         self.bouton_deporter_temps_restant.config(text="Déporter le temps restant dans une nouvelle fenêtre", activebackground=couleur_frame_minuteur_verte, command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
         self.fenetre_deportee.destroy()
 
-    def restart(self):
+    def restart(self): # pas mal de trucs pompés sur stackoverflow...
         if messagebox.askyesno(title="Redémarrer ?", message=f"Voulez vous vraiment redémarrer l'application {nom_application} ?"):
             try:
                 import subprocess

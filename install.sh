@@ -1,11 +1,9 @@
 #!/bin/bash
 
-set -e # Arrête le script si une commande échoue
-
+set -e # arrête le script si une commande échoue
 # Vérification des droits root
 if [ "$EUID" -ne 0 ]; then
-    echo -e "\e[1;31mERREUR! Ce script doit être exécuté en tant que superutilisateur (utiliser la commande 'sudo ./install.sh')"
-    exit 1
+    echo -e "\e[1;31mERREUR! Ce script doit être exécuté en tant que superutilisateur (utiliser la commande 'sudo ./install.sh')" && exit 1
 fi
 
 # def des chemins
@@ -17,23 +15,24 @@ EXEC_NAME="gotime-linux"
 
 echo "Merci d'avoir téléchargé et installé $APP_NAME! Démarrage du programme d'installation..."
 # verif fichiers sources
-for file in "$PWD" "sons" "log" "dep"; do
-    if [ ! -e "$file" ]; then
+for file in "LICENCE.txt" "sons" "log" "dep"; do
+    if [ ! -e "$PWD/$file" ]; then
         echo -e "\e[1;31mERREUR! Le fichier ou dossier '$file' est manquant."
-        exit 1
+    else
+        echo -e "\e[1;33mINFO! Le fichier ou dossier '$file' est présent."
     fi
 done
 
-# verif fichiers licence et readme
-for file in "$PWD" "LICENCE.txt" "README.md"; do
-    if [ ! -e "$file" ]; then
-        echo -e "\e[1;33mWARNING! Le fichier ou dossier '$file' est manquant."
-        exit 1
+if [ -d "$INSTALL_DIR" ]; then
+    echo -e "\e[1;33mWARNING! L'application est déjà installée, elle va être remplacée (cela va supprimer vos paramètres)..."
+    sleep 1s && rm -rf "$INSTALL_DIR" && echo -e "\t >> Répertoire d'une installation précédente supprimé!"
+    if [ -f "$DESKTOP_FILE" ]; then
+        rm "$DESKTOP_FILE" && echo -e "\t >> Fichier .desktop d'une installation précédente supprimé!"
     fi
-done
+fi
 
 # creer le répertoire d'installation
-mkdir -p "$INSTALL_DIR" || { echo "Erreur lors de la création du répertoire d'installation"; exit 1; }
+mkdir -p "$INSTALL_DIR" || { echo -e "\e[1;31mERREUR! IMpossible de créer le répertoire d'installation"; exit 1; }
 echo ">> Création du répertoire d'installation au chemin $INSTALL_DIR"
 mv "$EXEC_NAME" "$INSTALL_DIR/" && echo ">> Déplacement du fichier exécutable $EXEC_NAME dans $INSTALL_DIR"
 mv sons log dep "$INSTALL_DIR/" && echo ">> Déplacement des dossiers de dépendance 'sons', 'log', et 'dep' dans $INSTALL_DIR"
@@ -58,7 +57,7 @@ chmod +x "$INSTALL_DIR/$EXEC_NAME" && echo "Ajout de l'autorisation d'exécution
 update-desktop-database && echo "Mise à jour de la base de données des applis..."
 echo ">> Mise à jour de la base de données terminée!"
 
-echo "Installation de $APP_NAME terminée avec succès !"
+echo -e "\e[1;32mSUCCESS! Installation de $APP_NAME terminée avec succès!"
 echo -n "Voulez-vous supprimer ce script d'installation ? [Y/n] "
 read reponse
 
@@ -66,10 +65,8 @@ read reponse
 reponse=$(echo "$reponse" | tr '[:upper:]' '[:lower:]')
 
 if [[ $reponse == "y" || $reponse == "yes" || $reponse == "" ]]; then
-    echo "Suppression du script d'installation..."
-    rm "$0"
-    echo "Script d'installation supprimé."
+    echo "Suppression du script d'installation..." && rm "$0"
+    echo "Script d'installation supprimé." && exit 0
 else
-    echo "Le script d'installation n'a pas été supprimé."
-    exit 1
+    echo "Le script d'installation n'a pas été supprimé." && exit 0
 fi
