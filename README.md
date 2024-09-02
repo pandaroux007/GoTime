@@ -32,7 +32,7 @@ ___
 3. Lancer le programme d'installation avec la commande `sudo ./install.sh`
 
 ### Sous Microsoft Windows
-1. Lancer le fichier d'installation `gotime-win-v1.0.2-beta-install.exe`, puis suivez les instructions.
+1. Lancer le fichier d'installation `gotime-win-v*-install.exe`, puis suivez les instructions.
 
 ### Sous MacOS-X
 L'application n'est pas compilée sous Mac pour l'instant, vous pouvez l'exécuter depuis python3 si vous souhaitez l'utiliser (`python3 -m runApp.py`).
@@ -113,19 +113,19 @@ Sur la fenêtre principale, est disponible, dans l'ordre :
 - Deux entrées (minutes/secondes) et un bouton pour les effacer rapidement.
 L'application peut être agrandie et mise en plein écran.
 
+<p float="left">
+  <img src="screenshots/gotime-light-screenshot.png" width="49%" alt="GoTime en mode clair" title="GoTime en mode clair"/>
+  <img src="screenshots/gotime-dark-screenshot.png" width="49%" alt="GoTime en mode sombre" title="GoTime en mode sombre"/>
+</p>
+<p align="center">
+  <em>À gauche : GoTime (v1.0.3-bêta ici) en mode clair | À droite : GoTime (v1.0.3-bêta ici) en mode sombre</em>
+</p>
+
 **Détails sur la déportation du temps restant** :
 Comme indiqué plus haut, sur la fenêtre se trouve un bouton permettant de "déporter le temps restant". Concrètement cela signifie ouvrir
 une nouvelle fenêtre avec affiché seulement le temps restant, sur un fond de couleur. Cette fenêtre à l'avantage d'être beaucoup plus
 visible que l'affichage de l'application, mais aussi le fait qu'elle reste toujours au premier plan (même si vous cliquez à côté, elle
 restera apparente).
-
-<p float="left">
-  <img src="screenshots/gotime-light-screenshot.png" width="49%" alt="GoTime version 1.0.3-bêta en mode clair" title="GoTime version 1.0.3-bêta en mode clair"/>
-  <img src="screenshots/gotime-dark-screenshot.png" width="49%" alt="GoTime version 1.0.3-bêta en mode sombre" title="GoTime version 1.0.3-bêta en mode sombre"/>
-</p>
-<p align="center">
-  <em>À gauche : GoTime v1.0.3-bêta en mode clair | À droite : GoTime v1.0.3-bêta en mode sombre</em>
-</p>
 
 ## Améliorations et Ajouts
 Maintenant qu'il n'y a plus de bugs **dans le code python** d'après les tests fait récemment, voici une petite liste non exhaustive des futurs améliorations.
