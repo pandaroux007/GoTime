@@ -22,14 +22,10 @@ ___
 2. Décompressez le fichier zip, puis placez vous dans le dossier ainsi optenu.
 ### Sous Linux
 (doit fonctionner sous debian et ses sous-distributions)
-#### *Via* l'interface graphique si disponible
-1. Sélectionnez le fichier `install.sh`, puis faites un clique droit.
-2. Rendez vous dans `Propriétés > Permissions > Autoriser l'exécution du fichier comme un programme`.
-3. Fermez la fenêtre et double-cliquez sur ce même fichier `install.sh`. L'installation se lance.
 #### *Via* le terminal de commandes
 1. Placez vous dans le repertoire décompressé avec `cd` si ce n'est pas déjà fait.
 2. Exécutez la commande `chmod +x install.sh` pour autoriser l'exécution du fichier comme un programme.
-3. Lancer le programme d'installation avec la commande `sudo ./install.sh`
+3. Lancer le programme d'installation avec la commande `sudo ./install.sh` (pour le lancer en mode superutilisateur)
 
 ### Sous Microsoft Windows
 1. Lancer le fichier d'installation `gotime-win-v*-install.exe`, puis suivez les instructions.

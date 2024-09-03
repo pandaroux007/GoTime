@@ -43,9 +43,6 @@ class Application(tk.Tk):
         commandes_menu = tk.Menu(barre_de_menu, tearoff=0)
         commandes_menu.add_command(label="Effacer les entrées", command=self.clear_entrees)
         commandes_menu.add_command(label="Déporter minuteur", command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
-        if systeme_exploitation != "Windows":
-            commandes_menu.add_command(label="Plein écran", command=lambda: self.geometry("{}x{}".format(self.winfo_screenwidth(), self.winfo_screenheight())))
-            self.eval('tk::PlaceWindow . center')
         barre_de_menu.add_cascade(label="Commandes", menu=commandes_menu)
         # ------------------------ Création d'un troisième menu 'Source'
         source_menu = tk.Menu(barre_de_menu, tearoff=0)
