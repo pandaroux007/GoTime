@@ -7,7 +7,7 @@ import darkdetect # pour la détection du thème de l'OS
 from Definitions import * # fichier contenant toutes les variables
 from FenetreLicence import FenetreLicence
 from FenetreParametres import FenetreParametres # fichier contenant la fenêtre d'affichage des paramètres
-from FenetreInfo import FenetreInfoAffichageLienGitHub # fichier contenant la fenêtre d'affichage du lien du dépôt GitHub
+from FenetreInfo import FenetreInfo # fichier contenant la fenêtre d'affichage du lien du dépôt GitHub
 
 class Application(tk.Tk):
     def __init__(self):
@@ -43,11 +43,11 @@ class Application(tk.Tk):
         barre_de_menu.add_cascade(label="Commandes", menu=commandes_menu)
         # ------------------------ Création d'un troisième menu 'Source'
         source_menu = tk.Menu(barre_de_menu, tearoff=0)
-        source_menu.add_command(label="Ouvrir GitHub", command=lambda: webbrowser.open_new_tab(lien_du_github))
-        source_menu.add_command(label="Afficher GitHub", command=lambda: FenetreInfoAffichageLienGitHub())
+        # source_menu.add_command(label="Ouvrir GitHub", command=lambda: webbrowser.open_new_tab(lien_du_github))
+        # source_menu.add_command(label="Afficher GitHub", command=lambda: FenetreInfoAffichageLienGitHub())
         source_menu.add_command(label="Afficher LICENCE", command=lambda: FenetreLicence())
         source_menu.add_command(label="Signaler un bug", command=lambda: webbrowser.open_new_tab(lien_du_github + "/issues"))
-        source_menu.add_command(label="À propos", image=chemin_image_application, command=lambda: messagebox.showinfo(title="À propos", message="Section en cours de création."))    # <---------------------------- À faire!
+        source_menu.add_command(label="À propos", image=chemin_image_application, command=lambda: FenetreInfo())
         barre_de_menu.add_cascade(label="Source", menu=source_menu)
         # ------------------------ Ajout de la barre de menu à la fenêtre
         self.config(menu=barre_de_menu)

@@ -92,3 +92,4 @@ temps_max = 10800 # 3 heures en secondes
 lien_du_github = "https://github.com/pandaroux007/GoTime"
 nom_application = "GoTime"
 version_application = "1.0.3-bêta"
+developpeur_application = "Pandaroux007"
