@@ -1,15 +1,14 @@
 import tkinter as tk
 from tkinter import ttk
-from variables import *
-# fichier programme
+# ------------------------ fichiers de l'application
 from FenetreSonnerie import FenetreEssayerSonnerie
+from Definitions import *
 
 class FenetreParametres(tk.Toplevel):
-    def __init__(self, callback_theme=None, callback_restart=None):
+    def __init__(self, callback_theme=None):
         super().__init__()
         # ------------------------ Variables
-        self.callback_theme = callback_theme # Callback pour rafraichir le thème après modification des paramètres
-        self.callback_restart = callback_restart # Callback pour exécuter des actions après modification des paramètres
+        self.callback_theme = callback_theme # callback pour rafraichir le theme après modif paramètres
         self.reboot_app_ou_non = False
         self.sonnerie_en_cours = False
         # ------------------------ Paramétrage de la fenêtre des paramètres
@@ -41,9 +40,9 @@ class FenetreParametres(tk.Toplevel):
         self.frame_selection_theme = tk.Frame(self.onglet_theme, border=0)
         self.frame_selection_theme.pack(pady=20, padx=45, side=tk.LEFT, expand=True)
         # ------------------------ Valeur
-        self.parametre_radiobutton_select_theme_value = tk.StringVar(value=parametres_fichier_json["value_theme"])
-        self.parametre_checkbutton_select_sounds_on_or_off = tk.BooleanVar(value=parametres_fichier_json["value_sounds"])
-        self.parametre_checkbutton_afficher_heure_en_haut = tk.BooleanVar(value=parametres_fichier_json["value_affichage_heure"])
+        self.parametre_radiobutton_select_theme_value = tk.StringVar(value=parametres.value_theme)
+        self.parametre_checkbutton_select_sounds_on_or_off = tk.BooleanVar(value=parametres.value_sounds)
+        self.parametre_checkbutton_afficher_heure_en_haut = tk.BooleanVar(value=parametres.value_affichage_heure)
         # ------------------------ RadioButtons
         self.selection_parametre_theme_os_default = tk.Radiobutton(self.frame_selection_theme, text=f"{nom_application} mode Default", value="DEFAULT", variable=self.parametre_radiobutton_select_theme_value)
         self.selection_parametre_theme_os_dark = tk.Radiobutton(self.frame_selection_theme, text=f"{nom_application} mode Dark", value="DARK", variable=self.parametre_radiobutton_select_theme_value)
@@ -84,26 +83,24 @@ class FenetreParametres(tk.Toplevel):
         self.bouton_validation_parametre.pack(fill="x", padx=20)
 
     def apply_parametres(self):
+        parametres_changes = False
         # Gestion du thème clair ou sombre
-        self.reboot_app_ou_non = False
         selected_theme = self.parametre_radiobutton_select_theme_value.get()
-        if selected_theme != parametres_fichier_json["value_theme"]:
-            parametres_fichier_json["value_theme"] = selected_theme
-            save_config(parametres_fichier_json)
+        if selected_theme != parametres.value_theme:
+            parametres.value_theme = selected_theme
             if self.callback_theme: self.callback_theme()
+            parametres_changes = True
         # Gestion de l'activation de la sonnerie
         selected_state_sounds_for_windows = self.parametre_checkbutton_select_sounds_on_or_off.get()
-        if selected_state_sounds_for_windows != parametres_fichier_json["value_sounds"]:
-            parametres_fichier_json["value_sounds"] = selected_state_sounds_for_windows
-            save_config(parametres_fichier_json)
+        if selected_state_sounds_for_windows != parametres.value_sounds:
+            parametres.value_sounds = selected_state_sounds_for_windows
+            parametres_changes = True
         # Gestion de l'affichage de l'heure en haut de la fenêtre de l'application
         selected_state_affichage_heure_en_haut = self.parametre_checkbutton_afficher_heure_en_haut.get()
-        if selected_state_affichage_heure_en_haut != parametres_fichier_json["value_affichage_heure"]:
-            parametres_fichier_json["value_affichage_heure"] = selected_state_affichage_heure_en_haut
-            save_config(parametres_fichier_json)
-            self.reboot_app_ou_non = True
+        if selected_state_affichage_heure_en_haut != parametres.value_affichage_heure:
+            parametres.value_affichage_heure = selected_state_affichage_heure_en_haut
+            parametres_changes = True
         # Fermer la fenêtre des paramètres
         self.destroy()
-        if self.reboot_app_ou_non == True:
-            if self.callback_restart: self.callback_restart()
-        else: pass
+        # Si un ou plusieurs parametres ont changés, on enregistre
+        if parametres_changes is not False: parametres.sauvegarde()

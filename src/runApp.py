@@ -1,7 +1,8 @@
-from Application import Application
-from variables import log_error
 from tkinter import messagebox
 from sys import exit
+# ------------------------ fichiers de l'application
+from Application import Application
+from Definitions import log_error
 
 if __name__ == "__main__":
     try:
