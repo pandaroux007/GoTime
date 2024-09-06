@@ -213,12 +213,11 @@ Tout le reste de l'application n'est qu'une question d'apparence et de widgets, 
 Il y a deux bug actuellement découverts.
 1. Bien entendu, le bug des antivirus sur Windows persiste et c'est l'un des plus gros problèmes de l'application. Cependant il est aussi très simple à contourner : il suffit de désactiver son antivirus le temps d'installer le logiciel et le réactiver ensuite (ce qui prouve leur inutilité sur ce point). Je conseille d'utiliser la fonction "disable for 10mn" pour ne pas oublier ensuite de le réactiver.
 
-2. Actuellement l'application ne démarre pas (enfin la fenêtre commence à s'ouvrir - elle est juste noire, il n'y a aucun widget dedant - avec une boite de dialogue indiquant le message d'erreur). Le message d'erreur indique que le fichier [icon.png](dep/icon.png) n'existe pas. Voici le message :
+2. Actuellement l'application ne démarre pas (enfin la fenêtre commence à s'ouvrir - elle est juste noire, il n'y a aucun widget dedant - avec une boite de dialogue indiquant le message d'erreur). Le message d'erreur indique que le fichier [icon.png](dep/icon.png) n'existe pas (Cette erreur n'était jamais apparue avant que je change le système de paramètres dans la branche git "correctionParam"). Voici le message :
 ```txt
 Hmm...Quelque chose semble s'être mal passé...
 L'erreur est : image "/home/pandaroux007/Bureau/Programmation/Projets python/gui/GoTime/dep/icon.png" doesn't exist
 ```
-Cette erreur n'était jamais apparue avant que je change le système de paramètres dans la branche git "correctionParam"
  
 ## Compilation
 Pour compiler et distribuer l'application, j'utilise [`nuitka`](https://github.com/Nuitka/Nuitka), avec cette commande :
