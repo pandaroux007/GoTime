@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-# fichier programme
-from variables import *
+# ------------------------ fichiers de l'application
+from Definitions import *
 
 class FenetreEssayerSonnerie(tk.Toplevel):
     def __init__(self):

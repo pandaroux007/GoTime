@@ -1,14 +1,12 @@
 import tkinter as tk # pour la création et la manipulation de la fenêtre
-from tkinter import ttk # pour ajouter quelques plugins à tkinter
 from datetime import datetime # pour la gestion du temps et du minuteur
 import webbrowser # pour l'ouverture du navigateur avec le lien du github de l'application
 from tkinter import messagebox # pour les erreur et les validations
 import darkdetect # pour la détection du thème de l'OS
-import sys # Pour les fonctions "exit", "executable", et "argv"
 # ------------------------ fichiers de l'application
-from variables import * # fichier contenant toutes les variables
-from FenetreLicence import FenetreLicence # fichier contenant la fenêtre d'affichage de la licence
-from Parametres import FenetreParametres # fichier contenant la fenêtre d'affichage des paramètres
+from Definitions import * # fichier contenant toutes les variables
+from FenetreLicence import FenetreLicence
+from FenetreParametres import FenetreParametres # fichier contenant la fenêtre d'affichage des paramètres
 from FenetreInfo import FenetreInfoAffichageLienGitHub # fichier contenant la fenêtre d'affichage du lien du dépôt GitHub
 
 class Application(tk.Tk):
@@ -34,9 +32,8 @@ class Application(tk.Tk):
         barre_de_menu = tk.Menu(self)
         # ------------------------ Création d'un menu 'Fenêtre'
         fenetre_menu = tk.Menu(barre_de_menu, tearoff=0)
-        fenetre_menu.add_command(label="Paramètres", command=self.open_parametres)
+        fenetre_menu.add_command(label="Paramètres", command=lambda: FenetreParametres())
         fenetre_menu.add_separator()
-        fenetre_menu.add_command(label="Redémarrer", command=self.restart)
         fenetre_menu.add_command(label="Quitter", command=self.quit)
         barre_de_menu.add_cascade(label="Fenêtre", menu=fenetre_menu)
         # ------------------------ Création d'un second menu 'Commandes'
@@ -49,11 +46,13 @@ class Application(tk.Tk):
         source_menu.add_command(label="Ouvrir GitHub", command=lambda: webbrowser.open_new_tab(lien_du_github))
         source_menu.add_command(label="Afficher GitHub", command=lambda: FenetreInfoAffichageLienGitHub())
         source_menu.add_command(label="Afficher LICENCE", command=lambda: FenetreLicence())
+        source_menu.add_command(label="Signaler un bug", command=lambda: webbrowser.open_new_tab(lien_du_github + "/issues"))
+        source_menu.add_command(label="À propos", image=chemin_image_application, command=lambda: messagebox.showinfo(title="À propos", message="Section en cours de création."))    # <---------------------------- À faire!
         barre_de_menu.add_cascade(label="Source", menu=source_menu)
         # ------------------------ Ajout de la barre de menu à la fenêtre
         self.config(menu=barre_de_menu)
         # ------------------------ Affichage de l'heure en haut de la fenêtre
-        if parametres_fichier_json["value_affichage_heure"] == True:
+        if parametres.value_affichage_heure == True:
             self.time_label = tk.Label(self, text="", font=("Arial", 24))
             self.time_label.pack(pady=20)
         else:
@@ -65,7 +64,7 @@ class Application(tk.Tk):
         # ------------------------ Création de la frame de couleur et affichage d'un texte dedans (ici le temps restant)
         self.time_frame = tk.Frame(self.frame_principale, bg=couleur_frame_minuteur_verte, height=80)
         self.time_frame.pack(fill="x", padx=20, pady=(0, 20))
-        if parametres_fichier_json["value_affichage_heure"] == True:
+        if parametres.value_affichage_heure == True:
             self.time_frame.config(pady=10)
         self.temps_restant_label = tk.Label(self.time_frame, text=f"{nom_application}", font=("Arial", 24),
                                             bg=couleur_frame_minuteur_verte, fg="black")
@@ -233,7 +232,7 @@ class Application(tk.Tk):
             self.fenetre_deportee.config(background=couleur_frame_minuteur_verte)
             self.temps_restant_label_fenetre_deporte.config(text="Temps restant", font=("Arial", 35), bg=couleur_frame_minuteur_verte, fg="black")
         # ------------------------ Gestion du son :
-        if parametres_fichier_json["value_sounds"] == True:
+        if parametres.value_sounds == True:
             jouer_sonnerie(True) # Jouer la sonnerie à la fin du timer
         else: pass
         if parametre_appel_bouton_ou_non == None:
@@ -241,14 +240,14 @@ class Application(tk.Tk):
         else: pass
 
     def gestion_theme_par_defaut(self):
-        if parametres_fichier_json["value_theme"] == "DEFAULT":
+        if parametres.value_theme == "DEFAULT":
             if darkdetect.theme() == 'Dark':
                 self.mettre_app_en_mode_dark()
             elif darkdetect.theme() == 'Light':
                 self.mettre_app_en_mode_light()
-        elif parametres_fichier_json["value_theme"] == "LIGHT":
+        elif parametres.value_theme == "LIGHT":
             self.mettre_app_en_mode_light()
-        elif parametres_fichier_json["value_theme"] == "DARK":
+        elif parametres.value_theme == "DARK":
             self.mettre_app_en_mode_dark()
         else:
             messagebox.showerror(f"Erreur", "La sélection automatique du thème de l'application a échoué... L'application va automatiquement se lancer en mode sombre.")
@@ -288,11 +287,6 @@ class Application(tk.Tk):
         self.bouton_deporter_temps_restant.config(bg="lightblue", fg="black")
         self.titre_section_temps_entry.config(bg="white", fg="black")
 
-    def open_parametres(self):
-        def changement_du_theme(): self.gestion_theme_par_defaut()
-        def gestion_restart_apres_modif_parametres(): self.restart()
-        FenetreParametres(callback_theme=changement_du_theme, callback_restart=gestion_restart_apres_modif_parametres)
-
     def deporter_frame_temps_restant_dans_une_nouvelle_fenetre(self):
         self.fenetre_deportee = tk.Toplevel(self, background=couleur_frame_minuteur_verte)
         self.fenetre_deportee.geometry("600x400")
@@ -309,28 +303,6 @@ class Application(tk.Tk):
     def fermer_fenetre_temps_restant_deporte(self):
         self.bouton_deporter_temps_restant.config(text="Déporter le temps restant dans une nouvelle fenêtre", activebackground=couleur_frame_minuteur_verte, command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
         self.fenetre_deportee.destroy()
-
-    def restart(self): # pas mal de trucs pompés sur stackoverflow...
-        if messagebox.askyesno(title="Redémarrer ?", message=f"Voulez vous vraiment redémarrer l'application {nom_application} ?"):
-            try:
-                import subprocess
-                # annule tous les événements "after" en attente
-                for after_id in self.tk.eval('after info').split(): self.after_cancel(after_id)
-                if getattr(sys, 'frozen', False): # programme compilé
-                    if hasattr(sys, '_MEIPASS'): chemin_prog_app = sys.executable # avec PyInstaller
-                    else: chemin_prog_app = sys.argv[0] # avec Nuitka
-                else: chemin_prog_app = sys.executable # programme python
-                # crée la commande pour redémarrer
-                if systeme_exploitation == "Windows":
-                    args = [chemin_prog_app] + sys.argv[1:]
-                    creationflags = subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS
-                    subprocess.Popen(args, creationflags=creationflags, close_fds=True)
-                else: # Linux/Unix
-                    args = [chemin_prog_app] + sys.argv
-                    subprocess.Popen(args, start_new_session=True)
-                self.destroy(); del subprocess, chemin_prog_app; os._exit(0)
-            except Exception as e: messagebox.showerror(title="Erreur", message=f"Erreur lors du redémarrage du programme : {e}")
-        else: return
 
     def deselectionner_les_entry(self): self.focus_set()
     def clear_entrees(self):

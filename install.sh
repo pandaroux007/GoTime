@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e # arrête le script si une commande échoue
-# Vérification des droits root
+# verif des droits root
 if [ "$EUID" -ne 0 ]; then
     echo -e "${COLOR_ERROR_RED}ERREUR! Ce script doit être exécuté en tant que superutilisateur (utiliser la commande 'sudo ./install.sh')${COLOR_TERMINAL_DEFAULT}" && exit 1
 fi

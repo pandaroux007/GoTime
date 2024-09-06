@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 # fichiers programmes
-from variables import *
+from Definitions import *
 
 class FenetreInfoAffichageLienGitHub(tk.Toplevel):
     def __init__(self):

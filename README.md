@@ -39,34 +39,58 @@ Créez un fichier `uninstall.sh`, puis copier coller ce script shell bash dedant
 ```sh
 #!/bin/bash
 
-if [ "$EUID" -ne 0 ]; then # verif si l'utilisateur a les droits root
-  echo -e "\e[1;31mERREUR! Ce script doit être exécuté en tant que superutilisateur (utiliser la commande 'sudo ./install.sh')"
-  exit 1
+set -e # arrête le script si une commande échoue
+# verif des droits root
+if [ "$EUID" -ne 0 ]; then
+    echo -e "${COLOR_ERROR_RED}ERREUR! Ce script doit être exécuté en tant que superutilisateur (utiliser la commande 'sudo ./install.sh')${COLOR_TERMINAL_DEFAULT}" && exit 1
 fi
 
-# chemins de l'appli
+# def des chemins
 APP_NAME="GoTime"
 INSTALL_DIR="/opt/$APP_NAME"
 DESKTOP_FILE="/usr/share/applications/$APP_NAME.desktop"
+# def des raccourcis pour les couleurs
+COLOR_ERROR_RED="\e[1;31m"
+COLOR_SUCCESS_GREEN="\e[1;32m"
+COLOR_WARN_YELLOW="\e[1;33m"
+COLOR_TERMINAL_DEFAULT="\e[0;0m"
 
 # supprimer le répertoire d'installation
 if [ -d "$INSTALL_DIR" ]; then
-  rm -rf "$INSTALL_DIR"
-  echo "Répertoire d'installation supprimé : $INSTALL_DIR"
+  rm -rf "$INSTALL_DIR" && echo ">> Répertoire d'installation supprimé : $INSTALL_DIR"
 else
-  echo "Le répertoire d'installation n'existe pas : $INSTALL_DIR"
+  echo "${COLOR_WARN_YELLOW}WARNING! Le répertoire d'installation n'existe pas : $INSTALL_DIR${COLOR_TERMINAL_DEFAULT}"
 fi
 
 if [ -f "$DESKTOP_FILE" ]; then
-  rm "$DESKTOP_FILE"
-  echo "Fichier .desktop supprimé : $DESKTOP_FILE"
+  rm "$DESKTOP_FILE" && echo ">> Fichier .desktop supprimé : $DESKTOP_FILE"
 else
-  echo "Le fichier .desktop n'existe pas : $DESKTOP_FILE"
+  echo "${COLOR_WARN_YELLOW}WARNING! Le fichier .desktop n'existe pas : $DESKTOP_FILE${COLOR_TERMINAL_DEFAULT}"
 fi
 
 # mise à jour de la base de données des applications
-update-desktop-database && echo "Mise à jour de la base de données des applis..."
-echo "Désinstallation de $APP_NAME terminée avec succès ! Vous pouvez maintenant supprimer ce fichier."
+if command -v update-desktop-database > /dev/null 2>&1; then
+    echo "Mise à jour de la base de données des applis..."
+    update-desktop-database
+    echo ">> Mise à jour de la base de données terminée!"
+else
+    echo -e "${COLOR_WARN_YELLOW}WARNING! update-desktop-database n'est pas disponible. Vous devrez peut-être l'exécuter manuellement ou redémarrer votre ordinateur pour ne plus voir le logiciel dans la liste des applications installées.${COLOR_TERMINAL_DEFAULT}"
+fi
+
+echo -e "${COLOR_SUCCESS_GREEN}SUCCESS! Installation de $APP_NAME terminée avec succès!${COLOR_TERMINAL_DEFAULT}"
+# verif pour supprimer le script à la fin
+while true; do
+    read -p "Voulez-vous supprimer ce script de désinstallation ? [Y/n] " reponse
+    reponse=$(echo "$reponse" | tr '[:upper:]' '[:lower:]')
+    if [[ $reponse == "y" || $reponse == "yes" || $reponse == "" ]]; then
+        echo "Suppression du script..." && rm "$0"
+        echo ">> Script de désinstallation supprimé!" && exit 0
+    elif [[ $reponse == "n" || $reponse == "no" ]]; then
+        echo ">> OK - fin du script de désinstallation de $APP_NAME" && exit 0
+    else
+        echo -e "${COLOR_WARN_YELLOW}Veuillez entrer 'Y' pour oui ou 'N' pour non.${COLOR_TERMINAL_DEFAULT}"
+    fi
+done
 ```
 Une fois ceci fait, vous pouvez autoriser l'exécution du fichier comme un programme comme décrit dans le [chapitre Installation](#installation), puis le lancer avec la commande `sudo ./uninstall.sh`.
 
@@ -123,8 +147,18 @@ une nouvelle fenêtre avec affiché seulement le temps restant, sur un fond de c
 visible que l'affichage de l'application, mais aussi le fait qu'elle reste toujours au premier plan (même si vous cliquez à côté, elle
 restera apparente).
 
-## Améliorations et Ajouts
-Maintenant qu'il n'y a plus de bugs **dans le code python** d'après les tests fait récemment, voici une petite liste non exhaustive des futurs améliorations.
+# Développement
+## Fonctionnement des versions
+> **Base : *x.y.z***
+ - x : version majeure;
+ - y : correction de bug majeur, ajout de fonctions;
+ - z : correction de bug mineur, changements mineurs;
+
+> [!NOTE]
+> Quand une valeur d'importance supérieure change, les valeurs d'importance inférieures reviennent à 0.
+
+## Améliorations, Ajouts et choses à terminer
+Voici une petite liste non exhaustive des futurs améliorations.
 - [ ] Ajout d'un système permettant à l'utilisateur d'enregistrer des temps (par exemple ceux qu'il utilise régulièrement), en
   plus du système initial avec les entrées/`spinbox`. Cela consisterai en un menu déroulant de type `combobox`, qui ne
   s'afficherai que si au moins un temps est déjà enregistré, sinon un bouton pour créer un nouveau temps prédéfini.
@@ -141,7 +175,8 @@ Maintenant qu'il n'y a plus de bugs **dans le code python** d'après les tests f
 
 - [ ] Si un jour, une fois l'application terminée completement avec toutes les améliorations présentées ci-haut, j'ai envie de perdre mon temps, je passerai probablement sur une version 4 cross-platform, avec wxWidgets (**wxPython**) ou Toga (?). Mais comme cela nécessite de refaire toute l'interface, je ne le ferai probablement pas avant longtemps (j'en profiterai pour changer quelques détails pour rendre l'application plus conviviale).
 
-# Développement
+- [ ] Terminer la section "À propos" du menu "Source"
+
 ## Installation des dépendances
 Attention, **certains des modules utilisés par le projet ne sont pas inclus par défauts dans python**. Pour les installer, il vous suffit de
 lancer la commande suivante (après vous être déplacé dans le répertoire du projet téléchargé - commande '*cd path*' sous Windows et Unix):
@@ -178,10 +213,12 @@ Tout le reste de l'application n'est qu'une question d'apparence et de widgets, 
 Il y a deux bug actuellement découverts.
 1. Bien entendu, le bug des antivirus sur Windows persiste et c'est l'un des plus gros problèmes de l'application. Cependant il est aussi très simple à contourner : il suffit de désactiver son antivirus le temps d'installer le logiciel et le réactiver ensuite (ce qui prouve leur inutilité sur ce point). Je conseille d'utiliser la fonction "disable for 10mn" pour ne pas oublier ensuite de le réactiver.
 
-2. Il y a également un bug sur la fonction de redémarrage de l'application, utilisée dans le menu et aussi par la fenêtre de paramètre pour appliquer certains changement (redémarrer permet de faire relire au logiciel le fichier de paramètre). Malgré de nombreux essais et méthodes, je n'arrive pas à trouver quelque chose qui fonctionne à la fois sur l'interpréteur python (pour les développeurs et pour les utilisateurs d'appareil Apple...) et avec [le programme compilé](#compilation). Toutes les techniques testées jusqu'ici (visibles dans les commit précédents à celui de l'ajout de [ce chapitre bugs](#bugs)) ne sont fonctionnelles qu'avec l'interpréteur python. La fonction utilisée s'appelle `restart` est est placée dans le fichier [`Application.py`](src/Application.py)
-
-### Description du bug de redémarrage
-Comme indiqué ci-dessus, dans le fichier [`Application.py`](src/Application.py) se trouve une fonction `restart` permettant à l'application de redémarrer toute seule. Cette fonction doit fonctionner à la fois sur l'interpréteur python (c'est le cas actuellement), mais aussi lorsque le programme est [compilé](#compilation), hors cela ne fonctionne pas. Lorsque que l'on compile le programme et que l'on lance l'option `Redémarrer` du menu ou que l'on modifie un paramètre le nécessitant, une popup d'erreur s'ouvre. Sous Linux l'erreur est `Erreur lors du redémarrage du programme : [Errno 2] No such file or directory: '/tmp/onefile_37738_1725121396_744851/python3'` et sous Windows c'est `Erreur lors du redémarrage du programme : [Errno 2] No such file or directory: '\\'`. Donc impossible de faire un beau redémarrage et si ce genre d'erreur pête à la figure d'un pauvre utilisateur innocent, il ne risque pas de le prendre bien...
+2. Actuellement l'application ne démarre pas (enfin la fenêtre commence à s'ouvrir - elle est juste noire, il n'y a aucun widget dedant - avec une boite de dialogue indiquant le message d'erreur). Le message d'erreur indique que le fichier [icon.png](dep/icon.png) n'existe pas. Voici le message :
+```txt
+Hmm...Quelque chose semble s'être mal passé...
+L'erreur est : image "/home/pandaroux007/Bureau/Programmation/Projets python/gui/GoTime/dep/icon.png" doesn't exist
+```
+Cette erreur n'était jamais apparue avant que je change le système de paramètres dans la branche git "correctionParam"
  
 ## Compilation
 Pour compiler et distribuer l'application, j'utilise [`nuitka`](https://github.com/Nuitka/Nuitka), avec cette commande :
