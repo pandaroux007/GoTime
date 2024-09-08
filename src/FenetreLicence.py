@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+# ------------------------ fichiers de l'application
 from Definitions import *
 
 class FenetreLicence(tk.Toplevel):

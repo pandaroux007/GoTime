@@ -1,6 +1,10 @@
 import tkinter as tk
 from tkinter import messagebox
 import webbrowser
+from threading import Thread
+from urllib import request
+from packaging import version
+import re
 # ------------------------ fichiers de l'application
 from Definitions import *
 
@@ -13,8 +17,9 @@ class LienHypertexte(tk.Label):
         self.bind("<Leave>", lambda action: self.config(font=("TkDefaultFont", 10)))
 
 class FenetreInfo(tk.Toplevel):
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self):
+        super().__init__()
+        # ------------------------ Parametrge fenêtre
         self.title(f"À propos de {nom_application}")
         self.geometry("400x300")
         self.resizable(False, False)
@@ -29,14 +34,41 @@ class FenetreInfo(tk.Toplevel):
         # ------------------------ lien du GitHub
         LienHypertexte(self.frame_infos, text="GitHub du projet", url=lien_du_github).pack(pady=10)
         # ------------------------ Frame pour les boutons
-        button_frame = tk.Frame(self.frame_infos)
-        button_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=(20, 0))
+        self.frame_boutons = tk.Frame(self.frame_infos)
+        self.frame_boutons.pack(side=tk.BOTTOM, fill=tk.X, pady=(20, 0))
         # ------------------------ Bouton verif les mises à jours
-        update_button = tk.Button(button_frame, text="Vérifier les mises à jour maintenant", command=self.check_updates)
-        update_button.pack(side=tk.LEFT, expand=True)
+        self.bouton_verif_mises_a_jour = tk.Button(self.frame_boutons, text="Vérifier les mises à jour maintenant", command=self.lancer_verif_mise_a_jour)
+        self.bouton_verif_mises_a_jour.pack(side=tk.LEFT, expand=True)
         # ------------------------ Bouton "OK"
-        ok_button = tk.Button(button_frame, text="OK", command=self.destroy)
-        ok_button.pack(side=tk.RIGHT, expand=True)
+        self.bouton_ok = tk.Button(self.frame_boutons, text="OK", command=self.destroy)
+        self.bouton_ok.pack(side=tk.RIGHT, expand=True)
         
-    def check_updates(self):
-        messagebox.showwarning("Mise à jour", "Cette partie de l'application est encore en développement!") # "Vérification des mises à jour en cours..."
+    def lancer_verif_mise_a_jour(self):
+        self.bouton_verif_mises_a_jour.config(state="disabled")
+        Thread(target=self.verif_mise_a_jour, daemon=True).start()
+    
+    # utilisation de self.after(0, ...) pour modifier la gui depuis le thread car tkinter n'est pas thread-safe
+    def verif_mise_a_jour(self):
+        try:
+            # ------------------------ Requête à l'api de github pour obtenir la dernière version
+            url = "https://api.github.com/repos/" + developpeur_application + "/" + nom_application + "/releases/latest"
+            with request.urlopen(url) as response:
+                data = json.loads(response.read().decode())
+                derniere_version_app_sur_github = data['tag_name']
+            # ------------------------ enlever les éléments inutiles dans le numéro de version
+            version_app_local = re.sub(r"[^\d.]", "", version_application)
+            version_app_github = re.sub(r"[^\d.]", "", derniere_version_app_sur_github)
+            # ------------------------ comparer les deux versions
+            if version.parse(version_app_local) < version.parse(version_app_github):
+                def afficher_message_mise_a_jour_dispo():
+                    reponse = messagebox.askyesno(
+                        title="Mise à jour disponible", icon="info",
+                        message=f"Une nouvelle version {version_app_github} de {nom_application} est disponible!\n\nVoulez-vous ouvrir la page de téléchargement ?")
+                    if reponse == tk.YES: webbrowser.open_new_tab(url=lien_du_github + "/releases/latest")
+                self.after(0, afficher_message_mise_a_jour_dispo)
+            else: self.after(0, lambda: messagebox.showinfo(title="Aucune mise à jour disponible", message=f"Aucune nouvelle version de {nom_application} n'est disponible!"))
+        # ------------------------ Si une erreur est levée afficher un message d'avertissement
+        except Exception as e:
+            self.after(0, lambda: messagebox.showwarning(title="Avertissement", message=f"Erreur lors de la vérification des mises à jour!\n{e}"))
+        # ------------------------ réactiver le bouton de verif des mises à jours
+        finally: self.after(0, lambda: self.bouton_verif_mises_a_jour.config(state="normal"))

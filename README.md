@@ -108,7 +108,7 @@ ___
 5. Merci à ma professeur d'anglais, qui a lancer l'idée et qui m'a fait confiance pour réaliser ce projet;
 6. Merci à tous les développeurs des modules utilisés ici pour leurs travaux et leurs contributions à la communauté open-source;
 7. Enfin, merci à tous les créateurs de contenus techniques sur internet qui m'ont permis de trouver de la documentation pour chaque éléments des modules.
-
+___
 # Apparence globale
 ## Interface
 ### Barre de Menu
@@ -146,7 +146,7 @@ Comme indiqué plus haut, sur la fenêtre se trouve un bouton permettant de "dé
 une nouvelle fenêtre avec affiché seulement le temps restant, sur un fond de couleur. Cette fenêtre à l'avantage d'être beaucoup plus
 visible que l'affichage de l'application, mais aussi le fait qu'elle reste toujours au premier plan (même si vous cliquez à côté, elle
 restera apparente).
-
+___
 # Développement
 ## Fonctionnement des versions
 > **Base : *x.y.z***
@@ -175,7 +175,7 @@ Voici une petite liste non exhaustive des futurs améliorations.
 
 - [ ] Si un jour, une fois l'application terminée completement avec toutes les améliorations présentées ci-haut, j'ai envie de perdre mon temps, je passerai probablement sur une version 4 cross-platform, avec wxWidgets (**wxPython**) ou Toga (?). Mais comme cela nécessite de refaire toute l'interface, je ne le ferai probablement pas avant longtemps (j'en profiterai pour changer quelques détails pour rendre l'application plus conviviale).
 
-- [ ] Terminer la section "À propos" du menu "Source"
+- [x] Terminer la section "À propos" du menu "Source"
 
 ## Installation des dépendances
 Attention, **certains des modules utilisés par le projet ne sont pas inclus par défauts dans python**. Pour les installer, il vous suffit de
@@ -184,24 +184,30 @@ lancer la commande suivante (après vous être déplacé dans le répertoire du 
 pip install -r requirements.txt
 ```
 Cette commande installera les modules listés dans le fichier *requirements.txt*, utilisés par l'application mais qui ne sont pas inclue par défaut dans python3. Tous les modules utilisés par l'application sont listé ci-dessous :
-1. tkinter
-2. datetime
-3. webbrowser
-4. sys
-5. subprocess
-6. **darkdetect**
-7. **PIL (pillow)**
-8. os
-9. json
-10. platform
-11. getpass
-12. socket
-13. **pygame**
+1. `tkinter`, `ttk`, `messagebox`
+2. `datetime`
+3. `webbrowser`
+4. `sys`
+5. `subprocess`
+6. **`darkdetect`**
+7. `os`
+8. `json`
+9. `platform`
+10. `getpass`
+11. `socket`
+12. **`pygame`**
+13. `packaging`
+14. `re`
+15. `urllib`
+16. `threading`
+
+> [!CAUTION]
+> Notez qu'il peut y avoir des problème lors de l'utilisation de `darkdetect` sous Windows avec le fichier `setup.py`. Je réfléchie à placer directement le code du module dans [src](src/), je dois encore regarder les permissions accordées par la licence *BSD License*.
 
 ## Fonctionnement
 GoTime fonctionne avec la fonction `after` de `tkinter`. L'affichage de l'heure fonctionne de cette manière et le minuteur également.
 Cette méthode permet d'appeller une fonction un certain temps plus tard, temps défini en ms. Pour modifier chaque seconde l'heure, par exemple,
-on utilise cette commande (l.130)
+on utilise cette commande (l.138)
 ```py
 self.after(1000, self.update_time)  # Met à jour toutes les secondes
 ```
@@ -210,16 +216,11 @@ Pour ce qui est des paramètres, l'application fonctionne grâce à une lecture/
 Tout le reste de l'application n'est qu'une question d'apparence et de widgets, la base fonctionne comme ceci.
 
 ## Bugs
-Il y a deux bug actuellement découverts.
-1. Bien entendu, le bug des antivirus sur Windows persiste et c'est l'un des plus gros problèmes de l'application. Cependant il est aussi très simple à contourner : il suffit de désactiver son antivirus le temps d'installer le logiciel et le réactiver ensuite (ce qui prouve leur inutilité sur ce point). Je conseille d'utiliser la fonction "disable for 10mn" pour ne pas oublier ensuite de le réactiver.
+Il y a un bug actuellement découvert.
+1. Le bug des antivirus sur Windows persiste et c'est l'un des plus gros problèmes de l'application. Cependant il est aussi très simple à contourner : il suffit de désactiver son antivirus le temps d'installer le logiciel et le réactiver ensuite (ce qui prouve leur inutilité sur ce point). Je conseille d'utiliser la fonction "disable for 10mn" pour ne pas oublier ensuite de le réactiver.
 
-2. Actuellement l'application ne démarre pas (enfin la fenêtre commence à s'ouvrir - elle est juste noire, il n'y a aucun widget dedant - avec une boite de dialogue indiquant le message d'erreur). Le message d'erreur indique que le fichier [icon.png](dep/icon.png) n'existe pas (Cette erreur n'était jamais apparue avant que je change le système de paramètres dans la branche git "correctionParam"). Voici le message :
-```txt
-Hmm...Quelque chose semble s'être mal passé...
-L'erreur est : image "/home/pandaroux007/Bureau/Programmation/Projets python/gui/GoTime/dep/icon.png" doesn't exist
-```
- 
-## Compilation
+## Compilation & distribution
+### Compilation avec Nuitka
 Pour compiler et distribuer l'application, j'utilise [`nuitka`](https://github.com/Nuitka/Nuitka), avec cette commande :
 ```sh
 python3 -m nuitka --run --onefile --output-filename="GoTime" --windows-console-mode=disable --follow-imports --enable-plugin=tk-inter --nofollow-import-to=pygame.tests --linux-icon="dep/icon.ico" --macos-app-icon="dep/icon.ico" --windows-icon-from-ico="dep/icon.ico" runApp.py
@@ -233,3 +234,12 @@ python3 -m nuitka --run --onefile --output-filename="GoTime" --windows-console-m
 
 > [!NOTE]
 > Installez nuitka avec `pip install nuitka`, puis installez l'utilitaire de compression d'exécutables si il n'est pas installé (`pip install zstandard`), configurez le cache des fichiers `C` (ccache), puis lancez la commande indiquez plus haut.
+
+### Distribution du logiciel
+Comme indiqué dans [le chapitre installation](#installation), l'application est distribuée de trois façon:
+#### Sous Linux
+- Utilisation de scripts shell bash ([install.sh](install.sh) et [uninstall.sh](#désinstallation))
+#### Sous Microsoft Windows
+- Utilisation d'un installateur créé *via* `Inno Setup`
+#### Sous MacOS-X
+- Pas de programme compilé ni de script d'installation : les utilisateurs de machines Apple devrons utiliser la version python directement pendant une durée indéterminée.
