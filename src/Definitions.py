@@ -8,7 +8,7 @@ from datetime import datetime
 # https://github.com/Nuitka/Nuitka/issues/1737#issuecomment-1224488673
 # https://stackoverflow.com/questions/59427353/how-to-get-the-current-path-of-compiled-binary-from-python-using-nuitka
 repertoire_courant = os.path.dirname(os.path.abspath(os.path.realpath(sys.argv[0])))
-""" # variables définie par nuitka lors de la compilation (UNIQUEMENT Nuitka, pas un autre compilateur!)
+""" # chemins lors de la compilation
 chemin_fichier_parametres = os.path.join(repertoire_courant, "dep", "settings.json")
 chemin_fichier_logs = os.path.join(repertoire_courant, 'log', "error_log.csv")
 chemin_image_application = os.path.join(repertoire_courant, 'dep', 'icon.png')
@@ -18,7 +18,6 @@ chemin_fichier_licence = os.path.join(repertoire_courant, "LICENCE.txt") """
 chemin_fichier_parametres = os.path.join(os.path.dirname(repertoire_courant), "dep", "settings.json")
 chemin_fichier_logs = os.path.join(os.path.dirname(repertoire_courant), 'log', "error_log.csv")
 chemin_image_application = os.path.join(os.path.dirname(repertoire_courant), 'dep', 'icon.png')
-chemin_image_checkmark = os.path.join(os.path.dirname(repertoire_courant), 'dep', 'checkmark.png')
 chemin_fichier_wav_fin_temps = os.path.join(os.path.dirname(repertoire_courant), 'sons', 'digital-clock-alarm.wav')
 chemin_fichier_licence = os.path.join(os.path.dirname(repertoire_courant), "LICENCE.txt")
 
@@ -77,7 +76,7 @@ def jouer_sonnerie(etat_jouer_son):
             sonnerie_actuelle = mixer.Sound(chemin_fichier_wav_fin_temps)
         if etat_jouer_son: sonnerie_actuelle.play()
         else: sonnerie_actuelle.stop()
-    except Exception as e: log_error(f"Exception dans la fonction jouer_sonnerie : {e}"); pass
+    except Exception as e: log_error(f"Exception dans la fonction jouer_sonnerie : {str(e)}"); pass
 
 # ------------------------ Variables utiles
 systeme_exploitation = system()
@@ -89,7 +88,7 @@ couleur_frame_minuteur_rouge = "#F84615"
 temps_max = 10800 # 3 heures en secondes
 
 # ------------------------ Infos App
-lien_du_github = "https://github.com/pandaroux007/GoTime"
 nom_application = "GoTime"
-version_application = "1.0.3-bêta"
-developpeur_application = "Pandaroux007"
+version_application = "1.1.0-bêta"
+developpeur_application = "pandaroux007"
+lien_du_github = "https://github.com/" + developpeur_application + "/" + nom_application

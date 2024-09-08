@@ -11,5 +11,3 @@ runApp.onefile-build
 dev
 # dossier d'environnement python au cas où
 gotimeEnv
-# fichier contenant les screenshots de l'appli
-screenshots/
