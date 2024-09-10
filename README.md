@@ -40,10 +40,6 @@ Créez un fichier `uninstall.sh`, puis copier coller ce script shell bash dedant
 #!/bin/bash
 
 set -e # arrête le script si une commande échoue
-# verif des droits root
-if [ "$EUID" -ne 0 ]; then
-    echo -e "${COLOR_ERROR_RED}ERREUR! Ce script doit être exécuté en tant que superutilisateur (utiliser la commande 'sudo ./install.sh')${COLOR_TERMINAL_DEFAULT}" && exit 1
-fi
 
 # def des chemins
 APP_NAME="GoTime"
@@ -54,6 +50,11 @@ COLOR_ERROR_RED="\e[1;31m"
 COLOR_SUCCESS_GREEN="\e[1;32m"
 COLOR_WARN_YELLOW="\e[1;33m"
 COLOR_TERMINAL_DEFAULT="\e[0;0m"
+
+# verif des droits root
+if [ "$EUID" -ne 0 ]; then
+    echo -e "${COLOR_ERROR_RED}ERREUR! Ce script doit être exécuté en tant que superutilisateur (utiliser la commande 'sudo ./install.sh')${COLOR_TERMINAL_DEFAULT}" && exit 1
+fi
 
 # supprimer le répertoire d'installation
 if [ -d "$INSTALL_DIR" ]; then
