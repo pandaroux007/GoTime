@@ -14,13 +14,7 @@ class FenetreParametres(tk.Toplevel):
         # ------------------------ Paramétrage de la fenêtre des paramètres
         self.title(f"Paramètres")
         self.geometry("600x400")
-        if systeme_exploitation == 'Windows':
-            self.iconbitmap(chemin_image_application)
-        else: pass
         self.resizable(False, False)
-        self.wm_iconbitmap()
-        self.logo = tk.PhotoImage(file=chemin_image_application)
-        self.iconphoto(False, self.logo)
         # ------------------------ Créer le titre de la page de paramètres
         self.label_titre_parametres = tk.Label(self, text=f"{nom_application} - Paramètres", font=("Arial", 24))
         self.label_titre_parametres.pack(pady=10)

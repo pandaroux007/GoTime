@@ -8,9 +8,6 @@ class FenetreLicence(tk.Toplevel):
         super().__init__()
         self.geometry("800x500")
         self.title(f"Licence de {nom_application}")
-        self.wm_iconbitmap()
-        self.logo = tk.PhotoImage(file=chemin_image_application)
-        self.iconphoto(False, self.logo)
         self.resizable(False, False)
         try:
             with open(chemin_fichier_licence, "r") as file:

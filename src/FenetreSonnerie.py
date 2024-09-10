@@ -8,11 +8,7 @@ class FenetreEssayerSonnerie(tk.Toplevel):
         super().__init__()
         # ------------------------ Configuration de la fenêtre
         self.title("Essayer la sonnerie")
-        # self.geometry("340x100")
         self.resizable(False, False)
-        self.wm_iconbitmap()
-        self.logo = tk.PhotoImage(file=chemin_image_application)
-        self.iconphoto(False, self.logo)
         self.protocol("WM_DELETE_WINDOW", self.fermer_fenetre_essayer_sonnerie_et_arreter_sonnerie)
         # ------------------------ Configuration du style ttk
         self.style = ttk.Style()

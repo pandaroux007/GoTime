@@ -1,11 +1,12 @@
 import tkinter as tk
 from tkinter import messagebox
-import webbrowser
 from threading import Thread
-from urllib import request
 from packaging import version
 import re
-# ------------------------ fichiers de l'application
+import webbrowser
+import socket
+from urllib import request
+# ------------------------ fichiers de l'application
 from Definitions import *
 
 class LienHypertexte(tk.Label):
@@ -19,7 +20,7 @@ class LienHypertexte(tk.Label):
 class FenetreInfo(tk.Toplevel):
     def __init__(self):
         super().__init__()
-        # ------------------------ Parametrge fenêtre
+        # ------------------------ Parametrage fenêtre
         self.title(f"À propos de {nom_application}")
         self.geometry("400x300")
         self.resizable(False, False)
@@ -42,17 +43,44 @@ class FenetreInfo(tk.Toplevel):
         # ------------------------ Bouton "OK"
         self.bouton_ok = tk.Button(self.frame_boutons, text="OK", command=self.destroy)
         self.bouton_ok.pack(side=tk.RIGHT, expand=True)
+
+    def verif_connection(self):
+        try:
+            # ------------------------ on tente de se connecter à un serveur DNS de google
+            socket.create_connection(("8.8.8.8", 53), timeout=3)
+            return True
+        except (socket.timeout, OSError):
+            return False
+
+    def verif_acces_api_github(self):
+        try:
+            # ------------------------ on essaye de faire une requête à l'api de github
+            socket.create_connection(("api.github.com", 443), timeout=5)
+            return True
+        except (socket.timeout, OSError):
+            return False
         
     def lancer_verif_mise_a_jour(self):
-        self.bouton_verif_mises_a_jour.config(state="disabled")
-        Thread(target=self.verif_mise_a_jour, daemon=True).start()
+        self.bouton_verif_mises_a_jour.config(state="disabled", cursor="watch")
+        Thread(target=self.process_verif_mise_a_jour, daemon=True).start()
+    
+    def process_verif_mise_a_jour(self):
+        if not self.verif_connection():
+            self.after(0, lambda: messagebox.showwarning("Pas d'Internet", "Aucune connexion Internet détectée. Veuillez vérifier votre connexion et réessayer."))
+            self.after(0, lambda: self.bouton_verif_mises_a_jour.config(state="normal"))
+            return
+        if not self.verif_acces_api_github():
+            self.after(0, lambda: messagebox.showwarning("GitHub inaccessible", "Impossible d'accéder à GitHub. Veuillez vérifier votre connexion Internet et réessayer."))
+            self.after(0, lambda: self.bouton_verif_mises_a_jour.config(state="normal"))
+            return
+        self.verif_mise_a_jour()
     
     # utilisation de self.after(0, ...) pour modifier la gui depuis le thread car tkinter n'est pas thread-safe
     def verif_mise_a_jour(self):
         try:
             # ------------------------ Requête à l'api de github pour obtenir la dernière version
             url = "https://api.github.com/repos/" + developpeur_application + "/" + nom_application + "/releases/latest"
-            with request.urlopen(url) as response:
+            with request.urlopen(url, timeout=10) as response:
                 data = json.loads(response.read().decode())
                 derniere_version_app_sur_github = data['tag_name']
             # ------------------------ enlever les éléments inutiles dans le numéro de version
@@ -71,4 +99,4 @@ class FenetreInfo(tk.Toplevel):
         except Exception as e:
             self.after(0, lambda: messagebox.showwarning(title="Avertissement", message=f"Erreur lors de la vérification des mises à jour!\n{e}"))
         # ------------------------ réactiver le bouton de verif des mises à jours
-        finally: self.after(0, lambda: self.bouton_verif_mises_a_jour.config(state="normal"))
+        finally: self.after(0, lambda: self.bouton_verif_mises_a_jour.config(state="normal", cursor="arrow"))

@@ -25,7 +25,7 @@ class Application(tk.Tk):
         self.minsize(1000, 680)
         self.config(background=theme_sombre)
         self.logo = tk.PhotoImage(file=chemin_image_application)
-        self.iconphoto(False, self.logo)
+        self.iconphoto(True, self.logo)
         self.call('wm', 'iconphoto', self._w, self.logo)
         self.bind("<1>", lambda event: event.widget.focus_set())
         # ------------------------ Barre de menu
@@ -215,7 +215,7 @@ class Application(tk.Tk):
         self.deselectionner_les_entry()
         self.paused = False
         self.bouton_pause.config(text="PAUSE")
-        self.time_remaining = 0  # Réinitialiser le temps restant
+        self.time_remaining = 0  # réinitialiser le temps restant
         # ------------------------ Configuration de l'état des entrées et des boutons
         self.bouton_start.config(state="normal")
         self.bouton_pause.config(state="disabled")
@@ -231,10 +231,10 @@ class Application(tk.Tk):
             self.temps_restant_label_fenetre_deporte.config(text="Temps restant", font=("Arial", 35), bg=couleur_frame_minuteur_verte, fg="black")
         # ------------------------ Gestion du son :
         if parametres.value_sounds == True:
-            jouer_sonnerie(True) # Jouer la sonnerie à la fin du timer
+            jouer_sonnerie(True) # jouer la sonnerie à la fin du timer
         else: pass
         if parametre_appel_bouton_ou_non == None:
-            self.update_timer() # Arrêter la récursion de la fonction update_timer()
+            self.update_timer() # Arreter la récursion de la fonction update_timer()
         else: pass
 
     def gestion_theme_par_defaut(self):
@@ -316,13 +316,13 @@ class Application(tk.Tk):
     def gestion_etat_bouton_start_en_fonction_du_temps_entre(self, *args):
         minutes_str = self.variable_entree_minutes.get()
         seconds_str = self.variable_entree_secondes.get()
-        # Convertir le contenu des spinbox en entier
+        # ------------------------ convertir le contenu des spinbox en entier
         if minutes_str and seconds_str:
             minutes = int(minutes_str)
             seconds = int(seconds_str)
         else: minutes = 0; seconds = 0
         total_secondes = minutes * 60 + seconds
-        # gestion état bouton "Start" en fonction du total des secondes
+        # ------------------------ gestion état bouton "Start" en fonction du total des secondes
         if total_secondes >= 5 and total_secondes <= temps_max:
             self.bouton_start.config(state="normal")
         else: self.bouton_start.config(state="disabled")
