@@ -78,7 +78,7 @@ else
     echo -e "${COLOR_WARN_YELLOW}WARNING! update-desktop-database n'est pas disponible. Vous devrez peut-être l'exécuter manuellement ou redémarrer votre ordinateur pour ne plus voir le logiciel dans la liste des applications installées.${COLOR_TERMINAL_DEFAULT}"
 fi
 
-echo -e "${COLOR_SUCCESS_GREEN}SUCCESS! Installation de $APP_NAME terminée avec succès!${COLOR_TERMINAL_DEFAULT}"
+echo -e "${COLOR_SUCCESS_GREEN}SUCCESS! Désinstallation de $APP_NAME terminée avec succès!${COLOR_TERMINAL_DEFAULT}"
 # verif pour supprimer le script à la fin
 while true; do
     read -p "Voulez-vous supprimer ce script de désinstallation ? [Y/n] " reponse
