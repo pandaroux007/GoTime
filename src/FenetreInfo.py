@@ -67,11 +67,11 @@ class FenetreInfo(tk.Toplevel):
     def process_verif_mise_a_jour(self):
         if not self.verif_connection():
             self.after(0, lambda: messagebox.showwarning("Pas d'Internet", "Aucune connexion Internet détectée. Veuillez vérifier votre connexion et réessayer."))
-            self.after(0, lambda: self.bouton_verif_mises_a_jour.config(state="normal"))
+            self.after(0, lambda: self.bouton_verif_mises_a_jour.config(state="normal", cursor="arrow"))
             return
         if not self.verif_acces_api_github():
             self.after(0, lambda: messagebox.showwarning("GitHub inaccessible", "Impossible d'accéder à GitHub. Veuillez vérifier votre connexion Internet et réessayer."))
-            self.after(0, lambda: self.bouton_verif_mises_a_jour.config(state="normal"))
+            self.after(0, lambda: self.bouton_verif_mises_a_jour.config(state="normal", cursor="arrow"))
             return
         self.verif_mise_a_jour()
     

@@ -197,7 +197,7 @@ Cette commande installera les modules listés dans le fichier *requirements.txt*
 10. `getpass`
 11. `socket`
 12. **`pygame`**
-13. `packaging`
+13. **`packaging`**
 14. `re`
 15. `urllib`
 16. `threading`
