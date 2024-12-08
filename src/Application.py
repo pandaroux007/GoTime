@@ -3,16 +3,22 @@ from datetime import datetime # pour la gestion du temps et du minuteur
 import webbrowser # pour l'ouverture du navigateur avec le lien du github de l'application
 from tkinter import messagebox # pour les erreur et les validations
 import darkdetect # pour la détection du thème de l'OS
+from PIL import ImageTk, Image
 # ------------------------ fichiers de l'application
-from Definitions import *
 from FenetreLicence import FenetreLicence
 from FenetreParametres import FenetreParametres
 from FenetreInfo import FenetreInfo
+from InfoApp import *
+from Utiles import *
+from Parametres import parametres
+from CheminsFichiers import *
+from SystemeVerifUpdate import SystemeVerifUpdate
 
 class Application(tk.Tk):
     def __init__(self):
         super().__init__()
         # ------------------------ Variables
+        self.theme_interne = None
         self.paused = False # pour le bouton pause
         self.time_remaining = None # pour le temps restant
         self.pause_verrouillage = False # pour éviter les bugs du minuteur après des doubles cliques sur le bp pause
@@ -23,29 +29,27 @@ class Application(tk.Tk):
         self.height = int(self.winfo_screenheight()/1.5)
         self.geometry(f"{self.width}x{self.height}")
         self.minsize(1000, 680)
-        self.config(background=theme_sombre)
         self.logo = tk.PhotoImage(file=chemin_image_application)
         self.iconphoto(True, self.logo)
         self.call('wm', 'iconphoto', self._w, self.logo)
         self.bind("<1>", lambda event: event.widget.focus_set())
         # ------------------------ Barre de menu
-        barre_de_menu = tk.Menu(self)
+        barre_de_menu = tk.Menu(self, relief="solid", borderwidth=0, background="grey", foreground="white")
         # ------------------------ Création d'un menu 'Fenêtre'
-        fenetre_menu = tk.Menu(barre_de_menu, tearoff=0)
-        fenetre_menu.add_command(label="Paramètres", command=lambda: FenetreParametres(callback_theme=self.gestion_theme_par_defaut))
-        fenetre_menu.add_separator()
-        fenetre_menu.add_command(label="Quitter", command=self.quit)
+        fenetre_menu = tk.Menu(barre_de_menu, tearoff=False, relief="solid", borderwidth=0, background="grey", foreground="white")
+        fenetre_menu.add_command(label="Paramètres", underline=0, command=lambda: FenetreParametres(callback_theme=self.gestion_theme_par_defaut))
+        fenetre_menu.add_command(label="Quitter", underline=0, command=self.quit)
         barre_de_menu.add_cascade(label="Fenêtre", menu=fenetre_menu)
         # ------------------------ Création d'un second menu 'Commandes'
-        commandes_menu = tk.Menu(barre_de_menu, tearoff=0)
-        commandes_menu.add_command(label="Effacer les entrées", command=self.clear_entrees)
-        commandes_menu.add_command(label="Déporter minuteur", command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
+        commandes_menu = tk.Menu(barre_de_menu, tearoff=False, relief="solid", borderwidth=0, background="grey", foreground="white")
+        commandes_menu.add_command(label="Effacer les entrées", underline=0, command=self.clear_entrees)
+        commandes_menu.add_command(label="Déporter minuteur", underline=0, command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
         barre_de_menu.add_cascade(label="Commandes", menu=commandes_menu)
         # ------------------------ Création d'un troisième menu 'Source'
-        source_menu = tk.Menu(barre_de_menu, tearoff=0)
-        source_menu.add_command(label="Afficher LICENCE", command=lambda: FenetreLicence())
-        source_menu.add_command(label="Signaler un bug", command=lambda: webbrowser.open_new_tab(lien_du_github + "/issues"))
-        source_menu.add_command(label="À propos", command=lambda: FenetreInfo())
+        source_menu = tk.Menu(barre_de_menu, tearoff=False, relief="solid", borderwidth=0, background="grey", foreground="white")
+        source_menu.add_command(label="Afficher LICENCE", underline=0, command=lambda: FenetreLicence())
+        source_menu.add_command(label="Signaler un bug", underline=0, command=lambda: webbrowser.open_new_tab(lien_du_github + "/issues"))
+        source_menu.add_command(label="À propos", underline=2, command=lambda: FenetreInfo())
         barre_de_menu.add_cascade(label="Source", menu=source_menu)
         # ------------------------ Ajout de la barre de menu à la fenêtre
         self.config(menu=barre_de_menu)
@@ -54,34 +58,34 @@ class Application(tk.Tk):
             self.time_label = tk.Label(self, text="", font=("Arial", 24))
             self.time_label.pack(pady=20)
         else:
-            self.espace_vide = tk.Label(self, text="", height=1, bg="white")
+            self.espace_vide = tk.Label(self, text="", height=1)
             self.espace_vide.pack()
         # ------------------------ Création de la frame principale :
         self.frame_principale = tk.Frame(self, width=900)
         self.frame_principale.pack(padx=20, pady=(0, 20))
         # ------------------------ Création de la frame de couleur et affichage d'un texte dedans (ici le temps restant)
-        self.time_frame = tk.Frame(self.frame_principale, bg=couleur_frame_minuteur_verte, height=80)
+        self.time_frame = tk.Frame(self.frame_principale, bg=couleurs.frame_verte, height=80)
         self.time_frame.pack(fill="x", padx=20, pady=(0, 20))
         if parametres.value_affichage_heure == True:
             self.time_frame.config(pady=10)
         self.temps_restant_label = tk.Label(self.time_frame, text=f"{nom_application}", font=("Arial", 24),
-                                            bg=couleur_frame_minuteur_verte, fg="black")
+                                            bg=couleurs.frame_verte, fg=couleurs.sombre)
         self.temps_restant_label.pack(pady=20)
         # ------------------------ Boutons pour la gestion du minuteur
         self.boutons_frame = tk.Frame(self.frame_principale, height=80)
         self.boutons_frame.pack(fill="x", padx=20, pady=(0, 20))
         self.bouton_start = tk.Button(self.boutons_frame, text="LANCER",
-                                      activebackground=couleur_frame_minuteur_verte,
+                                      activebackground=couleurs.frame_verte,
                                       state="disabled", width=30, height=2,
                                       justify="center", relief="groove",
                                       command=self.start_timer)
         self.bouton_pause = tk.Button(self.boutons_frame, text="PAUSE",
-                                      activebackground=couleur_frame_minuteur_jaune,
+                                      activebackground=couleurs.frame_jaune,
                                       state="disabled", width=30, height=2,
                                       justify="center", relief="groove",
                                       command=self.pause_timer)
         self.bouton_stop = tk.Button(self.boutons_frame, text="ARRÊTER",
-                                     activebackground=couleur_frame_minuteur_rouge,
+                                     activebackground=couleurs.frame_rouge,
                                      state="disabled", width=30, height=2,
                                      justify="center", relief="groove",
                                      command=self.stop_timer)
@@ -91,7 +95,7 @@ class Application(tk.Tk):
         # ------------ Bouton pour déporter le temps restant dans une nouvelle fenêtre
         self.bouton_deporter_temps_restant = tk.Button(self.frame_principale, width=105,
                                                        text="Déporter le temps restant dans une nouvelle fenêtre",
-                                                       activebackground=couleur_frame_minuteur_verte,
+                                                       activebackground=couleurs.frame_verte,
                                                        command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
         self.bouton_deporter_temps_restant.pack(expand=True, pady=(5, 20))
         # ------------------------ Entrées pour la gestion du temps du minuteur (minutes et secondes)
@@ -103,7 +107,7 @@ class Application(tk.Tk):
         self.variable_entree_secondes = tk.StringVar(self)
         self.variable_entree_secondes.trace_add("write", self.gestion_etat_bouton_start_en_fonction_du_temps_entre)
         # ------------------------ Ajouter un titre à cette section
-        self.titre_section_temps_entry = tk.Label(self.entrees_frame, text="Entrez un temps ici :", font=("Arial", 20), background="white")
+        self.titre_section_temps_entry = tk.Label(self.entrees_frame, text="Entrez un temps ici :", font=("Arial", 20), background=couleurs.clair)
         self.titre_section_temps_entry.pack(pady=10)
         # ------------ Entrée des minutes :
         self.labelframe_entree_minutes = tk.LabelFrame(self.entrees_frame, text="min", border=0, labelanchor="e")
@@ -122,12 +126,15 @@ class Application(tk.Tk):
         self.clear_entrees()
         # ------------ Bouton pour effacer les entrées
         self.bouton_clear_entrees = tk.Button(self.entrees_frame, text="Effacer les entrées",
-                                              activebackground=couleur_frame_minuteur_rouge,
+                                              activebackground=couleurs.frame_rouge,
                                               width=15,command=self.clear_entrees)
         self.bouton_clear_entrees.pack(side="right", padx=10, pady=20, expand=True)
         # ------------------------ Mise à jour de l'heure et gestion du thème
         self.update_time()
         self.gestion_theme_par_defaut()
+        # ------------------------ lancement verif MàJ
+        self.systeme_verif_update = SystemeVerifUpdate()
+        self.systeme_verif_update.lancerVerifUpdate()
 
     def update_time(self):
         if hasattr(self, 'time_label'):
@@ -159,9 +166,9 @@ class Application(tk.Tk):
             minutes = self.time_remaining // 60
             seconds = self.time_remaining % 60
             time_str = f"{minutes:02d}:{seconds:02d}"
-            self.temps_restant_label.config(text=time_str, font=("Arial", 24), bg=couleur_frame_minuteur_verte, fg="black")
+            self.temps_restant_label.config(text=time_str, font=("Arial", 24), bg=couleurs.frame_verte, fg=couleurs.sombre)
             if hasattr(self, 'fenetre_deportee') and self.fenetre_deportee.winfo_exists():
-                self.temps_restant_label_fenetre_deporte.config(text=time_str, font=("Arial", 35), bg=couleur_frame_minuteur_verte, fg="black")
+                self.temps_restant_label_fenetre_deporte.config(text=time_str, font=("Arial", 35), bg=couleurs.frame_verte, fg=couleurs.sombre)
             else: pass
             # Calcul des pourcentages
             total_time = self.total_seconds
@@ -169,25 +176,25 @@ class Application(tk.Tk):
             percent_remaining = time_left / total_time
             # Changement de couleur en fonction du pourcentage restant
             if percent_remaining <= 0.2:
-                self.time_frame.config(bg=couleur_frame_minuteur_rouge)
-                self.temps_restant_label.config(bg=couleur_frame_minuteur_rouge)
+                self.time_frame.config(bg=couleurs.frame_rouge)
+                self.temps_restant_label.config(bg=couleurs.frame_rouge)
                 if hasattr(self, 'fenetre_deportee') and self.fenetre_deportee.winfo_exists():
-                    self.fenetre_deportee.config(bg=couleur_frame_minuteur_rouge)
-                    self.temps_restant_label_fenetre_deporte.config(bg=couleur_frame_minuteur_rouge)
+                    self.fenetre_deportee.config(bg=couleurs.frame_rouge)
+                    self.temps_restant_label_fenetre_deporte.config(bg=couleurs.frame_rouge)
                 else: pass
             elif percent_remaining <= 0.3:
-                self.time_frame.config(bg=couleur_frame_minuteur_jaune)
-                self.temps_restant_label.config(bg=couleur_frame_minuteur_jaune)
+                self.time_frame.config(bg=couleurs.frame_jaune)
+                self.temps_restant_label.config(bg=couleurs.frame_jaune)
                 if hasattr(self, 'fenetre_deportee') and self.fenetre_deportee.winfo_exists():
-                    self.fenetre_deportee.config(bg=couleur_frame_minuteur_jaune)
-                    self.temps_restant_label_fenetre_deporte.config(bg=couleur_frame_minuteur_jaune)
+                    self.fenetre_deportee.config(bg=couleurs.frame_jaune)
+                    self.temps_restant_label_fenetre_deporte.config(bg=couleurs.frame_jaune)
                 else: pass
             else:
-                self.time_frame.config(bg=couleur_frame_minuteur_verte)
-                self.temps_restant_label.config(bg=couleur_frame_minuteur_verte)
+                self.time_frame.config(bg=couleurs.frame_verte)
+                self.temps_restant_label.config(bg=couleurs.frame_verte)
                 if hasattr(self, 'fenetre_deportee') and self.fenetre_deportee.winfo_exists():
-                    self.fenetre_deportee.config(bg=couleur_frame_minuteur_verte)
-                    self.temps_restant_label_fenetre_deporte.config(bg=couleur_frame_minuteur_verte)
+                    self.fenetre_deportee.config(bg=couleurs.frame_verte)
+                    self.temps_restant_label_fenetre_deporte.config(bg=couleurs.frame_verte)
                 else: pass
             self.after(1000, self.update_timer)
         elif self.paused:
@@ -224,11 +231,11 @@ class Application(tk.Tk):
         self.seconds_entry.config(state="normal")
         self.bouton_clear_entrees.config(state="normal")
         # ------------------------ Gestion affichage temps restant à effacer
-        self.time_frame.config(bg=couleur_frame_minuteur_verte)
-        self.temps_restant_label.config(text=f"{nom_application}", font=("Arial", 24), bg=couleur_frame_minuteur_verte, fg="black")
+        self.time_frame.config(bg=couleurs.frame_verte)
+        self.temps_restant_label.config(text=f"{nom_application}", font=("Arial", 24), bg=couleurs.frame_verte, fg=couleurs.sombre)
         if hasattr(self, 'fenetre_deportee') and self.fenetre_deportee.winfo_exists():
-            self.fenetre_deportee.config(background=couleur_frame_minuteur_verte)
-            self.temps_restant_label_fenetre_deporte.config(text="Temps restant", font=("Arial", 35), bg=couleur_frame_minuteur_verte, fg="black")
+            self.fenetre_deportee.config(background=couleurs.frame_verte)
+            self.temps_restant_label_fenetre_deporte.config(text="Temps restant", font=("Arial", 35), bg=couleurs.frame_verte, fg=couleurs.sombre)
         # ------------------------ Gestion du son :
         if parametres.value_sounds == True:
             jouer_sonnerie(True) # jouer la sonnerie à la fin du timer
@@ -241,66 +248,69 @@ class Application(tk.Tk):
         if parametres.value_theme == "DEFAULT":
             if darkdetect.theme() == 'Dark':
                 self.mettre_app_en_mode_dark()
+                self.theme_interne = "DARK"
             elif darkdetect.theme() == 'Light':
                 self.mettre_app_en_mode_light()
+                self.theme_interne = "LIGHT"
         elif parametres.value_theme == "LIGHT":
             self.mettre_app_en_mode_light()
         elif parametres.value_theme == "DARK":
             self.mettre_app_en_mode_dark()
         else:
-            messagebox.showerror(f"Erreur", "La sélection automatique du thème de l'application a échoué... L'application va automatiquement se lancer en mode sombre.")
+            messagebox.showwarning(f"Erreur", "La sélection automatique du thème de l'application a échoué... L'application va automatiquement se lancer en mode sombre.")
             self.mettre_app_en_mode_dark()
+            self.theme_interne = "DARK"
 
     def mettre_app_en_mode_dark(self):
-        self.config(bg=theme_sombre)
-        if hasattr(self, 'time_label'): self.time_label.config(bg=theme_sombre, fg="white")
-        if hasattr(self, 'espace_vide'): self.espace_vide.config(bg=theme_sombre)
+        self.config(bg=couleurs.sombre)
+        if hasattr(self, 'time_label'): self.time_label.config(bg=couleurs.sombre, fg=couleurs.clair)
+        if hasattr(self, 'espace_vide'): self.espace_vide.config(bg=couleurs.sombre)
         self.time_frame.config()
-        self.frame_principale.config(bg=theme_sombre)
-        self.boutons_frame.config(bg=theme_sombre)
-        self.bouton_start.config(bg=theme_sombre, fg="white")
-        self.bouton_pause.config(bg=theme_sombre, fg="white")
-        self.bouton_stop.config(bg=theme_sombre, fg="white")
-        self.bouton_clear_entrees.config(bg=theme_sombre, fg="white")
-        self.entrees_frame.config(bg=theme_sombre)
-        self.labelframe_entree_minutes.config(background=theme_sombre, fg="white")
-        self.labelframe_entree_secondes.config(background=theme_sombre, fg="white")
-        self.bouton_deporter_temps_restant.config(bg=theme_sombre, fg="white")
-        self.titre_section_temps_entry.config(bg=theme_sombre, fg="white")
+        self.frame_principale.config(bg=couleurs.sombre)
+        self.boutons_frame.config(bg=couleurs.sombre)
+        self.bouton_start.config(bg=couleurs.sombre, fg=couleurs.clair)
+        self.bouton_pause.config(bg=couleurs.sombre, fg=couleurs.clair)
+        self.bouton_stop.config(bg=couleurs.sombre, fg=couleurs.clair)
+        self.bouton_clear_entrees.config(bg=couleurs.sombre, fg=couleurs.clair)
+        self.entrees_frame.config(bg=couleurs.sombre)
+        self.labelframe_entree_minutes.config(background=couleurs.sombre, fg=couleurs.clair)
+        self.labelframe_entree_secondes.config(background=couleurs.sombre, fg=couleurs.clair)
+        self.bouton_deporter_temps_restant.config(bg=couleurs.sombre, fg=couleurs.clair)
+        self.titre_section_temps_entry.config(bg=couleurs.sombre, fg=couleurs.clair)
 
     def mettre_app_en_mode_light(self):
-        self.config(bg="white")
-        if hasattr(self, 'time_label'): self.time_label.config(bg="white", fg="black")
-        if hasattr(self, 'espace_vide'): self.espace_vide.config(bg="white")
+        self.config(bg=couleurs.clair)
+        if hasattr(self, 'time_label'): self.time_label.config(bg=couleurs.clair, fg=couleurs.sombre)
+        if hasattr(self, 'espace_vide'): self.espace_vide.config(bg=couleurs.clair)
         self.time_frame.config()
-        self.frame_principale.config(bg="white")
-        self.boutons_frame.config(bg="white")
-        self.bouton_start.config(bg="lightblue", fg="black")
-        self.bouton_pause.config(bg="lightblue", fg="black")
-        self.bouton_stop.config(bg="lightblue", fg="black")
-        self.bouton_clear_entrees.config(bg="lightblue", fg="black")
-        self.entrees_frame.config(bg="white")
-        self.labelframe_entree_minutes.config(background="white", fg="black")
-        self.labelframe_entree_secondes.config(background="white", fg="black")
-        self.bouton_deporter_temps_restant.config(bg="lightblue", fg="black")
-        self.titre_section_temps_entry.config(bg="white", fg="black")
+        self.frame_principale.config(bg=couleurs.clair)
+        self.boutons_frame.config(bg=couleurs.clair)
+        self.bouton_start.config(bg="lightblue", fg=couleurs.sombre)
+        self.bouton_pause.config(bg="lightblue", fg=couleurs.sombre)
+        self.bouton_stop.config(bg="lightblue", fg=couleurs.sombre)
+        self.bouton_clear_entrees.config(bg="lightblue", fg=couleurs.sombre)
+        self.entrees_frame.config(bg=couleurs.clair)
+        self.labelframe_entree_minutes.config(background=couleurs.clair, fg=couleurs.sombre)
+        self.labelframe_entree_secondes.config(background=couleurs.clair, fg=couleurs.sombre)
+        self.bouton_deporter_temps_restant.config(bg="lightblue", fg=couleurs.sombre)
+        self.titre_section_temps_entry.config(bg=couleurs.clair, fg=couleurs.sombre)
 
     def deporter_frame_temps_restant_dans_une_nouvelle_fenetre(self):
-        self.fenetre_deportee = tk.Toplevel(self, background=couleur_frame_minuteur_verte)
+        self.fenetre_deportee = tk.Toplevel(self, background=couleurs.frame_verte)
         self.fenetre_deportee.geometry("600x400")
         self.fenetre_deportee.minsize(300, 200)
         self.fenetre_deportee.title(f"Temps restant - {nom_application}")
         self.fenetre_deportee.protocol("WM_DELETE_WINDOW", self.fermer_fenetre_temps_restant_deporte)
         self.fenetre_deportee.wm_attributes("-topmost", 1)
-        self.wm_iconbitmap(); self.fenetre_deportee.iconphoto(False, self.logo)
-        self.bouton_deporter_temps_restant.config(text="Fermer la fenêtre affichant le temps restant", activebackground=couleur_frame_minuteur_rouge, command=self.fermer_fenetre_temps_restant_deporte)
+        self.bouton_deporter_temps_restant.config(text="Fermer la fenêtre affichant le temps restant", activebackground=couleurs.frame_rouge, command=self.fermer_fenetre_temps_restant_deporte)
         # ------------------------ Afficher le temps restant au centre
-        self.temps_restant_label_fenetre_deporte = tk.Label(self.fenetre_deportee, text="Temps restant", font=("Arial", 35), bg=couleur_frame_minuteur_verte, fg="black")
+        self.temps_restant_label_fenetre_deporte = tk.Label(self.fenetre_deportee, text="Temps restant", font=("Arial", 35), bg=couleurs.frame_verte, fg=couleurs.sombre)
         self.temps_restant_label_fenetre_deporte.pack(expand=True)
 
     def fermer_fenetre_temps_restant_deporte(self):
-        self.bouton_deporter_temps_restant.config(text="Déporter le temps restant dans une nouvelle fenêtre", activebackground=couleur_frame_minuteur_verte, command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
+        self.bouton_deporter_temps_restant.config(text="Déporter le temps restant dans une nouvelle fenêtre", activebackground=couleurs.frame_verte, command=self.deporter_frame_temps_restant_dans_une_nouvelle_fenetre)
         self.fenetre_deportee.destroy()
+        self.focus_set()
 
     def deselectionner_les_entry(self): self.focus_set()
     def clear_entrees(self):

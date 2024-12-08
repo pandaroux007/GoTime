@@ -2,7 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 # ------------------------ fichiers de l'application
 from FenetreSonnerie import FenetreEssayerSonnerie
-from Definitions import *
+from InfoApp import *
+from Utiles import *
+from Parametres import parametres
 
 class FenetreParametres(tk.Toplevel):
     def __init__(self, callback_theme=None):
@@ -45,7 +47,7 @@ class FenetreParametres(tk.Toplevel):
         self.selection_parametre_theme_os_dark.pack(anchor='w', pady=2)
         self.selection_parametre_theme_os_light.pack(anchor='w', pady=2)
         # ------------------------ checkbutton
-        self.checkbutton_afficher_heure_en_haut = tk.Checkbutton(self.onglet_theme, text="Afficher l'heure en haut\n(nécéssite de redémarrer)",
+        self.checkbutton_afficher_heure_en_haut = tk.Checkbutton(self.onglet_theme, text="Afficher l'heure en haut\n(nécessite de redémarrer)",
                                                                  variable=self.parametre_checkbutton_afficher_heure_en_haut,
                                                                  onvalue = True, offvalue = False)
         self.checkbutton_afficher_heure_en_haut.pack(side=tk.RIGHT, anchor="w", padx=(0, 45))
@@ -64,16 +66,16 @@ class FenetreParametres(tk.Toplevel):
         self.checkbutton_parametre_sons.pack(side='top', padx=(0, 5), pady=2, anchor='w')
         # ------------------------ Bouton pour tester la sonnerie
         self.bouton_tester_la_sonnerie = tk.Button(self.frame_selection_sonnerie_et_volume_a_droite, text="Essayer la sonnerie",
-                                                   activebackground=couleur_frame_minuteur_jaune, command=lambda: FenetreEssayerSonnerie())
+                                                   activebackground=couleurs.frame_jaune, command=lambda: FenetreEssayerSonnerie())
         self.bouton_tester_la_sonnerie.pack(side='top', padx=(0, 5), pady=2, anchor='w', fill="x")
         # ------------------------ Frame pour regrouper les boutons entre eux
         self.frame_boutons_parametres = tk.Frame(self, width=200, height=400)
         self.frame_boutons_parametres.pack(fill="x", padx=20)
         self.bouton_validation_parametre = tk.Button(self.frame_boutons_parametres, text="Appliquer les paramètres et quitter",
-                                                     activebackground=couleur_frame_minuteur_verte, command=self.apply_parametres)
+                                                     activebackground=couleurs.frame_verte, command=self.apply_parametres)
         self.bouton_validation_parametre.pack(fill="x", padx=20)
         self.bouton_validation_parametre = tk.Button(self.frame_boutons_parametres, text="Annuler",
-                                                     activebackground=couleur_frame_minuteur_rouge, command=self.destroy)
+                                                     activebackground=couleurs.frame_rouge, command=self.destroy)
         self.bouton_validation_parametre.pack(fill="x", padx=20)
 
     def apply_parametres(self):

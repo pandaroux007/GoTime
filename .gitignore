@@ -11,3 +11,5 @@ runApp.onefile-build
 dev
 # dossier d'environnement python au cas où
 gotimeEnv
+# inutile
+dep/info.png

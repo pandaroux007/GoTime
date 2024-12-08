@@ -3,6 +3,7 @@
 [![Licence](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/pandaroux007/GoTime/blob/main/LICENCE.txt)
 [![GitHub Release](https://img.shields.io/github/v/release/pandaroux007/GoTime?include_prereleases&style=flat&logo=auto&color=red&link=https%3A%2F%2Fgithub.com%2Fpandaroux007%2FGoTime%2Freleases)](https://github.com/pandaroux007/GoTime/releases)
 [![Built with Python3](https://img.shields.io/badge/built%20with-Python3-yellow.svg)](https://www.python.org/)
+![platforms](https://img.shields.io/badge/Platforms-Linux%20|%20Windows%20|%20Mac%20-purple.svg)
 [![Commits](https://img.shields.io/github/commit-activity/t/pandaroux007/GoTime)](https://github.com/pandaroux007/GoTime/commits/main/)
 [![Stars](https://img.shields.io/github/stars/pandaroux007/GoTime.svg?style=social&label=Stars)](https://github.com/pandaroux007/GoTime)
 </div>
@@ -28,7 +29,7 @@ ___
 3. Lancer le programme d'installation avec la commande `sudo ./install.sh` (pour le lancer en mode superutilisateur)
 
 ### Sous Microsoft Windows
-1. Lancer le fichier d'installation `gotime-win-v*-install.exe`, puis suivez les instructions.
+1. Lancer le fichier d'installation `gotime-win-install.exe`, puis suivez les instructions.
 
 ### Sous MacOS-X
 L'application n'est pas compilée sous Mac pour l'instant, vous pouvez l'exécuter depuis python3 si vous souhaitez l'utiliser (`python3 -m runApp.py`).
@@ -103,7 +104,7 @@ ___
 
 ## Crédits
 1. Merci à `Lounys` pour son aide sur le bug du bouton 'copier le lien' dans Source;
-2. Merci à `Solme` pour son soutien pendant les longues phases de correction de bugs;
+2. Merci à `Solme` pour son logo et son soutien pendant les longues phases de correction de bugs;
 3. Merci à `Roucoule/PandaR09` pour son aide au début de mon apprentissage de tkinter;
 4. Merci à `Petitours` pour ses conseils sur l'ergonomie et pour le module py vers exe;
 5. Merci à ma professeur d'anglais, qui a lancer l'idée et qui m'a fait confiance pour réaliser ce projet;
@@ -174,7 +175,7 @@ Voici une petite liste non exhaustive des futurs améliorations.
   paramètres, de type `combobox`. Ce sélecteur sera géré dynamiquement via la variable `tkinter` du `checkbutton` permettant d'activer la
   sonnerie. Concrètement, si la sonnerie est désactivé alors le sélecteur sera grisé, inutilisable.
 
-- [ ] Si un jour, une fois l'application terminée completement avec toutes les améliorations présentées ci-haut, j'ai envie de perdre mon temps, je passerai probablement sur une version 4 cross-platform, avec wxWidgets (**wxPython**) ou Toga (?). Mais comme cela nécessite de refaire toute l'interface, je ne le ferai probablement pas avant longtemps (j'en profiterai pour changer quelques détails pour rendre l'application plus conviviale).
+- [ ] Si un jour, une fois l'application terminée completement avec toutes les améliorations présentées ci-haut, j'ai envie de perdre mon temps, je passerai probablement sur une version 4 cross-platform, avec wxWidgets (**wxPython**) ou Toga (?) ou simple Tukann. Mais comme cela nécessite de refaire toute l'interface, je ne le ferai probablement pas avant longtemps (j'en profiterai pour changer quelques détails pour rendre l'application plus conviviale).
 
 - [x] Terminer la section "À propos" du menu "Source"
 
