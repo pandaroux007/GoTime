@@ -1,15 +1,17 @@
-# fichier système macOS-X, Windows
+# system file (macOS-X, Windows)
 .DS_Store
 Thumbs.db
-# compilation + cache de python
-src/__pycache__
+# compilation + python cache
+*/__pycache__
 output
 runApp.build
 runApp.dist
 runApp.onefile-build
-# dossier contenant des éléments de développement
+# developement elements
 dev
-# dossier d'environnement python au cas où
 gotimeEnv
-# inutile
-dep/info.png
+dep/theme.json
+in_progress_code.txt
+src/SystemCheckUpdate.py
+README.md
+install.sh

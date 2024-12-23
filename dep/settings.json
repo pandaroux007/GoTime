@@ -1,5 +1,6 @@
 {
-    "value_theme": "DEFAULT",
-    "value_affichage_heure": true,
-    "value_sounds": false
+    "active_theme": "system",
+    "display_time": true,
+    "active_sounds": true,
+    "shortcut_quit": true
 }

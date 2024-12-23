@@ -8,18 +8,26 @@
 [![Stars](https://img.shields.io/github/stars/pandaroux007/GoTime.svg?style=social&label=Stars)](https://github.com/pandaroux007/GoTime)
 </div>
 
-# Présentation
-## Projet
-Ce projet est une application de minuteur ne nécessitant pas de connexion Internet, qui a débuté le 9 février 2024 pour les professeurs du collège.
-Je place le code et tout élément associé au projet sur GitHub, à ce lien : [https://github.com/pandaroux007/GoTime](https://github.com/pandaroux007/GoTime)
-Pour tout signalement de bug ou proposition de nouvelle.s fonctionnalitée.s, merci de créer une [issue](https://github.com/pandaroux007/GoTime/issues).
+# Presentation
+## Project
+This project is a timer application that does not require an internet connection, which started on February 9, 2024 (originally intended for use in education, for educational institutions)
 
-## Licence
-Ce projet est sous [Licence MIT](LICENCE.txt) - [The MIT License (MIT)](https://choosealicense.com/licenses/mit/).
-Retrouvez les détails de cette licence sur le site officiel : https://opensource.org/licenses/MIT.
+> 🔗 The code and all associated material for the project is on GitHub: [https://github.com/pandaroux007/GoTime](https://github.com/pandaroux007/GoTime), or on [the site](https://pandaroux007.github.io/gotime).
+>
+> 🪲 For any bug reports or new feature suggestions, please create an [issue](https://github.com/pandaroux007/GoTime/issues).
+> 
+> 🚀 Find updates, changes and different versions in the file [CHANGELOG.md](CHANGELOG.md)
+
+## License
+This project is licensed under [MIT License](LICENSE.txt), selected according to the [Choose A License](https://choosealicense.com/licenses/mit/) website.
+Find the details of this license on the official website: https://opensource.org/licenses/MIT.
+
+## Spécification
+- 64-bit application (no 32-bit for now)
+- Developed in python3 and compiled *via* `nuitka`
 ___
 ## Installation
-1. Téléchargez la dernière version de l'application au format zip sur GitHub à ce lien : https://github.com/pandaroux007/GoTime/releases
+1. Téléchargez la dernière version de l'application au format zip, sur le site web du projet : https://pandaroux007.github.io/gotime (sur GitHub à ce lien : https://github.com/pandaroux007/GoTime/releases)
 2. Décompressez le fichier zip, puis placez vous dans le dossier ainsi optenu.
 ### Sous Linux
 (doit fonctionner sous debian et ses sous-distributions)
@@ -33,6 +41,9 @@ ___
 
 ### Sous MacOS-X
 L'application n'est pas compilée sous Mac pour l'instant, vous pouvez l'exécuter depuis python3 si vous souhaitez l'utiliser (`python3 -m runApp.py`).
+
+> [!WARNING]
+> Potentielles incompatibilités car l'application n'est pas testée sur cette plateforme!
 
 ## Désinstallation
 ### Sous Linux
@@ -99,17 +110,18 @@ Une fois ceci fait, vous pouvez autoriser l'exécution du fichier comme un progr
 *Vous pouvez également ouvrir votre explorateur de fichier en mode superutilisateur et supprimer manuellement le répertoire d'installation dans `/opt/GoTime` et l'entrée du menu démarrer `/usr/share/applications/GoTime.desktop`*
 
 ### Sous Microsoft Windows
-Rendez-vous dans vos Paramètres, puis dans le menu Application recherchez "*GoTime*" (si vous ne le trouvez pas c'est que l'application est déjà désinstallée - pour vous en assurer aller dans votre explorateur de fichier, dans `C:\Programmes (x86)` et regardez si le dossier *GoTime* existe.), puis cliquez sur désinstaller.
+1. Fermez toutes les instances de l'application (toutes les fenetres)
+2. Rendez-vous dans vos Paramètres, puis dans le menu Application recherchez "*GoTime*" (si vous ne le trouvez pas c'est que l'application est déjà désinstallée - pour vous en assurer aller dans votre explorateur de fichier, dans `C:\Programmes (x86)` ou `C:\Programmes`, et regardez si le dossier *GoTime* existe.), puis cliquez sur désinstaller.
 ___
 
 ## Crédits
 1. Merci à `Lounys` pour son aide sur le bug du bouton 'copier le lien' dans Source;
-2. Merci à `Solme` pour son logo et son soutien pendant les longues phases de correction de bugs;
-3. Merci à `Roucoule/PandaR09` pour son aide au début de mon apprentissage de tkinter;
-4. Merci à `Petitours` pour ses conseils sur l'ergonomie et pour le module py vers exe;
+2. Merci à `Solme` pour la nouvelle version du logo et son soutien pendant les longues phases de correction de bugs;
+3. Merci à `Roucoule/PandaR09` pour son aide au début de mon apprentissage de tkinter et le module `customtkinter`;
+4. Merci à `Petitours` pour ses conseils sur l'ergonomie et pour le module `nuitka`;
 5. Merci à ma professeur d'anglais, qui a lancer l'idée et qui m'a fait confiance pour réaliser ce projet;
 6. Merci à tous les développeurs des modules utilisés ici pour leurs travaux et leurs contributions à la communauté open-source;
-7. Enfin, merci à tous les créateurs de contenus techniques sur internet qui m'ont permis de trouver de la documentation pour chaque éléments des modules.
+7. Enfin, merci à tous les créateurs de contenus techniques sur internet.
 ___
 # Apparence globale
 ## Interface
@@ -150,68 +162,19 @@ visible que l'affichage de l'application, mais aussi le fait qu'elle reste toujo
 restera apparente).
 ___
 # Développement
-## Fonctionnement des versions
-> **Base : *x.y.z***
- - x : version majeure;
- - y : correction de bug majeur, ajout de fonctions;
- - z : correction de bug mineur, changements mineurs;
-
-> [!NOTE]
-> Quand une valeur d'importance supérieure change, les valeurs d'importance inférieures reviennent à 0.
-
-## Améliorations, Ajouts et choses à terminer
-Voici une petite liste non exhaustive des futurs améliorations.
-- [ ] Ajout d'un système permettant à l'utilisateur d'enregistrer des temps (par exemple ceux qu'il utilise régulièrement), en
-  plus du système initial avec les entrées/`spinbox`. Cela consisterai en un menu déroulant de type `combobox`, qui ne
-  s'afficherai que si au moins un temps est déjà enregistré, sinon un bouton pour créer un nouveau temps prédéfini.
-  Si un ou plusieurs temps a déjà été enregistré, le sélecteur s'affiche, à côté un bouton pour lancer le temps prédéfini
-  sur le minuteur et un autre permettant d'ajouter un nouveau temps à la liste. **Cette amélioration sera l'objectif de la V2**.
-
-- [ ] Ajout d'un système d'extension à l'application, comme un générateur de mots de passe sécurisé, un chronomètre, ou un générateur de
-  plan de classe aléatoire, par exemple. Les extensions seraient stockées sur un GitHub séparé de celui de l'application, et celle-ci
-  viendrai télécharger et intégrer celle que l'utilisateur souhaitera dans un onglets spécifique des paramètres. **Cette amélioration sera l'objectif de la V3**.
-
-- [ ] Choix de la sonnerie. Dans les versions à venir de l'application, il sera possible de choisir la sonnerie via un sélecteur dans les
-  paramètres, de type `combobox`. Ce sélecteur sera géré dynamiquement via la variable `tkinter` du `checkbutton` permettant d'activer la
-  sonnerie. Concrètement, si la sonnerie est désactivé alors le sélecteur sera grisé, inutilisable.
-
-- [ ] Si un jour, une fois l'application terminée completement avec toutes les améliorations présentées ci-haut, j'ai envie de perdre mon temps, je passerai probablement sur une version 4 cross-platform, avec wxWidgets (**wxPython**) ou Toga (?) ou simple Tukann. Mais comme cela nécessite de refaire toute l'interface, je ne le ferai probablement pas avant longtemps (j'en profiterai pour changer quelques détails pour rendre l'application plus conviviale).
-
-- [x] Terminer la section "À propos" du menu "Source"
-
 ## Installation des dépendances
 Attention, **certains des modules utilisés par le projet ne sont pas inclus par défauts dans python**. Pour les installer, il vous suffit de
 lancer la commande suivante (après vous être déplacé dans le répertoire du projet téléchargé - commande '*cd path*' sous Windows et Unix):
 ```sh
 pip install -r requirements.txt
 ```
-Cette commande installera les modules listés dans le fichier *requirements.txt*, utilisés par l'application mais qui ne sont pas inclue par défaut dans python3. Tous les modules utilisés par l'application sont listé ci-dessous :
-1. `tkinter`, `ttk`, `messagebox`
-2. `datetime`
-3. `webbrowser`
-4. `sys`
-5. `subprocess`
-6. **`darkdetect`**
-7. `os`
-8. `json`
-9. `platform`
-10. `getpass`
-11. `socket`
-12. **`pygame`**
-13. **`packaging`**
-14. `re`
-15. `urllib`
-16. `threading`
-
-> [!CAUTION]
-> Notez qu'il peut y avoir des problème lors de l'utilisation de `darkdetect` sous Windows avec le fichier `setup.py`. Je réfléchie à placer directement le code du module dans [src](src/), je dois encore regarder les permissions accordées par la licence *BSD License*.
+Les modules listés dans ce fichier sont utilisés par l'application
 
 ## Fonctionnement
 GoTime fonctionne avec la fonction `after` de `tkinter`. L'affichage de l'heure fonctionne de cette manière et le minuteur également.
-Cette méthode permet d'appeller une fonction un certain temps plus tard, temps défini en ms. Pour modifier chaque seconde l'heure, par exemple,
-on utilise cette commande (l.138)
+Cette méthode permet d'appeller une fonction un certain temps plus tard, temps défini en ms, de manière non bloquante. Pour modifier chaque seconde l'heure, par exemple, on utilise cette commande
 ```py
-self.after(1000, self.update_time)  # Met à jour toutes les secondes
+self.after(1000, self.update_time)
 ```
 Cela crée une boucle qui met à jour l'heure toutes les 1000ms, soit 1s. **C'est le même principe qui est utilisé pour le rafraichissement du minuteur.**
 Pour ce qui est des paramètres, l'application fonctionne grâce à une lecture/écriture dans un fichier json ([settings.json](dep/settings.json)).
