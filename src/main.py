@@ -4,14 +4,14 @@ from datetime import datetime
 from PIL import Image, ImageTk
 import webbrowser
 from lib.CTkMessagebox import CTkMessagebox
-from lib.CTkMenuBar import *
+from lib.CTkMenuBar import CTkMenuBar, CTkTitleMenu, CustomDropdownMenu
 # ------------------------ app code files
 from settingsWindow import SettingsWindow
 from licenseWindow import LicenseWindow
 from aboutWindow import AboutWindow
 from spinbox import Spinbox
 from appInfos import *
-from filePaths import *
+from filePaths import app_icon_file_path
 from usefulElements import *
 from settings import settings
 
@@ -34,14 +34,14 @@ class Application(ctk.CTk):
             self.menu_bar = CTkTitleMenu(self)
         else:
             self.menu_bar = CTkMenuBar(self)
-        settings_button = self.menu_bar.add_cascade("Settings")
+        window_button = self.menu_bar.add_cascade("Window")
         commands_button = self.menu_bar.add_cascade("Edit")
         sources_button = self.menu_bar.add_cascade("Source")
         # ------------------------ creating a "Window" menu
-        dropdown_settings = CustomDropdownMenu(widget=settings_button)
-        dropdown_settings.add_option(option="Settings", command=lambda: SettingsWindow(self))
-        dropdown_settings.add_separator()
-        dropdown_settings.add_option(option="Quit", command=self.quit)
+        dropdown_window = CustomDropdownMenu(widget=window_button)
+        dropdown_window.add_option(option="Settings", command=lambda: SettingsWindow(self))
+        dropdown_window.add_separator()
+        dropdown_window.add_option(option="Quit", command=self.quit)
         # ------------------------ creating a second "Commands" menu
         dropdown_commands = CustomDropdownMenu(widget=commands_button)
         dropdown_commands.add_option(option="Clear entries", command=self.clear_entries)
@@ -126,7 +126,7 @@ class Application(ctk.CTk):
         icon_image = icon_image.resize((32, 32)) # Image.Resampling.LANCZOS
         self.icon = ImageTk.PhotoImage(icon_image)
         self.iconphoto(True, self.icon)
-        # self.wm_iconbitmap()
+        self.wm_iconbitmap()
 
     def config_window_app(self):
         self.title(f"{app_name} v{app_version}")
@@ -194,11 +194,11 @@ class Application(ctk.CTk):
                     self.minimized_window.configure(fg_color=colors.timeframe_green)
                     self.remaining_time_minimized_window.configure(fg_color=colors.timeframe_green)
             
-            self.after(1000, self.update_timer)
-        
-        elif self.remaining_time >= 0:
-            self.stop_timer(False)
-        
+            if self.remaining_time == 0:
+                self.stop_timer(False)
+            else:
+                self.after(1000, self.update_timer)
+               
         # else if self.paused is true, skips the timer
         # without decrementing the remaining time
 
@@ -222,7 +222,6 @@ class Application(ctk.CTk):
         self.after(1000, lambda: setattr(self, 'pause_button_lock', False))
 
     def stop_timer(self, call_from_button):
-        print(f"call from button: {call_from_button}") # debug
         self.paused = False
         self.remaining_time = 0  # restart remaining time
         # ------------------------ config entries and buttons state
@@ -239,13 +238,8 @@ class Application(ctk.CTk):
             self.minimized_window.configure(fg_color=colors.timeframe_green)
             self.remaining_time_minimized_window.configure(text=REMAINING_TIME_DEFAULT_TXT, fg_color=colors.timeframe_green)
         # ------------------------ handle sound
-        if settings.value_active_sounds and call_from_button == False: # the function is called at the end of timer
+        if call_from_button == False and settings.value_active_sounds: # the function is called at the end of timer
             play_sound(True)
-
-        # no need to call the update_timer function here to stop its recursion,
-        # at the next call thanks to the after function of ctk it will have a false
-        # condition and will use pass since self.remaining_time is at 0 and
-        # self.paused is False
 
     def handle_disponibility_start_command(self) -> bool:
         total_seconds = self.get_total_seconds()

@@ -11,7 +11,4 @@ runApp.onefile-build
 dev
 gotimeEnv
 dep/theme.json
-in_progress_code.txt
 src/SystemCheckUpdate.py
-README.md
-install.sh

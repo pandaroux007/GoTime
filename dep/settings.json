@@ -1,6 +1,6 @@
 {
     "active_theme": "system",
     "display_time": true,
-    "active_sounds": true,
+    "active_sounds": false,
     "shortcut_quit": true
 }
