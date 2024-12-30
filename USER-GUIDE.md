@@ -1,10 +1,6 @@
 # USER GUIDE (EN)
 ## Installation
-1. Download the latest version of the application in zip format [on GitHub](https://github.com/pandaroux007/GoTime/releases) or on the website here ➜ 
-<p align="center">
-
-  [![Download on the project website](https://custom-icon-badges.demolab.com/badge/-Download-blue?logo=download&logoColor=white "Download app")](https://pandaroux007.github.io/gotime)
-</p>
+1. Download the latest version of the application in zip format [on GitHub](https://github.com/pandaroux007/GoTime/releases) or on the website here ➜ [![Download on the project website](https://custom-icon-badges.demolab.com/badge/-Download-blue?logo=download&logoColor=white "Download app")](https://pandaroux007.github.io/gotime)
 
 2. Unzip the zip file, then go to the folder obtained.
 ### On Microsoft Windows
