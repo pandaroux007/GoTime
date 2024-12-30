@@ -57,8 +57,8 @@ On the main window, the following is available, in order:
 The application can be enlarged and put in full screen.
 
 <p float="left">
-  <img src="screenshots/gotime-light-screenshot.png" width="49%" alt="GoTime in light mode" title="GoTime in light mode"/>
-  <img src="screenshots/gotime-dark-screenshot.png" width="49%" alt="GoTime in dark mode" title="GoTime in dark mode"/>
+  <img src="screenshots/gotime-light.png" width="49%" alt="GoTime in light mode" title="GoTime in light mode"/>
+  <img src="screenshots/gotime-dark.png" width="49%" alt="GoTime in dark mode" title="GoTime in dark mode"/>
 </p>
 <p align="center">
   <em>Left: GoTime (v2.0.0 here) in light mode | Right: GoTime (v2.0.0 here) in dark mode</em>

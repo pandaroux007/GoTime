@@ -2,7 +2,8 @@
 .DS_Store
 Thumbs.db
 # compilation + python cache
-*/__pycache__
+**/__pycache__
+**/*.pyc
 output
 runApp.build
 runApp.dist
