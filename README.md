@@ -244,4 +244,4 @@ Comme indiqué dans [le chapitre installation](#installation), l'application est
 #### Sous Microsoft Windows
 - Utilisation d'un installateur créé *via* `Inno Setup`
 #### Sous MacOS-X
-- Pas de programme compilé ni de script d'installation : les utilisateurs de machines Apple devrons utiliser la version python directement pendant une durée indéterminée.
+- Pas de programme compilé ni de script d'installation : les utilisateurs de machines Apple devront utiliser la version python directement pendant une durée indéterminée.
