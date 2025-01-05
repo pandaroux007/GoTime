@@ -1,6 +1,6 @@
 # CHANGELOG
 
-Change log for GoTime application project, create at the 2.0.0 version
+Change log for GoTime application project, created at the 2.0.0 version
 
 ## Semantic versioning
 base : x.y.z

@@ -97,7 +97,7 @@ There is a bug currently discovered.
 ### Compilation with Nuitka
 To compile and distribute the application, we use [`nuitka`](https://github.com/Nuitka/Nuitka). Install it with `pip install nuitka`, then install the executable compression utility if it is not installed (`pip install zstandard`), configure the `C` file cache (ccache), then run the command indicated above.
 ```sh
-python3 -m nuitka --run --onefile --output-filename="GoTime" --windows-console-mode=disable --follow-imports --enable-plugin=tk-inter --nofollow-import-to=pygame.tests --linux-icon="dep/icon.ico" --macos-app-icon="dep/icon.ico" --windows-icon-from-ico="dep/icon.ico" runApp.py
+python3 -m nuitka --run --onefile --output-filename="GoTime" --windows-console-mode=disable --follow-imports --enable-plugin=tk-inter --nofollow-import-to=pygame.tests --linux-icon="dep/icon.ico" --macos-app-icon="dep/icon.ico" --windows-icon-from-ico="dep/icon.ico" main.py
 ```
 If you are on Windows, add the `--mingw64` attribute to the command to select the correct compiler.
 

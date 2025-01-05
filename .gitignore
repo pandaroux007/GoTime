@@ -14,5 +14,6 @@ gotimeEnv
 dep/theme.json
 src/SystemCheckUpdate.py
 # results
-gotime-win-install.exe
 gotime-linux
+gotime-*.exe
+gotime-*.zip
