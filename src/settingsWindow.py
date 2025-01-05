@@ -1,10 +1,11 @@
 import customtkinter as ctk
 # ------------------------ app code files
 from tryRingtoneWindow import TryRingtoneWindow
+from usefulElements import ModalCustomCTk, exploitation_system
 from appInfos import app_name
 from settings import *
 
-class SettingsWindow(ctk.CTkToplevel):
+class SettingsWindow(ModalCustomCTk):
     def __init__(self, _master):
         super().__init__(master=_master)
         # ------------------------ settings window configuration
@@ -34,7 +35,8 @@ class SettingsWindow(ctk.CTkToplevel):
         self.theme_selection_frame.grid_rowconfigure((0, 1, 2), weight=1)
         # ------------------------ values
         self.active_theme_selection_value = ctk.StringVar(value=settings.value_active_theme)
-        self.active_theme_selection_value.trace_add("write", lambda event, *args: ctk.set_appearance_mode(self.active_theme_selection_value.get()))
+        if exploitation_system != "win": 
+            self.active_theme_selection_value.trace_add("write", lambda event, *args: ctk.set_appearance_mode(self.active_theme_selection_value.get()))
         self.display_time_selection_value = ctk.BooleanVar(value=settings.value_display_time)
         self.active_shortcut_quit_value = ctk.BooleanVar(value=settings.value_display_time)
         # ------------------------ radiobuttons for choose theme
@@ -61,7 +63,7 @@ class SettingsWindow(ctk.CTkToplevel):
                                                 onvalue = True, offvalue = False)
         self.switch_active_sound.grid(row=0, column=0, padx=(0, 5), pady=2)
         # ------------------------ button to try the current ringtone
-        self.test_ringtone_button = ctk.CTkButton(self.ringtone_tab, text="Try the ringtone", command=lambda: TryRingtoneWindow(_master))
+        self.test_ringtone_button = ctk.CTkButton(self.ringtone_tab, text="Try the ringtone", command=lambda: TryRingtoneWindow(self))
         self.test_ringtone_button.grid(row=0, column=1, padx=(0, 5), pady=2)
         # ------------------------ frame to group the buttons together
         self.buttons_frame_settings = ctk.CTkFrame(self)

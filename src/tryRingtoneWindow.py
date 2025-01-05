@@ -1,9 +1,9 @@
 import customtkinter as ctk
 # ------------------------ app code files
-from usefulElements import play_sound
+from usefulElements import ModalCustomCTk, play_sound
 from appInfos import app_name
 
-class TryRingtoneWindow(ctk.CTkToplevel):
+class TryRingtoneWindow(ModalCustomCTk):
     def __init__(self, master):
         super().__init__(master=master)
         # ------------------------ window configuration

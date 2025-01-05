@@ -4,7 +4,7 @@ from datetime import datetime
 from PIL import Image, ImageTk
 import webbrowser
 from lib.CTkMessagebox import CTkMessagebox
-from lib.CTkMenuBar import CTkMenuBar, CTkTitleMenu, CustomDropdownMenu
+from lib.CTkMenuBar import CTkMenuBar, CustomDropdownMenu
 # ------------------------ app code files
 from settingsWindow import SettingsWindow
 from licenseWindow import LicenseWindow
@@ -30,10 +30,7 @@ class Application(ctk.CTk):
         
         self.config_window_app()
         # ------------------------ menu bar
-        if exploitation_system == "win32":
-            self.menu_bar = CTkTitleMenu(self)
-        else:
-            self.menu_bar = CTkMenuBar(self)
+        self.menu_bar = CTkMenuBar(self)
         window_button = self.menu_bar.add_cascade("Window")
         commands_button = self.menu_bar.add_cascade("Edit")
         sources_button = self.menu_bar.add_cascade("Source")
@@ -121,7 +118,7 @@ class Application(ctk.CTk):
         self.clear_button.grid(row=1, column=4, padx=(0, 5), sticky=ctk.EW)
         self.clear_entries()
 
-    def def_icon_app(self):
+    def def_icon_app_unix(self):
         icon_image = Image.open(app_icon_file_path)
         icon_image = icon_image.resize((32, 32)) # Image.Resampling.LANCZOS
         self.icon = ImageTk.PhotoImage(icon_image)
@@ -134,7 +131,8 @@ class Application(ctk.CTk):
         self.height = int(self.winfo_screenheight()/1.5)
         self.geometry(f"{self.width}x{self.height}")
         self.minsize(1000, 680)
-        self.def_icon_app()
+        if exploitation_system == "win": self.iconbitmap(app_icon_file_path)
+        else: self.def_icon_app_unix()
         # ------------------------ handle events
         self.bind("<1>", lambda event: event.widget.focus_set())
         if settings.value_shortcut_quit:
@@ -147,7 +145,7 @@ class Application(ctk.CTk):
             self.after(1000, self.update_time)
 
     def start_timer(self):
-        if self.handle_disponibility_start_command():
+        if self.get_disponibility_start_command():
             play_sound(False)
             self.start_button.configure(state=ctk.DISABLED)
             self.pause_button.configure(state=ctk.NORMAL)
@@ -241,7 +239,7 @@ class Application(ctk.CTk):
         if call_from_button == False and settings.value_active_sounds: # the function is called at the end of timer
             play_sound(True)
 
-    def handle_disponibility_start_command(self) -> bool:
+    def get_disponibility_start_command(self) -> bool:
         total_seconds = self.get_total_seconds()
         if total_seconds >= 5 and total_seconds <= max_time:
             return True
@@ -270,7 +268,7 @@ class Application(ctk.CTk):
 
     def handle_start_button(self, *args):
         # ------------------------ manage the state of the "START" button based on the total number of seconds
-        if self.handle_disponibility_start_command():
+        if self.get_disponibility_start_command():
             self.start_button.configure(state=ctk.NORMAL)
         else:
             self.start_button.configure(state=ctk.DISABLED)
@@ -280,15 +278,15 @@ class Application(ctk.CTk):
         self.seconds_entry.clear()
 
     def move_timer_in_new_window(self):
-        self.minimized_window = ctk.CTkToplevel(self, fg_color=colors.timeframe_green)
+        self.minimized_window = ModalCustomCTk(self, fg_color=colors.timeframe_green)
         self.minimized_window.title(f"{REMAINING_TIME_DEFAULT_TXT} - {app_name}")
         self.minimized_window.geometry("600x400")
         self.minimized_window.minsize(300, 200)
         self.minimized_window.transient(self)
-        self.minimized_window.protocol("WM_DELETE_WINDOW", self.fermer_fenetre_temps_restant_deporte)
+        self.minimized_window.protocol("WM_DELETE_WINDOW", self.close_minimized_window)
         self.minimized_window.wm_attributes("-topmost", 1)
 
-        self.move_button.configure(text="Close the window containing the remaining time", command=self.fermer_fenetre_temps_restant_deporte)
+        self.move_button.configure(text="Close the window containing the remaining time", command=self.close_minimized_window)
         # ------------------------ display remaining time in center
         self.remaining_time_minimized_window = ctk.CTkLabel(self.minimized_window, font=ctk.CTkFont(size=50), fg_color=colors.timeframe_green)
         self.remaining_time_minimized_window.pack(expand=True)
@@ -300,7 +298,7 @@ class Application(ctk.CTk):
         else:
             self.remaining_time_minimized_window.configure(text=REMAINING_TIME_DEFAULT_TXT)
 
-    def fermer_fenetre_temps_restant_deporte(self):
+    def close_minimized_window(self):
         self.move_button.configure(text=MOVE_TIMER_BUTTON_TXT, command=self.move_timer_in_new_window)
         self.minimized_window.destroy()
         self.focus_set()

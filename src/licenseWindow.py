@@ -3,9 +3,9 @@ from lib.CTkMessagebox import CTkMessagebox
 # ------------------------ app code files
 from appInfos import app_name
 from filePaths import license_file_path
-from usefulElements import log_error
+from usefulElements import ModalCustomCTk, log_error
 
-class LicenseWindow(ctk.CTkToplevel):
+class LicenseWindow(ModalCustomCTk):
     def __init__(self, _master):
         super().__init__(master=_master)
         # ------------------------ license window configuration

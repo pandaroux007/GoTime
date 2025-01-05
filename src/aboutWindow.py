@@ -4,10 +4,11 @@ from PIL import Image
 # ------------------------ app code files
 # from SystemCheckUpdate import SystemCheckUpdate
 from licenseWindow import LicenseWindow
+from usefulElements import ModalCustomCTk
 from appInfos import *
 from filePaths import license_file_path, github_icon_file_path
 
-class AboutWindow(ctk.CTkToplevel):
+class AboutWindow(ModalCustomCTk):
     def __init__(self, _master):
         super().__init__(master=_master)
         # ------------------------ window configuration
