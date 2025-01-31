@@ -11,8 +11,7 @@ runApp.onefile-build
 # developement elements
 dev
 gotimeEnv
-dep/theme.json
-src/SystemCheckUpdate.py
+src/usefulElements/CTkMessagebox
 # results
 gotime-linux
 gotime-*.exe

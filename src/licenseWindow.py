@@ -1,11 +1,9 @@
 import customtkinter as ctk
-from lib.CTkMessagebox import CTkMessagebox
 # ------------------------ app code files
 from appInfos import app_name
-from filePaths import license_file_path
-from usefulElements import ModalCustomCTk, log_error
+from usefulElements import *
 
-class LicenseWindow(ModalCustomCTk):
+class LicenseWindow(CTkModalWindow):
     def __init__(self, _master):
         super().__init__(master=_master)
         # ------------------------ license window configuration
@@ -26,9 +24,8 @@ class LicenseWindow(ModalCustomCTk):
             self.license_text.configure(state=ctk.DISABLED)
         except FileNotFoundError as error:
             self.destroy()
-            CTkMessagebox(title="License reading error...",
-                          message="An error occurred while trying to read the LICENSE file. It was not found.",
-                          icon="cancel").get()
+            CTkPopup(title="License reading error...", icon="cancel",
+                     message="An error occurred while trying to read the LICENSE file. It was not found.").get()
             log_error(str(error))
             return
         # ------------------------ button to close the window

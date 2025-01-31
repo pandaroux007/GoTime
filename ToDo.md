@@ -14,6 +14,10 @@ would download and integrate the one that the user wants in a specific tab of th
 settings, of the `combobox` type. This selector will be managed dynamically via the `tkinter` variable of the switch allowing to activate the
 ringtone. Concretely, if the ringtone is deactivated then the selector will be grayed out, unusable.
 
+- [ ] Finish to create the messagebox code, with event and icon handling, and check update system (❗️**high priority**❗️)
+
+- [ ] Finish to create the debug python decorator in [functions.py](./src/usefulElements/functions.py)
+
 - [x] Change of GUI module. Basically the project should have used a cross-platform library like wxWidget (use of the wxPython adaptation), see use the base library for better performances by recreating the application in `C++`. In the end, use of [customtkinter](https://github.com/tomschimansky/customtkinter), a module adding an overlay to the Tcl/Tk wrapper integrated into python3 with more modern widgets.
 
 - [x] Finish the "About" section of the "Source" menu

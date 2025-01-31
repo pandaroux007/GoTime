@@ -1,11 +1,10 @@
 import customtkinter as ctk
 # ------------------------ app code files
 from tryRingtoneWindow import TryRingtoneWindow
-from usefulElements import ModalCustomCTk, exploitation_system
+from usefulElements import *
 from appInfos import app_name
-from settings import *
 
-class SettingsWindow(ModalCustomCTk):
+class SettingsWindow(CTkModalWindow):
     def __init__(self, _master):
         super().__init__(master=_master)
         # ------------------------ settings window configuration
@@ -35,16 +34,20 @@ class SettingsWindow(ModalCustomCTk):
         self.theme_selection_frame.grid_rowconfigure((0, 1, 2), weight=1)
         # ------------------------ values
         self.active_theme_selection_value = ctk.StringVar(value=settings.value_active_theme)
-        if exploitation_system != "win": 
+        if exploitation_system != WINDOWS_NAME: 
             self.active_theme_selection_value.trace_add("write", lambda event, *args: ctk.set_appearance_mode(self.active_theme_selection_value.get()))
         self.display_time_selection_value = ctk.BooleanVar(value=settings.value_display_time)
         self.active_shortcut_quit_value = ctk.BooleanVar(value=settings.value_display_time)
+        self.check_update_at_startup = ctk.BooleanVar(value=settings.value_check_update_at_startup)
         # ------------------------ radiobuttons for choose theme
-        self.system_theme_selection_button = ctk.CTkRadioButton(self.theme_selection_frame, text=f"{THEME_SYSTEM} mode", value=THEME_SYSTEM, variable=self.active_theme_selection_value)
+        self.system_theme_selection_button = ctk.CTkRadioButton(self.theme_selection_frame, text=f"{SYSTEM_THEME} mode",
+                                                                value=SYSTEM_THEME, variable=self.active_theme_selection_value)
         self.system_theme_selection_button.grid(row=0, column=0, sticky=ctk.EW, padx=7)
-        self.dark_theme_selection_button = ctk.CTkRadioButton(self.theme_selection_frame, text=f"{THEME_DARK} mode", value=THEME_DARK, variable=self.active_theme_selection_value)
+        self.dark_theme_selection_button = ctk.CTkRadioButton(self.theme_selection_frame, text=f"{DARK_THEME} mode",
+                                                              value=DARK_THEME, variable=self.active_theme_selection_value)
         self.dark_theme_selection_button.grid(row=1, column=0, sticky=ctk.EW, padx=7)
-        self.light_theme_selection_button = ctk.CTkRadioButton(self.theme_selection_frame, text=f"{THEME_LIGHT} mode", value=THEME_LIGHT, variable=self.active_theme_selection_value)
+        self.light_theme_selection_button = ctk.CTkRadioButton(self.theme_selection_frame, text=f"{LIGHT_THEME} mode",
+                                                               value=LIGHT_THEME, variable=self.active_theme_selection_value)
         self.light_theme_selection_button.grid(row=2, column=0, sticky=ctk.EW, padx=7)
         # ------------------------ switchs for choose state of time displaying and shortcut for quit
         self.switch_display_time_at_top = ctk.CTkSwitch(self.theme_tab, text="Display time at top\n(requires restart)",
@@ -53,6 +56,9 @@ class SettingsWindow(ModalCustomCTk):
         self.switch_active_shortcut_quit = ctk.CTkSwitch(self.theme_tab, text="Active the quit shortcut (Ctrl-Q)\n(requires restart)",
                                                         variable=self.active_shortcut_quit_value, onvalue=True, offvalue=False)
         self.switch_active_shortcut_quit.grid(row=2, column=2, sticky=ctk.NSEW, padx=(10, 0))
+        self.switch_check_update_at_startup = ctk.CTkSwitch(self.theme_tab, text="Active the checking of update at startup",
+                                                        variable=self.check_update_at_startup, onvalue=True, offvalue=False)
+        self.switch_check_update_at_startup.grid(row=3, column=2, sticky=ctk.NSEW, padx=(10, 0))
 
         # ------------------------------------------------ Ringtone tab
         self.active_sound_selection_value = ctk.BooleanVar(value=settings.value_active_sounds)
@@ -85,16 +91,26 @@ class SettingsWindow(ModalCustomCTk):
             settings.value_active_theme = selected_theme
             settings_changes = True
         # ringtone activation management
-        selected_state_sounds_for_windows = self.active_sound_selection_value.get()
-        if selected_state_sounds_for_windows != settings.value_active_sounds:
-            settings.value_active_sounds = selected_state_sounds_for_windows
+        selected_state_sounds = self.active_sound_selection_value.get()
+        if selected_state_sounds != settings.value_active_sounds:
+            settings.value_active_sounds = selected_state_sounds
             settings_changes = True
         # managing the time display at the top of the application window
-        selected_state_affichage_heure_en_haut = self.display_time_selection_value.get()
-        if selected_state_affichage_heure_en_haut != settings.value_display_time:
-            settings.value_display_time = selected_state_affichage_heure_en_haut
+        selected_state_display_time = self.display_time_selection_value.get()
+        if selected_state_display_time != settings.value_display_time:
+            settings.value_display_time = selected_state_display_time
             settings_changes = True
-
+        # set the state of the quit shortcut
+        selected_state_shortcut_quit = self.active_shortcut_quit_value.get()
+        if selected_state_shortcut_quit != settings.value_shortcut_quit:
+            settings.value_shortcut_quit = selected_state_shortcut_quit
+            settings_changes = True
+        # state of checking update at startup
+        selected_state_checking_update_at_startup = self.check_update_at_startup.get()
+        if selected_state_checking_update_at_startup != settings.value_check_update_at_startup:
+            settings.value_check_update_at_startup = selected_state_checking_update_at_startup
+            settings_changes = True
+        
         # if one or more settings have changed, we save
         if settings_changes is not False:
             settings.record_data()
@@ -102,8 +118,9 @@ class SettingsWindow(ModalCustomCTk):
         self.quit_app()
 
     def quit_app(self):
-        ctk.set_appearance_mode(settings.value_active_theme)
+        if exploitation_system != WINDOWS_NAME: 
+            ctk.set_appearance_mode(settings.value_active_theme)
         self.destroy()
 
-""" app = SettingsWindow(None)
-app.mainloop() """
+# app = SettingsWindow(None)
+# app.mainloop()

@@ -3,17 +3,13 @@ import customtkinter as ctk
 from datetime import datetime
 from PIL import Image, ImageTk
 import webbrowser
-from lib.CTkMessagebox import CTkMessagebox
-from lib.CTkMenuBar import CTkMenuBar, CustomDropdownMenu
 # ------------------------ app code files
+from systemCheckUpdate import SystemCheckUpdate
 from settingsWindow import SettingsWindow
 from licenseWindow import LicenseWindow
 from aboutWindow import AboutWindow
-from spinbox import Spinbox
 from appInfos import *
-from filePaths import app_icon_file_path
 from usefulElements import *
-from settings import settings
 
 REMAINING_TIME_DEFAULT_TXT = "Remaining time"
 MOVE_TIMER_BUTTON_TXT = "Move the timer to a new dedicated window"
@@ -64,14 +60,14 @@ class Application(ctk.CTk):
         
         # ------------------------ creating the frame with the remaining time
         self.remaining_frame = ctk.CTkFrame(self.main, fg_color=colors.timeframe_green)
-        self.remaining_frame.grid(row=1, column=0, padx=25, pady=10, sticky="nsew")
+        self.remaining_frame.grid(row=1, column=0, padx=25, pady=10, sticky=ctk.NSEW)
         self.remaining_frame.grid_columnconfigure(0, weight=1)
         self.remaining_frame.grid_rowconfigure(0, weight=1)
         self.remaining_label = ctk.CTkLabel(self.remaining_frame, text=REMAINING_TIME_DEFAULT_TXT, font=ctk.CTkFont(size=36))
         self.remaining_label.grid(row=0, column=0, padx=10, pady=10)
 
         # ------------------------ create control timer buttons
-        default_button_style = {"row": 0, "padx": 5, "pady": 5, "sticky": "ew"}
+        default_button_style = {"row": 0, "padx": 5, "pady": 5, "sticky": ctk.EW}
 
         self.button_frame = ctk.CTkFrame(self.main)
         self.button_frame.grid(row=2, column=0, padx=20, pady=10, sticky="new")
@@ -117,6 +113,10 @@ class Application(ctk.CTk):
         self.clear_button = ctk.CTkButton(self.entries_frame, text="Clear entries", command=self.clear_entries)
         self.clear_button.grid(row=1, column=4, padx=(0, 5), sticky=ctk.EW)
         self.clear_entries()
+        # ------------------------ if the settings is active, launch checking updates
+        if settings.value_check_update_at_startup:
+            self.update_system = SystemCheckUpdate(self)
+            self.update_system.run_check_update()
 
     def def_icon_app_unix(self):
         icon_image = Image.open(app_icon_file_path)
@@ -131,7 +131,7 @@ class Application(ctk.CTk):
         self.height = int(self.winfo_screenheight()/1.5)
         self.geometry(f"{self.width}x{self.height}")
         self.minsize(1000, 680)
-        if exploitation_system == "win": self.iconbitmap(app_icon_file_path)
+        if exploitation_system == WINDOWS_NAME: self.iconbitmap(app_icon_file_path)
         else: self.def_icon_app_unix()
         # ------------------------ handle events
         self.bind("<1>", lambda event: event.widget.focus_set())
@@ -196,7 +196,7 @@ class Application(ctk.CTk):
                 self.stop_timer(False)
             else:
                 self.after(1000, self.update_timer)
-               
+  
         # else if self.paused is true, skips the timer
         # without decrementing the remaining time
 
@@ -241,7 +241,7 @@ class Application(ctk.CTk):
 
     def get_disponibility_start_command(self) -> bool:
         total_seconds = self.get_total_seconds()
-        if total_seconds >= 5 and total_seconds <= max_time:
+        if total_seconds >= 5 and total_seconds <= MAX_TIME:
             return True
         else:
             return False
@@ -278,7 +278,7 @@ class Application(ctk.CTk):
         self.seconds_entry.clear()
 
     def move_timer_in_new_window(self):
-        self.minimized_window = ModalCustomCTk(self, fg_color=colors.timeframe_green)
+        self.minimized_window = CTkModalWindow(self, fg_color=colors.timeframe_green)
         self.minimized_window.title(f"{REMAINING_TIME_DEFAULT_TXT} - {app_name}")
         self.minimized_window.geometry("600x400")
         self.minimized_window.minsize(300, 200)
@@ -314,6 +314,6 @@ if __name__ == "__main__":
         exit(EXIT_SUCCESS)
 
     except Exception as error:
-        CTkMessagebox(title="Error... Something went wrong", message=error, icon="cancel").get()
+        CTkPopup(title="Error... Something went wrong", message=error, icon="cancel").get()
         log_error(str(error))
         exit(EXIT_FAILURE)
