@@ -14,11 +14,15 @@
 ## Project
 This project is a timer application that does not require an internet connection, which started on February 9, 2024 (originally intended for use in education, for educational institutions)
 
-> 🔗 The code and all associated material for the project is on GitHub: [https://github.com/pandaroux007/GoTime](https://github.com/pandaroux007/GoTime), or on [the site](https://pandaroux007.github.io/gotime).
+> [!NOTE]
+> - 🔗 The code and all associated material for the project is on GitHub: [https://github.com/pandaroux007/GoTime](https://github.com/pandaroux007/GoTime), or on [the site](https://pandaroux007.github.io/gotime).
+> - 🪲 For any bug reports or new feature suggestions, please create an [issue](https://github.com/pandaroux007/GoTime/issues).
+> - 🚀 Find updates, changes and different versions in the file [CHANGELOG.md](CHANGELOG.md)
 >
-> 🪲 For any bug reports or new feature suggestions, please create an [issue](https://github.com/pandaroux007/GoTime/issues).
-> 
-> 🚀 Find updates, changes and different versions in the file [CHANGELOG.md](CHANGELOG.md)
+> **THANKS FOR YOUR HELP!**
+
+> [!WARNING]
+> The project is currently no longer in active development. The latest commit is a work-in-progress version and does not work, nor does it match the current stable version of the application. **You can use the application, but as it is no longer being developed, expect to see bugs! Also, issues will no longer be fixed. Thank you for using GoTime until now ♥️!**
 
 **To learn how to install the application on Windows, Linux or MacOS-X, refer to the [USER-GUIDE.md](USER-GUIDE.md). file**
 
@@ -52,7 +56,7 @@ ___
 ## Interface
 On the main window, the following is available, in order:
 - The time, in large, at the top <b style="color: red">*</b>
-- A colored rectangle containing the name of the application, then the remaining time during the countdown.
+- A colored rectangle containing the remaining time during the countdown.
 - Three buttons (START, PAUSE/RESUME, STOP).
 - A button to move the remaining time to a new window.
 - Two entries (minutes/seconds) and a button to quickly clear them.
