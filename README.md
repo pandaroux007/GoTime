@@ -22,7 +22,7 @@ This project is a timer application that does not require an internet connection
 > **THANKS FOR YOUR HELP!**
 
 > [!WARNING]
-> The project is currently no longer in active development. The latest commit is a work-in-progress version and does not work, nor does it match the current stable version of the application. **You can use the application, but as it is no longer being developed, expect to see bugs! Also, issues will no longer be fixed. Thank you for using GoTime until now ♥️!**
+> The project is currently no longer in active development. The [the last real development commit](https://github.com/pandaroux007/GoTime/commit/e7afbca74dab06c0ab6ec351c70e44bfb1d07f02) is a work-in-progress version and does not work, nor does it match the current stable version of the application. **You can use the application, but as it is no longer being developed, expect to see bugs! Also, issues will no longer be fixed. Thank you for using GoTime until now ♥️!**
 
 **To learn how to install the application on Windows, Linux or MacOS-X, refer to the [USER-GUIDE.md](USER-GUIDE.md). file**
 
